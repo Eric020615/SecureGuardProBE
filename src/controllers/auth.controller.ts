@@ -8,8 +8,9 @@ const auth = firebase.FIREBASE_AUTH
 export const signUpAsResident = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = req.body;
-        next()
-        res.status(200).send('user created successfully')
+        const response = await signInWithEmailAndPassword(auth, data.email, data.password);
+        next();
+        res.status(200).send('account created successfully');
     } catch (error) {
         res.status(400).send(error)
     }
