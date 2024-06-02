@@ -1,3 +1,5 @@
-export interface User {
-    
+export interface ResponseBone {
+    message?: string
+    data?: any
+    code?: number
 }
