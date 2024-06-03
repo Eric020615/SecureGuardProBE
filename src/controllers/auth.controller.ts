@@ -4,11 +4,11 @@ import firebase from "../config/firebase"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { CreateUserDto } from "../dtos/user.dto"
 import { LoginDto } from "../dtos/auth.dto"
-import { ResponseBone } from "../types/response"
+import { IResponse } from "../types/response"
 
 const auth = firebase.FIREBASE_AUTH
 
-export const signUpAsResident = async (req: Request<{}, {}, CreateUserDto>, res: Response<ResponseBone>, next: NextFunction) => {
+export const signUpAsResident = async (req: Request<{}, {}, CreateUserDto>, res: Response<IResponse>, next: NextFunction) => {
     try {
         const data = req.body;
         if(data.confirmPassword !== data.password){
@@ -32,7 +32,7 @@ export const signUpAsResident = async (req: Request<{}, {}, CreateUserDto>, res:
     }
 }
 
-export const LogIn = async (req: Request<{}, {}, LoginDto>, res: Response<ResponseBone>, next: NextFunction) => {
+export const LogIn = async (req: Request<{}, {}, LoginDto>, res: Response<IResponse>, next: NextFunction) => {
     try {
         const data = req.body;
         const response = await signInWithEmailAndPassword(auth, data.email, data.password);
