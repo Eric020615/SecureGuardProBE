@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { CreateUserDto } from "../dtos/user.dto"
 import { LoginDto } from "../dtos/auth.dto"
 import { IResponse } from "../types/response"
+import { createToken } from "../config/jwt"
 
 const auth = firebase.FIREBASE_AUTH
 
@@ -36,8 +37,10 @@ export const LogIn = async (req: Request<{}, {}, LoginDto>, res: Response<IRespo
     try {
         const data = req.body;
         const response = await signInWithEmailAndPassword(auth, data.email, data.password);
+        const token = createToken(response.user.uid)
         next();
         res.status(200).send({
+            data: token,
             message: "Account Login successfully",
             code: 200
         });
