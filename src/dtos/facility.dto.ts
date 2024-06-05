@@ -1,6 +1,6 @@
 export interface CreateBookingDto {
     userGUID: string;
-    facilityId: number;
+    facilityId: string;
     startDate: string;
     endDate: string;
     numOfGuest: number;

@@ -20,8 +20,6 @@ const firebaseConfig = {
   databaseURL: process.env.DATABASE_URL
 };
 
-console.log(firebaseConfig)
-
 // Initialize Firebase
 const FIREBASE_APP = initializeApp(firebaseConfig);
 const FIREBASE_AUTH = getAuth(FIREBASE_APP);

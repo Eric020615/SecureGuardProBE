@@ -9,7 +9,7 @@ import { createToken } from "../config/jwt"
 
 const auth = firebase.FIREBASE_AUTH
 
-export const signUpAsResident = async (req: Request<{}, {}, CreateUserDto>, res: Response<IResponse>, next: NextFunction) => {
+export const signUpAsResident = async (req: Request<{}, {}, CreateUserDto>, res: Response<IResponse<any>>, next: NextFunction) => {
     try {
         const data = req.body;
         if(data.confirmPassword !== data.password){
@@ -33,7 +33,7 @@ export const signUpAsResident = async (req: Request<{}, {}, CreateUserDto>, res:
     }
 }
 
-export const LogIn = async (req: Request<{}, {}, LoginDto>, res: Response<IResponse>, next: NextFunction) => {
+export const LogIn = async (req: Request<{}, {}, LoginDto>, res: Response<IResponse<any>>, next: NextFunction) => {
     try {
         const data = req.body;
         const response = await signInWithEmailAndPassword(auth, data.email, data.password);
