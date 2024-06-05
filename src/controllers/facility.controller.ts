@@ -4,6 +4,8 @@ import firebase from "../config/firebase"
 import { CreateBookingDto } from "../dtos/facility.dto"
 import { IResponse, getBookingHistoryResponse } from "../types/response"
 import { verifyToken } from "../config/jwt"
+import moment from "moment";
+import "moment-timezone"
 
 const facilityDB = firebase.FIRESTORE
 const facilityCollection = collection(facilityDB, "facility")
@@ -41,7 +43,7 @@ export const getBookingHistory = async (req: Request, res: Response<IResponse<ge
         const q = query(facilityCollection, 
             and(
                 where("userGUID", "==", userId),
-                where("startDate", isPast ? "<=" : ">", new Date().toISOString())
+                where("startDate", isPast ? "<=" : ">", moment().tz('Asia/Kuala_Lumpur').toISOString())
             )
         )
         const querySnapshot = await getDocs(q)
