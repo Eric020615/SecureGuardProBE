@@ -55,3 +55,32 @@ export const getNotices = async (req: Request, res: Response<IResponse<getNotice
         })
     }
 }
+
+export const getNoticesByResident = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
+    try {
+        const data = req.body;
+        const q = query(noticeCollection, 
+            // and(
+            //     where("userGUID", "==", userId),
+            //     where("startDate", isPast ? "<=" : ">", moment().tz('Asia/Kuala_Lumpur').toISOString())
+            // )
+        )
+        const querySnapshot = await getDocs(q)
+        let result : getNoticeResponse[] = [];
+        querySnapshot.forEach((doc) => {
+            result.push(doc.data() as getNoticeResponse)
+        })
+        return res.status(200).send({
+            data: result,
+            code: 200,
+            message: "Notices get successfully"
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            message: "Failed to get notices",
+            code: 500,
+            data: null
+        })
+    }
+}
