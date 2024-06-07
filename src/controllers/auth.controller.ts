@@ -5,7 +5,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { CreateUserDto } from "../dtos/user.dto"
 import { LoginDto } from "../dtos/auth.dto"
 import { IResponse } from "../types/response"
-import { createToken } from "../config/jwt"
+import { createToken, verifyToken } from "../config/jwt"
 
 const auth = firebase.FIREBASE_AUTH
 
@@ -48,6 +48,25 @@ export const LogIn = async (req: Request<{}, {}, LoginDto>, res: Response<IRespo
         console.log(error)
         res.status(500).send({
             message: "Account Login failed",
+            code: 500
+        });
+    }
+}
+
+export const checkAuth = async (req: Request<{}, {}, LoginDto>, res: Response<IResponse<any>>, next: NextFunction) => {
+    try {
+        const authHeader = req.headers.authorization;
+        const token = authHeader?.substring(7);
+        const payload = verifyToken(token ? token : "");
+        res.status(200).send({
+            data: token,
+            message: "JWT valid",
+            code: 200
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            message: "JWT invalid",
             code: 500
         });
     }

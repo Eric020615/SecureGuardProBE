@@ -10,7 +10,6 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
             code: 401
         }) 
     }
-    
     const token = authHeader?.substring(7);
     const payload = verifyToken(token ? token : "");
     next()
