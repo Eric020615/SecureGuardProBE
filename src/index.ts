@@ -7,6 +7,14 @@ import router from './routes';
 dotenv.config();
 const app = express();
 
+const corsOptions = {
+    origin: [
+        'http:/localhost:8081/',
+        'http:/localhost:3001/'
+    ],
+    optionsSuccessStatus: 200,
+};
+app.use(cors());
 app.use(express.json());
 app.use(router)
 

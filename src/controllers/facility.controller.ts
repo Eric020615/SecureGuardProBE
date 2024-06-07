@@ -31,6 +31,22 @@ export const createBooking = async (req: Request<{}, {}, CreateBookingDto>, res:
     }
 }
 
+export const createBookingByAdmin = async (req: Request<{}, {}, CreateBookingDto>, res: Response<IResponse<any>>, next: NextFunction) => {
+    try {
+        const data = req.body;
+        await addDoc(facilityCollection, data);
+        return res.status(200).send({
+            message: "Facility booking created successfully",
+            code: 200
+        })
+    } catch (error) {
+        return res.status(500).send({
+            message: "Facility booking failed",
+            code: 500
+        })
+    }
+}
+
 export const getBookingHistory = async (req: Request, res: Response<IResponse<getBookingHistoryResponse>>, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
@@ -46,6 +62,29 @@ export const getBookingHistory = async (req: Request, res: Response<IResponse<ge
                 where("startDate", isPast ? "<=" : ">", moment().tz('Asia/Kuala_Lumpur').toISOString())
             )
         )
+        const querySnapshot = await getDocs(q)
+        let result : getBookingHistoryResponse[] = [];
+        querySnapshot.forEach((doc) => {
+            result.push(doc.data() as getBookingHistoryResponse)
+        })
+        return res.status(200).send({
+            data: result,
+            code: 200,
+            message: "Facility get successfully"
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            message: "Failed to get facility",
+            code: 500,
+            data: null
+        })
+    }
+}
+
+export const getBookingHistoryByAdmin = async (req: Request, res: Response<IResponse<getBookingHistoryResponse>>, next: NextFunction) => {
+    try {
+        const q = query(facilityCollection)
         const querySnapshot = await getDocs(q)
         let result : getBookingHistoryResponse[] = [];
         querySnapshot.forEach((doc) => {
