@@ -12,3 +12,10 @@ export interface getBookingHistoryResponse {
     userGUID: string
     numOfGuest: number
 }
+
+export interface getNoticeResponse {
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+}
