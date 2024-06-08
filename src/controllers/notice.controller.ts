@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { addDoc, and, collection, doc, getDoc, getDocs, or, query, setDoc, where } from "firebase/firestore"
+import { addDoc, and, collection, doc, getDoc, getDocs, or, orderBy, query, setDoc, where } from "firebase/firestore"
 import firebase from "../config/firebase"
 import { CreateBookingDto } from "../dtos/facility.dto"
 import { IResponse, getBookingHistoryResponse, getNoticeResponse } from "../types/response"
@@ -29,13 +29,7 @@ export const createNotice = async (req: Request<{}, {}, CreateNoticeDto>, res: R
 
 export const getNotices = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
     try {
-        const data = req.body;
-        const q = query(noticeCollection, 
-            // and(
-            //     where("userGUID", "==", userId),
-            //     where("startDate", isPast ? "<=" : ">", moment().tz('Asia/Kuala_Lumpur').toISOString())
-            // )
-        )
+        const q = query(noticeCollection)
         const querySnapshot = await getDocs(q)
         let result : getNoticeResponse[] = [];
         querySnapshot.forEach((doc) => {
@@ -58,12 +52,12 @@ export const getNotices = async (req: Request, res: Response<IResponse<getNotice
 
 export const getNoticesByResident = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
     try {
-        const data = req.body;
-        const q = query(noticeCollection, 
-            // and(
-            //     where("userGUID", "==", userId),
-            //     where("startDate", isPast ? "<=" : ">", moment().tz('Asia/Kuala_Lumpur').toISOString())
-            // )
+        const q = query(noticeCollection,                 
+            and(
+                where("startDate", "<=", moment().tz('Asia/Kuala_Lumpur').toISOString()),
+                where("endDate", ">", moment().tz('Asia/Kuala_Lumpur').toISOString()),
+            ),
+            orderBy("startDate")
         )
         const querySnapshot = await getDocs(q)
         let result : getNoticeResponse[] = [];
