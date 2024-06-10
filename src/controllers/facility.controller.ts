@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { addDoc, and, collection, doc, getDoc, getDocs, or, query, setDoc, where } from "firebase/firestore"
+import { addDoc, and, collection, doc, getDoc, getDocs, or, query, setDoc, updateDoc, where } from "firebase/firestore"
 import firebase from "../config/firebase"
 import { CreateBookingDto } from "../dtos/facility.dto"
 import { IResponse, getBookingHistoryResponse } from "../types/response"
@@ -65,7 +65,9 @@ export const getBookingHistory = async (req: Request, res: Response<IResponse<ge
         const querySnapshot = await getDocs(q)
         let result : getBookingHistoryResponse[] = [];
         querySnapshot.forEach((doc) => {
-            result.push(doc.data() as getBookingHistoryResponse)
+            let data = doc.data() as getBookingHistoryResponse
+            data.bookingId = doc.id
+            result.push(data)
         })
         return res.status(200).send({
             data: result,
@@ -99,6 +101,33 @@ export const getBookingHistoryByAdmin = async (req: Request, res: Response<IResp
         console.log(error)
         return res.status(500).send({
             message: "Failed to get facility",
+            code: 500,
+            data: null
+        })
+    }
+}
+
+
+export const cancelBooking = async (req: Request, res: Response<IResponse<getBookingHistoryResponse>>, next: NextFunction) => {
+    try {
+        let bookingId = ""
+        bookingId = req.body.bookingId ? req.body.bookingId as string : ""
+        const data = {
+            isCancelled: true
+        };
+        const docRef = doc(facilityCollection, 
+            bookingId
+        )
+        const querySnapshot = await updateDoc(docRef, data)
+        return res.status(200).send({
+            data: null,
+            code: 200,
+            message: "Booking cancel successfully"
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            message: "Failed to cancel booking",
             code: 500,
             data: null
         })

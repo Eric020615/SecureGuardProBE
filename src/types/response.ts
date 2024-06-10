@@ -5,12 +5,14 @@ export interface IResponse<T> {
 }
 
 export interface getBookingHistoryResponse { 
+    bookingId: string
     startDate: string
     facilityId: string
     facilityName: string
     endDate: string
     userGUID: string
     numOfGuest: number
+    isCancelled: boolean
 }
 
 export interface getNoticeResponse {
