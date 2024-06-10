@@ -4,3 +4,10 @@ export interface CreateNoticeDto {
     startDate: string;
     endDate: string;
 }
+
+export interface UpdateNoticeDto {
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+}

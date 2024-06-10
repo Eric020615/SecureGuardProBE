@@ -90,7 +90,9 @@ export const getBookingHistoryByAdmin = async (req: Request, res: Response<IResp
         const querySnapshot = await getDocs(q)
         let result : getBookingHistoryResponse[] = [];
         querySnapshot.forEach((doc) => {
-            result.push(doc.data() as getBookingHistoryResponse)
+            let data = doc.data() as getBookingHistoryResponse
+            data.bookingId = doc.id
+            result.push(data)
         })
         return res.status(200).send({
             data: result,
@@ -107,12 +109,14 @@ export const getBookingHistoryByAdmin = async (req: Request, res: Response<IResp
     }
 }
 
-
 export const cancelBooking = async (req: Request, res: Response<IResponse<getBookingHistoryResponse>>, next: NextFunction) => {
     try {
         let bookingId = ""
+        let cancelRemark = ""
         bookingId = req.body.bookingId ? req.body.bookingId as string : ""
+        cancelRemark = req.body.cancelRemark ? req.body.cancelRemark as string : "Cancel by user"
         const data = {
+            cancelRemark: cancelRemark,
             isCancelled: true
         };
         const docRef = doc(facilityCollection, 

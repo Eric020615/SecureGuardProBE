@@ -16,6 +16,7 @@ export interface getBookingHistoryResponse {
 }
 
 export interface getNoticeResponse {
+    noticeId: string
     title: string;
     description: string;
     startDate: string;
