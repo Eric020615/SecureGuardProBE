@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { addDoc, and, collection, doc, getDoc, getDocs, or, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore"
+import { addDoc, and, collection, deleteDoc, doc, getDoc, getDocs, or, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore"
 import firebase from "../config/firebase"
 import { CreateBookingDto } from "../dtos/facility.dto"
 import { IResponse, getBookingHistoryResponse, getNoticeResponse } from "../types/response"
@@ -115,6 +115,28 @@ export const editNotice = async (req: Request, res: Response<IResponse<getNotice
             noticeId
         )
         const querySnapshot = await updateDoc(docRef, data)
+        return res.status(200).send({
+            data: null,
+            code: 200,
+            message: "Notice updated successfully"
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            message: "Failed to update notice",
+            code: 500,
+            data: null
+        })
+    }
+}
+
+export const deleteNotice = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
+    try {
+        let noticeId = req.params.id
+        const docRef = doc(noticeCollection, 
+            noticeId
+        )
+        const querySnapshot = await deleteDoc(docRef)
         return res.status(200).send({
             data: null,
             code: 200,
