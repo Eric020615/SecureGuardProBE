@@ -1,4 +1,4 @@
-export interface CreateBookingDto {
+export interface CreateFacilityBookingDto {
     userGUID: string;
     facilityId: string;
     startDate: string;

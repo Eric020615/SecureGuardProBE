@@ -54,6 +54,7 @@ export const registerRoutes = (app: express.Express) => {
         status: err.status,
       };
     } else {
+      console.log(err)
       return {
         message: "UNKNOWN_ERROR",
         status: HttpStatusCode.INTERNAL_SERVER_ERROR,

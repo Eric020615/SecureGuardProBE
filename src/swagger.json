@@ -147,6 +147,35 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CreateFacilityBookingDto": {
+				"properties": {
+					"userGUID": {
+						"type": "string"
+					},
+					"facilityId": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"numOfGuest": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"userGUID",
+					"facilityId",
+					"startDate",
+					"endDate",
+					"numOfGuest"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"LoginDto": {
 				"properties": {
 					"email": {
@@ -165,22 +194,10 @@
 			}
 		},
 		"securitySchemes": {
-			"api_key": {
+			"jwt": {
 				"type": "apiKey",
-				"name": "api_key",
+				"name": "Authorization",
 				"in": "header"
-			},
-			"oauth2": {
-				"type": "oauth2",
-				"flows": {
-					"implicit": {
-						"authorizationUrl": "https://example.com/oauth/authorize",
-						"scopes": {
-							"read:pets": "read your pets",
-							"write:pets": "modify pets in your account"
-						}
-					}
-				}
 			}
 		}
 	},
@@ -270,7 +287,13 @@
 				"tags": [
 					"Notice"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": []
 			}
 		},
@@ -451,7 +474,61 @@
 				]
 			}
 		},
-		"/auth/register": {
+		"/facility/create": {
+			"post": {
+				"operationId": "createFacilityBooking",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Facility"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "headers",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateFacilityBookingDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/sign-up": {
 			"post": {
 				"operationId": "registerUser",
 				"responses": {
@@ -480,7 +557,52 @@
 					}
 				},
 				"tags": [
-					"Users"
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/log-in": {
+			"post": {
+				"operationId": "login",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
 				],
 				"security": [],
 				"parameters": [],
