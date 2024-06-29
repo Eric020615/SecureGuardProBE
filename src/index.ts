@@ -1,22 +1,11 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
-import cors from 'cors';
-import FIREBASE from "../src/config/firebase";
-import router from './routes';
+import { registerRoutes } from "./registerRoute";
 
 dotenv.config();
 const app = express();
 
-const corsOptions = {
-    origin: [
-        'http:/localhost:8081/',
-        'http:/localhost:3001/'
-    ],
-    optionsSuccessStatus: 200,
-};
-app.use(cors());
-app.use(express.json());
-app.use(router)
+registerRoutes(app)
 
 const startServer = async () => {
     try {

@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express"
 import { addDoc, and, collection, doc, getDoc, getDocs, or, query, setDoc, updateDoc, where } from "firebase/firestore"
 import firebase from "../config/firebase"
-import { CreateBookingDto } from "../dtos/facility.dto"
-import { IResponse, getBookingHistoryResponse } from "../types/response"
+import { CreateBookingDto, GetBookingHistoryDto } from "../dtos/facility.dto"
 import { verifyToken } from "../config/jwt"
 import moment from "moment";
 import "moment-timezone"
+import { IResponse } from "../dtos/response.dto"
 
 const facilityDB = firebase.FIRESTORE
 const facilityCollection = collection(facilityDB, "facility")
@@ -21,12 +21,12 @@ export const createBooking = async (req: Request<{}, {}, CreateBookingDto>, res:
         await addDoc(facilityCollection, data);
         return res.status(200).send({
             message: "Facility booking created successfully",
-            code: 200
+            status: "200"
         })
     } catch (error) {
         return res.status(500).send({
             message: "Facility booking failed",
-            code: 500
+            status: "500"
         })
     }
 }
@@ -37,17 +37,17 @@ export const createBookingByAdmin = async (req: Request<{}, {}, CreateBookingDto
         await addDoc(facilityCollection, data);
         return res.status(200).send({
             message: "Facility booking created successfully",
-            code: 200
+            status: "200"
         })
     } catch (error) {
         return res.status(500).send({
             message: "Facility booking failed",
-            code: 500
+            status: "500"
         })
     }
 }
 
-export const getBookingHistory = async (req: Request, res: Response<IResponse<getBookingHistoryResponse>>, next: NextFunction) => {
+export const getBookingHistory = async (req: Request, res: Response<IResponse<GetBookingHistoryDto>>, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
         let isPast = true
@@ -63,53 +63,53 @@ export const getBookingHistory = async (req: Request, res: Response<IResponse<ge
             )
         )
         const querySnapshot = await getDocs(q)
-        let result : getBookingHistoryResponse[] = [];
+        let result : GetBookingHistoryDto[] = [];
         querySnapshot.forEach((doc) => {
-            let data = doc.data() as getBookingHistoryResponse
+            let data = doc.data() as GetBookingHistoryDto
             data.bookingId = doc.id
             result.push(data)
         })
         return res.status(200).send({
             data: result,
-            code: 200,
+            status: "200",
             message: "Facility get successfully"
         })
     } catch (error) {
         console.log(error)
         return res.status(500).send({
             message: "Failed to get facility",
-            code: 500,
+            status: "500",
             data: null
         })
     }
 }
 
-export const getBookingHistoryByAdmin = async (req: Request, res: Response<IResponse<getBookingHistoryResponse>>, next: NextFunction) => {
+export const getBookingHistoryByAdmin = async (req: Request, res: Response<IResponse<GetBookingHistoryDto>>, next: NextFunction) => {
     try {
         const q = query(facilityCollection)
         const querySnapshot = await getDocs(q)
-        let result : getBookingHistoryResponse[] = [];
+        let result : GetBookingHistoryDto[] = [];
         querySnapshot.forEach((doc) => {
-            let data = doc.data() as getBookingHistoryResponse
+            let data = doc.data() as GetBookingHistoryDto
             data.bookingId = doc.id
             result.push(data)
         })
         return res.status(200).send({
             data: result,
-            code: 200,
+            status: "200",
             message: "Facility get successfully"
         })
     } catch (error) {
         console.log(error)
         return res.status(500).send({
             message: "Failed to get facility",
-            code: 500,
+            status: "500",
             data: null
         })
     }
 }
 
-export const cancelBooking = async (req: Request, res: Response<IResponse<getBookingHistoryResponse>>, next: NextFunction) => {
+export const cancelBooking = async (req: Request, res: Response<IResponse<GetBookingHistoryDto>>, next: NextFunction) => {
     try {
         let bookingId = ""
         let cancelRemark = ""
@@ -125,14 +125,14 @@ export const cancelBooking = async (req: Request, res: Response<IResponse<getBoo
         const querySnapshot = await updateDoc(docRef, data)
         return res.status(200).send({
             data: null,
-            code: 200,
+            status: "200",
             message: "Booking cancel successfully"
         })
     } catch (error) {
         console.log(error)
         return res.status(500).send({
             message: "Failed to cancel booking",
-            code: 500,
+            status: "500",
             data: null
         })
     }

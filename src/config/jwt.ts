@@ -1,4 +1,3 @@
-import * as bcrypt from "bcrypt"
 import * as dotenv from 'dotenv';
 import jwt, { JwtPayload } from "jsonwebtoken"
 

@@ -1,153 +1,181 @@
-import { NextFunction, Request, Response } from "express"
-import { addDoc, and, collection, deleteDoc, doc, getDoc, getDocs, or, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore"
-import firebase from "../config/firebase"
-import { CreateBookingDto } from "../dtos/facility.dto"
-import { IResponse, getBookingHistoryResponse, getNoticeResponse } from "../types/response"
-import { verifyToken } from "../config/jwt"
-import moment from "moment";
-import "moment-timezone"
-import { CreateNoticeDto } from "../dtos/notice.dto"
+import { IResponse } from "../dtos/response.dto"
+import { createNoticeService, deleteNoticeByIdService, editNoticeByIdService, getAllNoticeService, getNoticeByIdService, getNoticeService } from "../services/notice.service";
+import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Path, Put, Delete } from "tsoa";
+import { CreateNoticeDto, GetNoticeDto, UpdateNoticeDto } from "../dtos/notice.dto";
+import { HttpStatusCode } from "../common/http-status-code";
 
-const noticesDB = firebase.FIRESTORE
-const noticeCollection = collection(noticesDB, "notice")
-
-export const createNotice = async (req: Request<{}, {}, CreateNoticeDto>, res: Response<IResponse<any>>, next: NextFunction) => {
-    try {
-        const data = req.body;
-        await addDoc(noticeCollection, data);
-        return res.status(200).send({
+@Route("notice")
+export class NoticeController extends Controller {
+    @Tags("Notice")
+    @OperationId('createNotice')
+    @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @SuccessResponse(HttpStatusCode.OK, 'OK')
+    @Post('/create')
+    public async createNotice(
+      @Body() createNoticeDto: CreateNoticeDto
+    ): Promise<IResponse<any>> {
+      try {
+        await createNoticeService(createNoticeDto);
+        this.setStatus(200);
+        const response = {
             message: "Notices created successfully",
-            code: 200
-        })
-    } catch (error) {
-        return res.status(500).send({
-            message: "Notices booking failed",
-            code: 500
-        })
-    }
-}
-
-export const getNotices = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
-    try {
-        const q = query(noticeCollection)
-        const querySnapshot = await getDocs(q)
-        let result : getNoticeResponse[] = [];
-        querySnapshot.forEach((doc) => {
-            let data = doc.data() as getNoticeResponse
-            data.noticeId = doc.id
-            result.push(data)
-        })
-        return res.status(200).send({
-            data: result,
-            code: 200,
-            message: "Notices get successfully"
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({
-            message: "Failed to get notices",
-            code: 500,
-            data: null
-        })
-    }
-}
-
-export const getNoticeById = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
-    try {
-        let noticeId = ""
-        noticeId = req.query.noticeId ? req.query.noticeId as string : ""
-        const noticeDocRef = doc(noticeCollection, noticeId)
-        const noticeDoc = await getDoc(noticeDocRef)
-        let data : getNoticeResponse = {} as getNoticeResponse;
-        data = noticeDoc.data() as getNoticeResponse
-        data.noticeId = noticeDoc.id
-        let result : getNoticeResponse[] = []
-        result.push(data)
-        return res.status(200).send({
-            data: result,
-            code: 200,
-            message: "Notices get successfully"
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({
-            message: "Failed to get notices",
-            code: 500,
-            data: null
-        })
-    }
-}
-
-export const getNoticesByResident = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
-    try {
-        const q = query(noticeCollection,                 
-            and(
-                where("startDate", "<=", moment().tz('Asia/Kuala_Lumpur').toISOString()),
-                where("endDate", ">", moment().tz('Asia/Kuala_Lumpur').toISOString()),
-            ),
-            orderBy("startDate")
-        )
-        const querySnapshot = await getDocs(q)
-        let result : getNoticeResponse[] = [];
-        querySnapshot.forEach((doc) => {
-            result.push(doc.data() as getNoticeResponse)
-        })
-        return res.status(200).send({
-            data: result,
-            code: 200,
-            message: "Notices get successfully"
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({
-            message: "Failed to get notices",
-            code: 500,
-            data: null
-        })
-    }
-}
-
-export const editNotice = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
-    try {
-        let noticeId = req.params.id
-        let data = req.body
-        const docRef = doc(noticeCollection, 
-            noticeId
-        )
-        const querySnapshot = await updateDoc(docRef, data)
-        return res.status(200).send({
+            status: "200",
             data: null,
-            code: 200,
-            message: "Notice updated successfully"
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({
-            message: "Failed to update notice",
-            code: 500,
-            data: null
-        })
+        }
+        return response;
+      }
+      catch(err) {
+        this.setStatus(500);
+        const response = {
+            message: "Failed to create notice",
+            status: "500",
+            data: err,
+        }
+        return response;
+      } 
     }
-}
 
-export const deleteNotice = async (req: Request, res: Response<IResponse<getNoticeResponse>>, next: NextFunction) => {
-    try {
-        let noticeId = req.params.id
-        const docRef = doc(noticeCollection, 
-            noticeId
-        )
-        const querySnapshot = await deleteDoc(docRef)
-        return res.status(200).send({
+    @Tags("Notice")
+    @OperationId('getAllNotice')
+    @Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @SuccessResponse(HttpStatusCode.OK, 'OK')
+    @Get('/admin')
+    public async getAllNotice(
+    ): Promise<IResponse<GetNoticeDto>> {
+      try {
+        let data = await getAllNoticeService();
+        this.setStatus(200);
+        const response = {
+            message: "Notices retrieved successfully",
+            status: "200",
+            data: data,
+        }
+        return response;
+      }
+      catch(err) {
+        this.setStatus(500);
+        const response = {
+            message: "Failed to retrieve notices",
+            status: "500",
             data: null,
-            code: 200,
-            message: "Notice updated successfully"
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({
+        }
+        return response;
+      } 
+    }
+
+    @Tags("Notice")
+    @OperationId('getNotice')
+    @Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @SuccessResponse(HttpStatusCode.OK, 'OK')
+    @Get('/')
+    public async getNotice(
+    ): Promise<IResponse<GetNoticeDto>> {
+      try {
+        let data = await getNoticeService();
+        this.setStatus(200);
+        const response = {
+            message: "Notices retrieved successfully",
+            status: "200",
+            data: data,
+        }
+        return response;
+      }
+      catch(err) {
+        this.setStatus(500);
+        const response = {
+            message: "Failed to retrieve notices",
+            status: "500",
+            data: null,
+        }
+        return response;
+      } 
+    }
+
+    @Tags("Notice")
+    @OperationId('getNoticeById')
+    @Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @SuccessResponse(HttpStatusCode.OK, 'OK')
+    @Get('{id}')
+    public async getNoticeById(
+      @Path() id: string
+    ): Promise<IResponse<GetNoticeDto>> {
+      try {
+        let data = await getNoticeByIdService(id);
+        this.setStatus(200);
+        const response = {
+            message: "Notice retrieved successfully",
+            status: "200",
+            data: data,
+        }
+        return response;
+      }
+      catch(err) {
+        this.setStatus(500);
+        const response = {
+            message: "Failed to retrieve notice",
+            status: "500",
+            data: null,
+        }
+        return response;
+      } 
+    }
+
+    @Tags("Notice")
+    @OperationId('editNoticeById')
+    @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @SuccessResponse(HttpStatusCode.OK, 'OK')
+    @Put('/update/{id}')
+    public async editNoticeById(
+      @Path() id: string,
+      @Body() updateNoticeDto: UpdateNoticeDto
+    ): Promise<IResponse<any>> {
+      try {
+        await editNoticeByIdService(id, updateNoticeDto);
+        this.setStatus(200);
+        const response = {
+            message: "Notice updated successfully",
+            status: "200",
+            data: null,
+        }
+        return response;
+      }
+      catch(err) {
+        this.setStatus(500);
+        const response = {
             message: "Failed to update notice",
-            code: 500,
-            data: null
-        })
+            status: "500",
+            data: null,
+        }
+        return response;
+      } 
+    }
+
+    @Tags("Notice")
+    @OperationId('deleteNoticeById')
+    @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @SuccessResponse(HttpStatusCode.OK, 'OK')
+    @Delete('/delete/{id}')
+    public async deleteNoticeById(
+      @Path() id: string,
+    ): Promise<IResponse<any>> {
+      try {
+        await deleteNoticeByIdService(id);
+        this.setStatus(200);
+        const response = {
+            message: "Notice deleted successfully",
+            status: "200",
+            data: null,
+        }
+        return response;
+      }
+      catch(err) {
+        this.setStatus(500);
+        const response = {
+            message: "Failed to delete notice",
+            status: "500",
+            data: null,
+        }
+        return response;
+      } 
     }
 }

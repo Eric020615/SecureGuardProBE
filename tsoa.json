@@ -1,0 +1,35 @@
+{
+    "entryFile": "./src/index.ts",
+    "noImplicitAdditionalProperties": "throw-on-extras",
+    "controllerPathGlobs": ["./src/controllers/*.ts"],
+    "spec": {
+      "outputDirectory": "./src",
+      "specVersion": 3,
+      "schemes": [ "http", "https" ],
+      "host": "localhost:3000",
+      "description": "Backend API",
+      "name": "Secure Guard Pro",
+      "version": "1.0.0",
+      "securityDefinitions": {
+        "api_key": {
+          "type": "apiKey",
+          "name": "api_key",
+          "in": "header"
+        },
+        "oauth2": {
+          "type": "oauth2",
+          "authorizationUrl": "https://example.com/oauth/authorize",
+          "flow": "implicit",
+          "scopes": {
+            "read:pets": "read your pets",
+            "write:pets": "modify pets in your account"
+          }
+        }
+      }
+    },
+    "routes": {
+      "entryFile": "./src/index.ts",
+      "routesDir": "./src",
+      "middleware": "express"
+    }
+}
