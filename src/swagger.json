@@ -176,6 +176,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CreateUserDto": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"confirmPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password",
+					"confirmPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"LoginDto": {
 				"properties": {
 					"email": {
@@ -566,7 +586,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/LoginDto"
+								"$ref": "#/components/schemas/CreateUserDto"
 							}
 						}
 					}
@@ -616,6 +636,48 @@
 						}
 					}
 				}
+			}
+		},
+		"/auth/check-auth": {
+			"post": {
+				"operationId": "checkAuth",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": [
+							"resident",
+							"admin"
+						]
+					}
+				],
+				"parameters": []
 			}
 		}
 	},

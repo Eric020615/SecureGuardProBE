@@ -45,7 +45,6 @@ export class NoticeController extends Controller {
     ): Promise<IResponse<GetNoticeDto>> {
       try {
         let data = await getAllNoticeService();
-        this.setStatus(HttpStatusCode.OK);
         const response = {
             message: "Notices retrieved successfully",
             status: "200",
@@ -73,7 +72,6 @@ export class NoticeController extends Controller {
     ): Promise<IResponse<GetNoticeDto>> {
       try {
         let data = await getNoticeService();
-        this.setStatus(HttpStatusCode.OK);
         const response = {
             message: "Notices retrieved successfully",
             status: "200",
@@ -102,7 +100,6 @@ export class NoticeController extends Controller {
     ): Promise<IResponse<GetNoticeDto>> {
       try {
         let data = await getNoticeByIdService(id);
-        this.setStatus(HttpStatusCode.OK);
         const response = {
             message: "Notice retrieved successfully",
             status: "200",
@@ -132,7 +129,6 @@ export class NoticeController extends Controller {
     ): Promise<IResponse<any>> {
       try {
         await editNoticeByIdService(id, updateNoticeDto);
-        this.setStatus(HttpStatusCode.OK);
         const response = {
             message: "Notice updated successfully",
             status: "200",
@@ -161,7 +157,6 @@ export class NoticeController extends Controller {
     ): Promise<IResponse<any>> {
       try {
         await deleteNoticeByIdService(id);
-        this.setStatus(HttpStatusCode.OK);
         const response = {
             message: "Notice deleted successfully",
             status: "200",
