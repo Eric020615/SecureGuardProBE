@@ -3,6 +3,10 @@ export interface CreateNoticeDto {
     description: string;
     startDate: string;
     endDate: string;
+    createdBy: string;
+    createdDateTime: string;
+    updatedBy: string;
+    updatedDateTime: string;
 }
 
 export interface UpdateNoticeDto {
@@ -10,6 +14,8 @@ export interface UpdateNoticeDto {
     description: string;
     startDate: string;
     endDate: string;
+    updatedBy: string;
+    updatedDateTime: string;
 }
 
 export interface GetNoticeDto {

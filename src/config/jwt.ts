@@ -38,9 +38,9 @@ export const verifyToken = (token: string, scopes?: string[]) => {
             HttpStatusCode.INTERNAL_SERVER_ERROR
         )
     }
-    let decoded : JwtPayloadDto = {} as JwtPayloadDto;
+    let decodedData : JwtPayloadDto = {} as JwtPayloadDto;
     jwt.verify(token, signature, (err: any, decoded: any) => {
-        console.log(decoded)
+        decodedData = decoded as JwtPayloadDto; 
         if (err) {
             throw new OperationError(
                 err,
@@ -62,8 +62,7 @@ export const verifyToken = (token: string, scopes?: string[]) => {
                 )
             }
           }
-          decoded = decoded; 
         }
     });
-    return decoded;
+    return decodedData;
 }

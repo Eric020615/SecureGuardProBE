@@ -35,6 +35,10 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -72,6 +76,8 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -118,12 +124,14 @@ export function RegisterRoutes(app: Router) {
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
         app.post('/notice/create',
+            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.createNotice)),
 
             async function NoticeController_createNotice(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     createNoticeDto: {"in":"body","name":"createNoticeDto","required":true,"ref":"CreateNoticeDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -237,6 +245,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/notice/update/:id',
+            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.editNoticeById)),
 
@@ -244,6 +253,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     id: {"in":"path","name":"id","required":true,"dataType":"string"},
                     updateNoticeDto: {"in":"body","name":"updateNoticeDto","required":true,"ref":"UpdateNoticeDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

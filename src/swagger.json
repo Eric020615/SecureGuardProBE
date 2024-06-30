@@ -42,13 +42,29 @@
 					},
 					"endDate": {
 						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"title",
 					"description",
 					"startDate",
-					"endDate"
+					"endDate",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -136,13 +152,21 @@
 					},
 					"endDate": {
 						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"title",
 					"description",
 					"startDate",
-					"endDate"
+					"endDate",
+					"updatedBy",
+					"updatedDateTime"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -262,7 +286,13 @@
 				"tags": [
 					"Notice"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -427,7 +457,13 @@
 				"tags": [
 					"Notice"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",

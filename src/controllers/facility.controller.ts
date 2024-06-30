@@ -42,6 +42,8 @@ export class FacilityController extends Controller {
             return response;
           } 
     }
+
+    
 }
 
 // export const createBooking = async (req: Request<{}, {}, CreateBookingDto>, res: Response<IResponse<any>>, next: NextFunction) => {

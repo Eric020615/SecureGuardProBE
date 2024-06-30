@@ -1,8 +1,10 @@
 import { IResponse } from "../dtos/response.dto"
 import { createNoticeService, deleteNoticeByIdService, editNoticeByIdService, getAllNoticeService, getNoticeByIdService, getNoticeService } from "../services/notice.service";
-import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Path, Put, Delete, Security } from "tsoa";
+import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Path, Put, Delete, Security, Request } from "tsoa";
 import { CreateNoticeDto, GetNoticeDto, UpdateNoticeDto } from "../dtos/notice.dto";
 import { HttpStatusCode } from "../common/http-status-code";
+import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
+import { OperationError } from "../common/operation-error";
 
 @Route("notice")
 export class NoticeController extends Controller {
@@ -11,11 +13,19 @@ export class NoticeController extends Controller {
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Post('/create')
+    @Security("jwt", ["admin"])
     public async createNotice(
-      @Body() createNoticeDto: CreateNoticeDto
+      @Body() createNoticeDto: CreateNoticeDto,
+      @Request() request: IGetUserAuthInfoRequest
     ): Promise<IResponse<any>> {
       try {
-        await createNoticeService(createNoticeDto);
+        if(!request.userId){
+          throw new OperationError(
+            "User not found",
+            HttpStatusCode.INTERNAL_SERVER_ERROR
+          )
+        }
+        await createNoticeService(createNoticeDto, request.userId);
         this.setStatus(HttpStatusCode.OK);
         const response = {
             message: "Notices created successfully",
@@ -25,6 +35,7 @@ export class NoticeController extends Controller {
         return response;
       }
       catch(err) {
+        console.log(err)
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
         const response = {
             message: "Failed to create notice",
@@ -123,12 +134,20 @@ export class NoticeController extends Controller {
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Put('/update/{id}')
+    @Security("jwt", ["admin"])
     public async editNoticeById(
       @Path() id: string,
-      @Body() updateNoticeDto: UpdateNoticeDto
+      @Body() updateNoticeDto: UpdateNoticeDto,
+      @Request() request: IGetUserAuthInfoRequest
     ): Promise<IResponse<any>> {
       try {
-        await editNoticeByIdService(id, updateNoticeDto);
+        if(!request.userId){
+          throw new OperationError(
+            "User not found",
+            HttpStatusCode.INTERNAL_SERVER_ERROR
+          )
+        }
+        await editNoticeByIdService(id, updateNoticeDto, request.userId);
         const response = {
             message: "Notice updated successfully",
             status: "200",

@@ -1,25 +1,13 @@
-// import { NextFunction, Request, Response } from "express"
-// import { verifyToken } from "../config/jwt"
-
-// export const checkJWT = (req: Request, res: Response, next: NextFunction) => {
-//     const authHeader = req.headers.authorization
-
-//     if(!authHeader?.startsWith("Bearer ")){
-//         return res.status(401).send({
-//             message: "Authorization failed",
-//             code: 401
-//         }) 
-//     }
-//     const token = authHeader?.substring(7);
-//     const payload = verifyToken(token ? token : "");
-//     next()
-// }
-
-import * as express from "express";
+import { Request } from "express";
 import { verifyToken } from "../config/jwt";
+import { JwtPayloadDto } from "../dtos/auth.dto";
+
+export interface IGetUserAuthInfoRequest extends Request {
+  userId: string;
+}
 
 export const expressAuthentication = (
-  request: express.Request,
+  request: IGetUserAuthInfoRequest,
   securityName: string,
   scopes?: string[]
 ): Promise<any> => {
@@ -29,7 +17,8 @@ export const expressAuthentication = (
       request.query.token ||
       request.headers["authorization"];
     return new Promise((resolve, reject) => {
-      verifyToken(token, scopes);
+      const userData : JwtPayloadDto = verifyToken(token, scopes);
+      request.userId = userData.userGUID;
       resolve({})
     });
   }

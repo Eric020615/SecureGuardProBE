@@ -16,7 +16,7 @@ import moment from "moment";
 import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
 
-export const createNoticeService = async (createNoticeDto: CreateNoticeDto) => {
+export const createNoticeService = async (createNoticeDto: CreateNoticeDto, userId: string) => {
   try {
     await createNoticeRepository(
       new Notice(
@@ -26,8 +26,8 @@ export const createNoticeService = async (createNoticeDto: CreateNoticeDto) => {
           ? moment(createNoticeDto.startDate).valueOf()
           : 0,
         createNoticeDto.endDate ? moment(createNoticeDto.endDate).valueOf() : 0,
-        "1",
-        "22",
+        userId,
+        userId,
         moment().valueOf(),
         moment().valueOf()
       )
@@ -141,7 +141,8 @@ export const getNoticeByIdService = async (id: string) => {
 
 export const editNoticeByIdService = async (
   id: string,
-  updateNoticeDto: UpdateNoticeDto
+  updateNoticeDto: UpdateNoticeDto,
+  userId: string
 ) => {
   try {
     let notice: Notice = {
@@ -149,7 +150,7 @@ export const editNoticeByIdService = async (
       description: updateNoticeDto.description,
       startDate: moment(updateNoticeDto.startDate).valueOf(),
       endDate: moment(updateNoticeDto.endDate).valueOf(),
-      updatedBy: "",
+      updatedBy: userId,
       updatedDateTime: moment().valueOf(),
     } as Notice;
     await editNoticeByIdRepository(id, notice);
