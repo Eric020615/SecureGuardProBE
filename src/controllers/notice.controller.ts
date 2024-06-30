@@ -48,12 +48,12 @@ export class NoticeController extends Controller {
 
     @Tags("Notice")
     @OperationId('getAllNotice')
-    @Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @Response<IResponse<GetNoticeDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Get('/admin')
     @Security("jwt", ["admin"])
     public async getAllNotice(
-    ): Promise<IResponse<GetNoticeDto>> {
+    ): Promise<IResponse<GetNoticeDto[]>> {
       try {
         let data = await getAllNoticeService();
         const response = {
@@ -76,11 +76,11 @@ export class NoticeController extends Controller {
 
     @Tags("Notice")
     @OperationId('getNotice')
-    @Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+    @Response<IResponse<GetNoticeDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Get('/')
     public async getNotice(
-    ): Promise<IResponse<GetNoticeDto>> {
+    ): Promise<IResponse<GetNoticeDto[]>> {
       try {
         let data = await getNoticeService();
         const response = {

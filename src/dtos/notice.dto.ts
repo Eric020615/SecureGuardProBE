@@ -3,19 +3,13 @@ export interface CreateNoticeDto {
     description: string;
     startDate: string;
     endDate: string;
-    createdBy: string;
-    createdDateTime: string;
-    updatedBy: string;
-    updatedDateTime: string;
 }
 
 export interface UpdateNoticeDto {
     title: string;
     description: string;
     startDate: string;
-    endDate: string;
-    updatedBy: string;
-    updatedDateTime: string;
+    endDate: string
 }
 
 export interface GetNoticeDto {

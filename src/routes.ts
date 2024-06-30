@@ -35,10 +35,6 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
-            "createdBy": {"dataType":"string","required":true},
-            "createdDateTime": {"dataType":"string","required":true},
-            "updatedBy": {"dataType":"string","required":true},
-            "updatedDateTime": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -55,6 +51,16 @@ const models: TsoaRoute.Models = {
             "createdDateTime": {"dataType":"string","required":true},
             "updatedBy": {"dataType":"string","required":true},
             "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetNoticeDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -76,8 +82,6 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
-            "updatedBy": {"dataType":"string","required":true},
-            "updatedDateTime": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -85,11 +89,50 @@ const models: TsoaRoute.Models = {
     "CreateFacilityBookingDto": {
         "dataType": "refObject",
         "properties": {
-            "userGUID": {"dataType":"string","required":true},
+            "bookedBy": {"dataType":"string","required":true},
             "facilityId": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
             "numOfGuest": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetFacilityBookingHistoryDto": {
+        "dataType": "refObject",
+        "properties": {
+            "bookingId": {"dataType":"string","required":true},
+            "startDate": {"dataType":"string","required":true},
+            "facilityId": {"dataType":"string","required":true},
+            "facilityName": {"dataType":"string","required":true},
+            "endDate": {"dataType":"string","required":true},
+            "bookedBy": {"dataType":"string","required":true},
+            "numOfGuest": {"dataType":"double","required":true},
+            "isCancelled": {"dataType":"boolean","required":true},
+            "cancelRemark": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetFacilityBookingHistoryDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CancelFacilityBookingDto": {
+        "dataType": "refObject",
+        "properties": {
+            "isCancelled": {"dataType":"boolean","required":true},
+            "cancelRemark": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -308,13 +351,14 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/facility/create',
+            authenticateMiddleware([{"jwt":["resident","admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.createFacilityBooking)),
 
             async function FacilityController_createFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     createFacilityBookingDto: {"in":"body","name":"createFacilityBookingDto","required":true,"ref":"CreateFacilityBookingDto"},
-                    headers: {"in":"header","name":"headers","required":true,"dataType":"any"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -327,6 +371,101 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'createFacilityBooking',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/facility',
+            authenticateMiddleware([{"jwt":["resident","admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController)),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getFacilityBooking)),
+
+            async function FacilityController_getFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    isPast: {"in":"query","name":"isPast","required":true,"dataType":"boolean"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new FacilityController();
+
+              await templateService.apiHandler({
+                methodName: 'getFacilityBooking',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/facility/admin',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController)),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getAllFacilityBooking)),
+
+            async function FacilityController_getAllFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new FacilityController();
+
+              await templateService.apiHandler({
+                methodName: 'getAllFacilityBooking',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/facility/cancel/:bookingId',
+            authenticateMiddleware([{"jwt":["admin","resident"]}]),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController)),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.cancelFacilityBooking)),
+
+            async function FacilityController_cancelFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    cancelFacilityBookingDto: {"in":"body","name":"cancelFacilityBookingDto","required":true,"ref":"CancelFacilityBookingDto"},
+                    bookingId: {"in":"path","name":"bookingId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new FacilityController();
+
+              await templateService.apiHandler({
+                methodName: 'cancelFacilityBooking',
                 controller,
                 response,
                 next,

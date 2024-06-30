@@ -1,7 +1,6 @@
 import {
   addDoc,
   and,
-  or,
   collection,
   doc,
   getDoc,
@@ -13,7 +12,6 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import firebase from "../config/firebase";
-import { CreateNoticeDto } from "../dtos/notice.dto";
 import { Notice } from "../models/notice.model";
 import moment from "moment";
 import "moment-timezone";

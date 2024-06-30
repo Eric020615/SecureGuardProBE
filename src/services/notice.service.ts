@@ -88,7 +88,9 @@ export const getNoticeService = async () => {
             startDate: notice.startDate
               ? moment(notice.startDate).toString()
               : "",
-            endDate: notice.endDate ? moment(notice.endDate).toString() : "",
+            endDate: notice.endDate 
+              ? moment(notice.endDate).toString() 
+              : "",
             createdBy: notice.createdBy,
             createdDateTime: notice.createdDateTime
               ? moment(notice.createdDateTime).toString()

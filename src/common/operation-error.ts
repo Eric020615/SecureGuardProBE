@@ -9,6 +9,7 @@ export type OperationErrorMessage =
   | "SIGNATURE_NOT_FOUND"
   | "JWT_SCOPE_EMPTY"
   | "ROLE_PERMISSION_INVALID"
+  | "USER_NOT_FOUND" 
   | any;
 
 export class OperationError extends Error {
