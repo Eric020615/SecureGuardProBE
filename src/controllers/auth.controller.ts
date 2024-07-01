@@ -3,6 +3,7 @@ import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, 
 import { IResponse } from "../dtos/response.dto"
 import { loginService, registerService } from "../services/auth.service"
 import { HttpStatusCode } from "../common/http-status-code"
+import { OperationError } from "../common/operation-error"
   
 @Route("auth")
 export class AuthController extends Controller {
@@ -53,9 +54,18 @@ export class AuthController extends Controller {
         return response;
       }
       catch(err: any) {
-        this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+        console.log(err)
+        this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+        if(err instanceof OperationError){
+          const response = {
+            message: err.message,
+            status: "500",
+            data: null,
+          }
+          return response;
+        }
         const response = {
-          message: "Failed",
+          message: "",
           status: "500",
           data: null,
         }
