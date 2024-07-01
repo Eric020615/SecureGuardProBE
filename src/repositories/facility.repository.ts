@@ -63,7 +63,7 @@ export const getAllFacilityBookingRepository = async () => {
   return result;
 };
 
-export const cancelFacilityBookingRepository = async (data: CancelFacilityBookingDto, bookingId: string) => {
+export const cancelFacilityBookingRepository = async (data: FacilityBooking, bookingId: string) => {
   const docRef = doc(facilityCollection, bookingId);
   await updateDoc(docRef, { ...data });
 };

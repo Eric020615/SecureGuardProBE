@@ -8,4 +8,10 @@ export interface LoginDto {
     password: string;
 }
 
+export interface RegisterUserDto {
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
+
 // export type UserCreationParams = Pick<LoginDto, "email" | "password">;

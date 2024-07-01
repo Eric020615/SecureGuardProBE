@@ -1,6 +1,6 @@
 import { IResponse } from "../dtos/response.dto"
 import { createNoticeService, deleteNoticeByIdService, editNoticeByIdService, getAllNoticeService, getNoticeByIdService, getNoticeService } from "../services/notice.service";
-import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Path, Put, Delete, Security, Request } from "tsoa";
+import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Path, Put, Delete, Security, Request, Query } from "tsoa";
 import { CreateNoticeDto, GetNoticeDto, UpdateNoticeDto } from "../dtos/notice.dto";
 import { HttpStatusCode } from "../common/http-status-code";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
@@ -105,9 +105,9 @@ export class NoticeController extends Controller {
     @OperationId('getNoticeById')
     @Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
-    @Get('{id}')
+    @Get('/detail')
     public async getNoticeById(
-      @Path() id: string
+      @Query() id: string
     ): Promise<IResponse<GetNoticeDto>> {
       try {
         let data = await getNoticeByIdService(id);
@@ -133,10 +133,10 @@ export class NoticeController extends Controller {
     @OperationId('editNoticeById')
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
-    @Put('/update/{id}')
+    @Put('/update')
     @Security("jwt", ["admin"])
     public async editNoticeById(
-      @Path() id: string,
+      @Query() id: string,
       @Body() updateNoticeDto: UpdateNoticeDto,
       @Request() request: IGetUserAuthInfoRequest
     ): Promise<IResponse<any>> {

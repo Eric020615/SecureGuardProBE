@@ -199,7 +199,6 @@
 					}
 				},
 				"required": [
-					"bookedBy",
 					"facilityId",
 					"startDate",
 					"endDate",
@@ -303,21 +302,17 @@
 			},
 			"CancelFacilityBookingDto": {
 				"properties": {
-					"isCancelled": {
-						"type": "boolean"
-					},
 					"cancelRemark": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"isCancelled",
 					"cancelRemark"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CreateUserDto": {
+			"RegisterUserDto": {
 				"properties": {
 					"email": {
 						"type": "string"
@@ -499,7 +494,7 @@
 				"parameters": []
 			}
 		},
-		"/notice/{id}": {
+		"/notice/detail": {
 			"get": {
 				"operationId": "getNoticeById",
 				"responses": {
@@ -533,7 +528,7 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
+						"in": "query",
 						"name": "id",
 						"required": true,
 						"schema": {
@@ -543,7 +538,7 @@
 				]
 			}
 		},
-		"/notice/update/{id}": {
+		"/notice/update": {
 			"put": {
 				"operationId": "editNoticeById",
 				"responses": {
@@ -583,7 +578,7 @@
 				],
 				"parameters": [
 					{
-						"in": "path",
+						"in": "query",
 						"name": "id",
 						"required": true,
 						"schema": {
@@ -791,7 +786,7 @@
 				"parameters": []
 			}
 		},
-		"/facility/cancel/{bookingId}": {
+		"/facility/cancel": {
 			"put": {
 				"operationId": "cancelFacilityBooking",
 				"responses": {
@@ -832,7 +827,7 @@
 				],
 				"parameters": [
 					{
-						"in": "path",
+						"in": "query",
 						"name": "bookingId",
 						"required": true,
 						"schema": {
@@ -890,7 +885,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateUserDto"
+								"$ref": "#/components/schemas/RegisterUserDto"
 							}
 						}
 					}
@@ -943,7 +938,7 @@
 			}
 		},
 		"/auth/check-auth": {
-			"post": {
+			"get": {
 				"operationId": "checkAuth",
 				"responses": {
 					"200": {

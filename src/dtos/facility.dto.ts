@@ -1,5 +1,5 @@
 export interface CreateFacilityBookingDto {
-    bookedBy: string;
+    bookedBy?: string;
     facilityId: string;
     startDate: string;
     endDate: string;
@@ -23,6 +23,5 @@ export interface GetFacilityBookingHistoryDto {
 }
 
 export interface CancelFacilityBookingDto {
-    isCancelled: boolean,
     cancelRemark: string
 }

@@ -125,7 +125,7 @@ export const cancelFacilityBookingService = async (
   ) => {
     try {
       let facilityBooking : FacilityBooking = {
-        isCancelled : cancelFacilityBookingDto.isCancelled,
+        isCancelled : true,
         cancelRemark : cancelFacilityBookingDto.cancelRemark ? 
             cancelFacilityBookingDto.cancelRemark 
             : "Cancel by user",

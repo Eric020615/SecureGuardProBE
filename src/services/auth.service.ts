@@ -1,24 +1,24 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { JwtPayloadDto, LoginDto } from "../dtos/auth.dto";
+import { JwtPayloadDto, LoginDto, RegisterUserDto } from "../dtos/auth.dto";
 import firebase from "../config/firebase";
 import { createToken } from "../config/jwt";
 import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
-import { CreateUserDto } from "../dtos/user.dto";
 import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
 
 const auth = firebase.FIREBASE_AUTH
 
-export const registerService = async (createUserDto: CreateUserDto) => {
+export const registerService = async (registerUserDto: RegisterUserDto) => {
     try {
-        if(createUserDto.confirmPassword !== createUserDto.password){
+        if(registerUserDto.confirmPassword 
+            !== registerUserDto.password){
             throw new OperationError(
                 "Confirm Password and Password not Match",
                 HttpStatusCode.INTERNAL_SERVER_ERROR
             )
         }
-        await createUserWithEmailAndPassword(auth, createUserDto.email, createUserDto.password);
+        await createUserWithEmailAndPassword(auth, registerUserDto.email, registerUserDto.password);
     } catch (error: any) {
         if(error instanceof (FirebaseError)){
             throw new OperationError(

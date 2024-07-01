@@ -56,7 +56,7 @@ export class FacilityController extends Controller {
       const response = {
         message: "Failed to create facility booking",
         status: "500",
-        data: err,
+        data: "",
       };
       return response;
     }
@@ -128,12 +128,12 @@ export class FacilityController extends Controller {
   @OperationId("cancelFacilityBooking")
   @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
   @SuccessResponse(HttpStatusCode.OK, "OK")
-  @Put("/cancel/{bookingId}")
+  @Put("/cancel")
   @Security("jwt", ["admin", "resident"])
   public async cancelFacilityBooking(
     @Request() request: IGetUserAuthInfoRequest,
     @Body() cancelFacilityBookingDto: CancelFacilityBookingDto,
-    @Path() bookingId: string
+    @Query() bookingId: string
   ): Promise<IResponse<any>> {
     try {
       if (!request.userId) {

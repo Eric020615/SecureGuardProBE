@@ -1,12 +1,8 @@
-import firebase from "../config/firebase"
-import { CreateUserDto } from "../dtos/user.dto"
-import { LoginDto } from "../dtos/auth.dto"
-import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, Body, Security } from "tsoa"
+import { LoginDto, RegisterUserDto } from "../dtos/auth.dto"
+import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, Body, Security, Get } from "tsoa"
 import { IResponse } from "../dtos/response.dto"
 import { loginService, registerService } from "../services/auth.service"
 import { HttpStatusCode } from "../common/http-status-code"
-
-const auth = firebase.FIREBASE_AUTH
   
 @Route("auth")
 export class AuthController extends Controller {
@@ -17,10 +13,10 @@ export class AuthController extends Controller {
     @SuccessResponse('200', 'OK')
     @Post('/sign-up')
     public async createUser(
-      @Body() createUserDto: CreateUserDto
+      @Body() registerUserDto: RegisterUserDto
     ): Promise<IResponse<any>> {
       try {
-        await registerService(createUserDto);
+        await registerService(registerUserDto);
         const response = {
           message: "Account Created successfully",
           status: "200",
@@ -71,7 +67,7 @@ export class AuthController extends Controller {
     @OperationId('checkAuth')
     @Response<IResponse<any>>('400', 'Bad Request')
     @SuccessResponse('200', 'OK')
-    @Post('/check-auth')
+    @Get('/check-auth')
     @Security("jwt", ["resident", "admin"])
     public async checkAuth(
     ): Promise<IResponse<any>> {
