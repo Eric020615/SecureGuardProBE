@@ -18,7 +18,7 @@ interface IError {
 const corsOptions = {
   origin: [
       'http:/localhost:8081/',
-      'http:/localhost:3001/'
+      'http:/localhost:4000/'
   ],
   optionsSuccessStatus: 200,
 };
@@ -30,7 +30,6 @@ export const registerRoutes = (app: express.Express) => {
     .use(cors(corsOptions))
     .use(["/openapi", "/docs", "/swagger"], swaggerUi.serve, swaggerUi.setup(swaggerJson))
     .use((_req, res, next) => {
-      res.header("Access-Control-Allow-Origin", "*");
       res.header(
         "Access-Control-Allow-Headers",
         `Origin, X-Requested-With, Content-Type, Accept, Authorization`
