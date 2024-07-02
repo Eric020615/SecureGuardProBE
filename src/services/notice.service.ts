@@ -142,7 +142,6 @@ export const getNoticeByIdService = async (id: string) => {
 };
 
 export const editNoticeByIdService = async (
-  id: string,
   updateNoticeDto: UpdateNoticeDto,
   userId: string
 ) => {
@@ -155,7 +154,7 @@ export const editNoticeByIdService = async (
       updatedBy: userId,
       updatedDateTime: moment().valueOf(),
     } as Notice;
-    await editNoticeByIdRepository(id, notice);
+    await editNoticeByIdRepository(updateNoticeDto.noticeId, notice);
   } catch (error: any) {
     throw new OperationError(
       error,

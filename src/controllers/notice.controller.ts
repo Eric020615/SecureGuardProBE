@@ -1,7 +1,7 @@
 import { IResponse } from "../dtos/response.dto"
 import { createNoticeService, deleteNoticeByIdService, editNoticeByIdService, getAllNoticeService, getNoticeByIdService, getNoticeService } from "../services/notice.service";
-import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Path, Put, Delete, Security, Request, Query } from "tsoa";
-import { CreateNoticeDto, GetNoticeDto, UpdateNoticeDto } from "../dtos/notice.dto";
+import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Put, Delete, Security, Request, Query } from "tsoa";
+import { CreateNoticeDto, DeleteNoticeDto, GetNoticeDto, UpdateNoticeDto } from "../dtos/notice.dto";
 import { HttpStatusCode } from "../common/http-status-code";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
 import { OperationError } from "../common/operation-error";
@@ -107,10 +107,10 @@ export class NoticeController extends Controller {
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Get('/detail')
     public async getNoticeById(
-      @Query() id: string
+      @Query() noticeId: string
     ): Promise<IResponse<GetNoticeDto>> {
       try {
-        let data = await getNoticeByIdService(id);
+        let data = await getNoticeByIdService(noticeId);
         const response = {
             message: "Notice retrieved successfully",
             status: "200",
@@ -136,7 +136,6 @@ export class NoticeController extends Controller {
     @Put('/update')
     @Security("jwt", ["admin"])
     public async editNoticeById(
-      @Query() id: string,
       @Body() updateNoticeDto: UpdateNoticeDto,
       @Request() request: IGetUserAuthInfoRequest
     ): Promise<IResponse<any>> {
@@ -147,7 +146,7 @@ export class NoticeController extends Controller {
             HttpStatusCode.INTERNAL_SERVER_ERROR
           )
         }
-        await editNoticeByIdService(id, updateNoticeDto, request.userId);
+        await editNoticeByIdService(updateNoticeDto, request.userId);
         const response = {
             message: "Notice updated successfully",
             status: "200",
@@ -170,12 +169,12 @@ export class NoticeController extends Controller {
     @OperationId('deleteNoticeById')
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
-    @Delete('/delete/{id}')
+    @Delete('/delete')
     public async deleteNoticeById(
-      @Path() id: string,
+      @Body() deleteNoticeDto: DeleteNoticeDto,
     ): Promise<IResponse<any>> {
       try {
-        await deleteNoticeByIdService(id);
+        await deleteNoticeByIdService(deleteNoticeDto.noticeId);
         const response = {
             message: "Notice deleted successfully",
             status: "200",

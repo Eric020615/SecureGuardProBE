@@ -157,6 +157,9 @@
 			},
 			"UpdateNoticeDto": {
 				"properties": {
+					"noticeId": {
+						"type": "string"
+					},
 					"title": {
 						"type": "string"
 					},
@@ -171,10 +174,23 @@
 					}
 				},
 				"required": [
+					"noticeId",
 					"title",
 					"description",
 					"startDate",
 					"endDate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DeleteNoticeDto": {
+				"properties": {
+					"noticeId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"noticeId"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -529,7 +545,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "id",
+						"name": "noticeId",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -576,16 +592,7 @@
 						]
 					}
 				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -598,7 +605,7 @@
 				}
 			}
 		},
-		"/notice/delete/{id}": {
+		"/notice/delete": {
 			"delete": {
 				"operationId": "deleteNoticeById",
 				"responses": {
@@ -630,16 +637,17 @@
 					"Notice"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DeleteNoticeDto"
+							}
 						}
 					}
-				]
+				}
 			}
 		},
 		"/facility/create": {

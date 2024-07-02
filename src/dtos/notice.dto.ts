@@ -6,10 +6,15 @@ export interface CreateNoticeDto {
 }
 
 export interface UpdateNoticeDto {
+    noticeId: string;
     title: string;
     description: string;
     startDate: string;
     endDate: string
+}
+
+export interface DeleteNoticeDto {
+    noticeId: string;
 }
 
 export interface GetNoticeDto {

@@ -38,7 +38,7 @@ export const loginService = async (loginDto: LoginDto) => {
         const response = await signInWithEmailAndPassword(auth, loginDto.email, loginDto.password);
         const token = createToken({
             userGUID: response.user.uid,
-            role: "resident"
+            role: "admin"
         } as JwtPayloadDto)
         return token
     }

@@ -78,10 +78,19 @@ const models: TsoaRoute.Models = {
     "UpdateNoticeDto": {
         "dataType": "refObject",
         "properties": {
+            "noticeId": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DeleteNoticeDto": {
+        "dataType": "refObject",
+        "properties": {
+            "noticeId": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -262,7 +271,7 @@ export function RegisterRoutes(app: Router) {
 
             async function NoticeController_getNoticeById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    id: {"in":"query","name":"id","required":true,"dataType":"string"},
+                    noticeId: {"in":"query","name":"noticeId","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -293,7 +302,6 @@ export function RegisterRoutes(app: Router) {
 
             async function NoticeController_editNoticeById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    id: {"in":"query","name":"id","required":true,"dataType":"string"},
                     updateNoticeDto: {"in":"body","name":"updateNoticeDto","required":true,"ref":"UpdateNoticeDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
@@ -319,13 +327,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/notice/delete/:id',
+        app.delete('/notice/delete',
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.deleteNoticeById)),
 
             async function NoticeController_deleteNoticeById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    deleteNoticeDto: {"in":"body","name":"deleteNoticeDto","required":true,"ref":"DeleteNoticeDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
