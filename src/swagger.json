@@ -318,12 +318,15 @@
 			},
 			"CancelFacilityBookingDto": {
 				"properties": {
+					"bookingId": {
+						"type": "string"
+					},
 					"cancelRemark": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"cancelRemark"
+					"bookingId"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -833,16 +836,7 @@
 						]
 					}
 				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "bookingId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {

@@ -23,5 +23,6 @@ export interface GetFacilityBookingHistoryDto {
 }
 
 export interface CancelFacilityBookingDto {
-    cancelRemark: string
+    bookingId: string
+    cancelRemark?: string
 }

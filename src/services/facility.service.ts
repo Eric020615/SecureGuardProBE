@@ -121,7 +121,6 @@ export const getAllFacilityBookingService = async (
 export const cancelFacilityBookingService = async (
     userId: string,
     cancelFacilityBookingDto: CancelFacilityBookingDto, 
-    bookingId: string
   ) => {
     try {
       let facilityBooking : FacilityBooking = {
@@ -132,7 +131,7 @@ export const cancelFacilityBookingService = async (
         updatedBy : userId,
         updatedDateTime : moment().tz("Asia/Kuala_Lumpur").valueOf(),
       } as FacilityBooking;
-      await cancelFacilityBookingRepository(facilityBooking, bookingId);
+      await cancelFacilityBookingRepository(facilityBooking, cancelFacilityBookingDto.bookingId);
     } catch (error: any) {
       throw new OperationError(
         error,

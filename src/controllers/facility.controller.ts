@@ -133,7 +133,6 @@ export class FacilityController extends Controller {
   public async cancelFacilityBooking(
     @Request() request: IGetUserAuthInfoRequest,
     @Body() cancelFacilityBookingDto: CancelFacilityBookingDto,
-    @Query() bookingId: string
   ): Promise<IResponse<any>> {
     try {
       if (!request.userId) {
@@ -142,7 +141,7 @@ export class FacilityController extends Controller {
           HttpStatusCode.INTERNAL_SERVER_ERROR
         );
       }
-      await cancelFacilityBookingService(request.userId, cancelFacilityBookingDto, bookingId)
+      await cancelFacilityBookingService(request.userId, cancelFacilityBookingDto)
       const response = {
         message: "Facility booking cancel successfully",
         status: "200",

@@ -140,7 +140,8 @@ const models: TsoaRoute.Models = {
     "CancelFacilityBookingDto": {
         "dataType": "refObject",
         "properties": {
-            "cancelRemark": {"dataType":"string","required":true},
+            "bookingId": {"dataType":"string","required":true},
+            "cancelRemark": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -460,7 +461,6 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     cancelFacilityBookingDto: {"in":"body","name":"cancelFacilityBookingDto","required":true,"ref":"CancelFacilityBookingDto"},
-                    bookingId: {"in":"query","name":"bookingId","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
