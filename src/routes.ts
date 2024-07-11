@@ -3,6 +3,8 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { VisitorController } from './controllers/visitor.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { NoticeController } from './controllers/notice.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FacilityController } from './controllers/facility.controller';
@@ -23,6 +25,43 @@ const models: TsoaRoute.Models = {
         "properties": {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"dataType":"any"},{"dataType":"array","array":{"dataType":"any"}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateVisitorDto": {
+        "dataType": "refObject",
+        "properties": {
+            "visitorName": {"dataType":"string","required":true},
+            "visitorCategory": {"dataType":"string","required":true},
+            "visitorContactNumber": {"dataType":"string","required":true},
+            "visitDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetVisitorDto": {
+        "dataType": "refObject",
+        "properties": {
+            "visitorId": {"dataType":"string","required":true},
+            "visitorName": {"dataType":"string","required":true},
+            "visitorCategory": {"dataType":"string","required":true},
+            "visitorContactNumber": {"dataType":"string","required":true},
+            "visitDateTime": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetVisitorDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -175,6 +214,67 @@ export function RegisterRoutes(app: Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+        app.post('/visitor/create',
+            authenticateMiddleware([{"jwt":["resident","admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.createVisitor)),
+
+            async function VisitorController_createVisitor(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    createVisitorDto: {"in":"body","name":"createVisitorDto","required":true,"ref":"CreateVisitorDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new VisitorController();
+
+              await templateService.apiHandler({
+                methodName: 'createVisitor',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/visitor',
+            ...(fetchMiddlewares<RequestHandler>(VisitorController)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getAllVisitors)),
+
+            async function VisitorController_getAllVisitors(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new VisitorController();
+
+              await templateService.apiHandler({
+                methodName: 'getAllVisitors',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/notice/create',
             authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
