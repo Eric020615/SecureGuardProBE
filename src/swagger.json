@@ -29,6 +29,106 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CreateVisitorDto": {
+				"properties": {
+					"visitorName": {
+						"type": "string"
+					},
+					"visitorCategory": {
+						"type": "string"
+					},
+					"visitorContactNumber": {
+						"type": "string"
+					},
+					"visitDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"visitorName",
+					"visitorCategory",
+					"visitorContactNumber",
+					"visitDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetVisitorDto": {
+				"properties": {
+					"visitorId": {
+						"type": "string"
+					},
+					"visitorName": {
+						"type": "string"
+					},
+					"visitorCategory": {
+						"type": "string"
+					},
+					"visitorContactNumber": {
+						"type": "string"
+					},
+					"visitDateTime": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"visitorId",
+					"visitorName",
+					"visitorCategory",
+					"visitorContactNumber",
+					"visitDateTime",
+					"createdBy",
+					"updatedBy",
+					"createdDateTime",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetVisitorDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetVisitorDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetVisitorDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -386,6 +486,93 @@
 		"contact": {}
 	},
 	"paths": {
+		"/visitor/create": {
+			"post": {
+				"operationId": "createVisitor",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"jwt": [
+							"resident",
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateVisitorDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/visitor": {
+			"get": {
+				"operationId": "getAllVisitor",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/notice/create": {
 			"post": {
 				"operationId": "createNotice",

@@ -15,7 +15,6 @@ import firebase from "../config/firebase";
 import moment from "moment";
 import "moment-timezone";
 import { FacilityBooking } from "../models/facilityBooking.mode";
-import { CancelFacilityBookingDto } from "../dtos/facility.dto";
 
 const facilityDB = firebase.FIRESTORE;
 const facilityCollection = collection(facilityDB, "facilityBooking");
