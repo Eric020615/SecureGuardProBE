@@ -1,62 +1,57 @@
-enum UserRole {
+import { Timestamp } from "firebase/firestore";
+
+export enum UserRole {
   Resident = "RES",
   System_Admin = "SA",
 }
 
-class User {
+export class User {
     id?: string; // Optional
-    email: string;
-    name: string;
     firstName: string;
     lastName: string;
     contactNumber: string;
     gender: string;
-    dateOfBirth: Date;
+    dateOfBirth: Timestamp | null;
     role: UserRole;
+    createdDateTime: Timestamp;
+    updatedDateTime: Timestamp;
   
     constructor(
-      email: string,
-      name: string,
       firstName: string,
       lastName: string,
       contactNumber: string,
       gender: string,
-      dateOfBirth: Date | string, // Accepts Date object or date string
+      dateOfBirth: Timestamp | null,
       role: UserRole,
-      id?: string // Optional
+      createdDateTime: Timestamp,
+      updatedDateTime: Timestamp,
     ) {
-      this.email = email;
-      this.name = name;
       this.firstName = firstName;
       this.lastName = lastName;
       this.contactNumber = contactNumber;
       this.gender = gender;
-      this.dateOfBirth = typeof dateOfBirth === 'string' ? new Date(dateOfBirth) : dateOfBirth;
+      this.dateOfBirth = dateOfBirth;
       this.role = role;
-      this.id = id;
+      this.createdDateTime = createdDateTime;
+      this.updatedDateTime = updatedDateTime;
     }  
 }
 
-class Resident extends User {
+export class Resident {
   unitNumber: string;
   floorNumber: string;
+  createdDateTime: Timestamp;
+  updatedDateTime: Timestamp;
 
   constructor(
-    email: string,
-    name: string,
-    firstName: string,
-    lastName: string,
-    contactNumber: string,
-    gender: string,
-    dateOfBirth: Date | string,
     unitNumber: string,
     floorNumber: string,
-    id?: string // Optional
+    createdDateTime: Timestamp,
+    updatedDateTime: Timestamp
   ) {
-    super(email, name, firstName, 
-        lastName, contactNumber, gender,
-        dateOfBirth, UserRole.Resident, id);
     this.unitNumber = unitNumber,
-    this.floorNumber = floorNumber
+    this.floorNumber = floorNumber,
+    this.createdDateTime = createdDateTime;
+    this.updatedDateTime = updatedDateTime;
   }  
 }

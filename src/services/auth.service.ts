@@ -65,3 +65,32 @@ export const loginService = async (loginDto: LoginDto) => {
         )
     }
 }
+
+export const checkUserStatus = async (userId: string) => {
+    try {
+        const user = await authAdmin.getUser(userId)
+        if(!user){
+            throw new OperationError(
+                "User Not Found",
+                HttpStatusCode.INTERNAL_SERVER_ERROR
+            )
+        }
+        if(user.disabled){
+            throw new OperationError(
+                "User Account Disabled",
+                HttpStatusCode.INTERNAL_SERVER_ERROR
+            )
+        }
+    } catch (error: any) {
+        if(error instanceof (FirebaseError)){
+            throw new OperationError(
+                convertFirebaseAuthEnumMessage(error.code),
+                HttpStatusCode.INTERNAL_SERVER_ERROR
+            )
+        }
+        throw new OperationError(
+            error,
+            HttpStatusCode.INTERNAL_SERVER_ERROR
+        )
+    }
+}

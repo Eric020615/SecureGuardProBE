@@ -1,4 +1,3 @@
-import { LoginDto, RegisterUserDto } from "../dtos/auth.dto";
 import {
   Controller,
   Route,
@@ -13,10 +12,11 @@ import {
   Request,
 } from "tsoa";
 import { IResponse } from "../dtos/response.dto";
-import { loginService, registerService } from "../services/auth.service";
 import { HttpStatusCode } from "../common/http-status-code";
 import { OperationError } from "../common/operation-error";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
+import { createUserService } from "../services/user.service";
+import { CreateResidentDto } from "../dtos/user.dto";
 
 @Route("user")
 export class UserController extends Controller {
@@ -25,13 +25,19 @@ export class UserController extends Controller {
   @Response<IResponse<any>>("400", "Bad Request")
   @SuccessResponse("200", "OK")
   @Post("/create")
-  @Security("jwt", ["RES", "SA"])
+  @Security("newUser", ["RES", "SA"])
   public async createUser(
     @Request() request: IGetUserAuthInfoRequest,
-    @Body() registerUserDto: RegisterUserDto
+    @Body() createUserDto: CreateResidentDto
   ): Promise<IResponse<any>> {
     try {
-      await registerService(registerUserDto);
+      if (!request.userId || !request.role) {
+        throw new OperationError(
+          "User not found",
+          HttpStatusCode.INTERNAL_SERVER_ERROR
+        );
+      }
+      await createUserService(createUserDto, request.userId, request.role);
       const response = {
         message: "User Created successfully",
         status: "200",

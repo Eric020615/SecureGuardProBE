@@ -1,6 +1,8 @@
+import { UserRole } from "../models/user.model";
+
 export interface JwtPayloadDto{
     userGUID: string;
-    role: string;
+    role: UserRole;
 }
 
 export interface LoginDto {

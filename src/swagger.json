@@ -129,22 +129,42 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"RegisterUserDto": {
+			"CreateResidentDto": {
 				"properties": {
-					"email": {
+					"firstName": {
 						"type": "string"
 					},
-					"password": {
+					"lastName": {
 						"type": "string"
 					},
-					"confirmPassword": {
+					"userName": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"unitNumber": {
+						"type": "string"
+					},
+					"floorNumber": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"email",
-					"password",
-					"confirmPassword"
+					"firstName",
+					"lastName",
+					"userName",
+					"contactNumber",
+					"gender",
+					"dateOfBirth",
+					"unitNumber",
+					"floorNumber"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -451,6 +471,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"RegisterUserDto": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"confirmPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password",
+					"confirmPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"LoginDto": {
 				"properties": {
 					"email": {
@@ -606,7 +646,7 @@
 				],
 				"security": [
 					{
-						"jwt": [
+						"newUser": [
 							"RES",
 							"SA"
 						]
@@ -618,7 +658,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RegisterUserDto"
+								"$ref": "#/components/schemas/CreateResidentDto"
 							}
 						}
 					}
