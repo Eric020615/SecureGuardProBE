@@ -28,10 +28,11 @@ export class AuthController extends Controller {
       catch(err: any) {
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
         const response = {
-          message: err,
+          message: err.message ? err.message : "",
           status: "500",
           data: null,
         }
+        console.log(response)
         return response;
       } 
     }
