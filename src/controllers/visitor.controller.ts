@@ -13,7 +13,7 @@ export class VisitorController extends Controller {
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Post('/create')
-    @Security("jwt", ["resident", "admin"])
+    @Security("jwt", ["RES", "SA"])
     public async createVisitor(
       @Body() createVisitorDto: CreateVisitorDto,
       @Request() request: IGetUserAuthInfoRequest
@@ -50,7 +50,7 @@ export class VisitorController extends Controller {
     @Response<IResponse<GetVisitorDto[]>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
     @SuccessResponse(HttpStatusCode.OK, "OK")
     @Get("/")
-    // @Security("jwt", ["admin"])
+    // @Security("jwt", ["SA"])
     public async getAllVisitors(
     ): Promise<IResponse<any>> {
       try {

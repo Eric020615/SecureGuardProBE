@@ -5,6 +5,8 @@ import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runti
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { VisitorController } from './controllers/visitor.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UserController } from './controllers/user.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { NoticeController } from './controllers/notice.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FacilityController } from './controllers/facility.controller';
@@ -63,6 +65,16 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RegisterUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "email": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+            "confirmPassword": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -185,16 +197,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "RegisterUserDto": {
-        "dataType": "refObject",
-        "properties": {
-            "email": {"dataType":"string","required":true},
-            "password": {"dataType":"string","required":true},
-            "confirmPassword": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LoginDto": {
         "dataType": "refObject",
         "properties": {
@@ -215,7 +217,7 @@ export function RegisterRoutes(app: Router) {
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
         app.post('/visitor/create',
-            authenticateMiddleware([{"jwt":["resident","admin"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
             ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.createVisitor)),
 
@@ -275,8 +277,40 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/user/create',
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createUser)),
+
+            async function UserController_createUser(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    registerUserDto: {"in":"body","name":"registerUserDto","required":true,"ref":"RegisterUserDto"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'createUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/notice/create',
-            authenticateMiddleware([{"jwt":["admin"]}]),
+            authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.createNotice)),
 
@@ -308,7 +342,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/notice/admin',
-            authenticateMiddleware([{"jwt":["admin"]}]),
+            authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.getAllNotice)),
 
@@ -397,7 +431,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/notice/update',
-            authenticateMiddleware([{"jwt":["admin"]}]),
+            authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.editNoticeById)),
 
@@ -459,7 +493,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/facility/create',
-            authenticateMiddleware([{"jwt":["resident","admin"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.createFacilityBooking)),
 
@@ -491,7 +525,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/facility',
-            authenticateMiddleware([{"jwt":["resident","admin"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getFacilityBooking)),
 
@@ -523,7 +557,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/facility/admin',
-            authenticateMiddleware([{"jwt":["admin"]}]),
+            authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getAllFacilityBooking)),
 
@@ -553,7 +587,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/facility/cancel',
-            authenticateMiddleware([{"jwt":["admin","resident"]}]),
+            authenticateMiddleware([{"jwt":["SA","RES"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.cancelFacilityBooking)),
 
@@ -586,9 +620,9 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/auth/sign-up',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
-            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.createUser)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.signUp)),
 
-            async function AuthController_createUser(request: ExRequest, response: ExResponse, next: any) {
+            async function AuthController_signUp(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     registerUserDto: {"in":"body","name":"registerUserDto","required":true,"ref":"RegisterUserDto"},
             };
@@ -602,7 +636,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new AuthController();
 
               await templateService.apiHandler({
-                methodName: 'createUser',
+                methodName: 'signUp',
                 controller,
                 response,
                 next,
@@ -645,7 +679,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/auth/check-auth',
-            authenticateMiddleware([{"jwt":["resident","admin"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.checkAuth)),
 

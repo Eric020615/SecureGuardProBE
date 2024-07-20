@@ -13,7 +13,7 @@ export class NoticeController extends Controller {
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Post('/create')
-    @Security("jwt", ["admin"])
+    @Security("jwt", ["SA"])
     public async createNotice(
       @Body() createNoticeDto: CreateNoticeDto,
       @Request() request: IGetUserAuthInfoRequest
@@ -51,7 +51,7 @@ export class NoticeController extends Controller {
     @Response<IResponse<GetNoticeDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Get('/admin')
-    @Security("jwt", ["admin"])
+    @Security("jwt", ["SA"])
     public async getAllNotice(
     ): Promise<IResponse<GetNoticeDto[]>> {
       try {
@@ -134,7 +134,7 @@ export class NoticeController extends Controller {
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
     @Put('/update')
-    @Security("jwt", ["admin"])
+    @Security("jwt", ["SA"])
     public async editNoticeById(
       @Body() updateNoticeDto: UpdateNoticeDto,
       @Request() request: IGetUserAuthInfoRequest

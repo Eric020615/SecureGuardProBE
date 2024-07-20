@@ -13,26 +13,33 @@ export class AuthController extends Controller {
     @Response<IResponse<any>>('400', 'Bad Request')
     @SuccessResponse('200', 'OK')
     @Post('/sign-up')
-    public async createUser(
+    public async signUp(
       @Body() registerUserDto: RegisterUserDto
     ): Promise<IResponse<any>> {
       try {
-        await registerService(registerUserDto);
+        const token = await registerService(registerUserDto);
         const response = {
           message: "Account Created successfully",
           status: "200",
-          data: null,
+          data: token,
         }
         return response;
       }
       catch(err: any) {
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+        if(err instanceof OperationError){
+          const response = {
+            message: err.message ? err.message : "",
+            status: "500",
+            data: null,
+          }
+          return response;
+        }
         const response = {
-          message: err.message ? err.message : "",
+          message: "",
           status: "500",
           data: null,
         }
-        console.log(response)
         return response;
       } 
     }
@@ -55,11 +62,10 @@ export class AuthController extends Controller {
         return response;
       }
       catch(err: any) {
-        console.log(err)
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
         if(err instanceof OperationError){
           const response = {
-            message: err.message,
+            message: err.message ? err.message : "",
             status: "500",
             data: null,
           }
@@ -79,7 +85,7 @@ export class AuthController extends Controller {
     @Response<IResponse<any>>('400', 'Bad Request')
     @SuccessResponse('200', 'OK')
     @Get('/check-auth')
-    @Security("jwt", ["resident", "admin"])
+    @Security("jwt", ["RES", "SA"])
     public async checkAuth(
     ): Promise<IResponse<any>> {
       try {
@@ -93,7 +99,7 @@ export class AuthController extends Controller {
       catch(err: any) {
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
         const response = {
-          message: err,
+          message: err.message ? err.message : "",
           status: "500",
           data: err,
         }

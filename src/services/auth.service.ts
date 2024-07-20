@@ -23,6 +23,11 @@ export const registerService = async (registerUserDto: RegisterUserDto) => {
         const userCredentials = await createUserWithEmailAndPassword(auth, registerUserDto.email, registerUserDto.password);
         const user = userCredentials.user;
         await authAdmin.updateUser(user.uid, {disabled: true})
+        const token = createToken({
+            userGUID: user.uid,
+            role: "RES"
+        } as JwtPayloadDto)
+        return token
     } catch (error: any) {
         console.log(error)
         if(error instanceof (FirebaseError)){
@@ -43,7 +48,7 @@ export const loginService = async (loginDto: LoginDto) => {
         const response = await signInWithEmailAndPassword(auth, loginDto.email, loginDto.password);
         const token = createToken({
             userGUID: response.user.uid,
-            role: "resident"
+            role: "RES"
         } as JwtPayloadDto)
         return token
     }

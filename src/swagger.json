@@ -129,6 +129,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"RegisterUserDto": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"confirmPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password",
+					"confirmPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -431,26 +451,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"RegisterUserDto": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"confirmPassword": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"email",
-					"password",
-					"confirmPassword"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"LoginDto": {
 				"properties": {
 					"email": {
@@ -520,8 +520,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],
@@ -573,6 +573,58 @@
 				"parameters": []
 			}
 		},
+		"/user/create": {
+			"post": {
+				"operationId": "createUser",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SA"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterUserDto"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/notice/create": {
 			"post": {
 				"operationId": "createNotice",
@@ -607,7 +659,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -658,7 +710,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -778,7 +830,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -874,8 +926,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],
@@ -926,8 +978,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],
@@ -977,7 +1029,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -1018,8 +1070,8 @@
 				"security": [
 					{
 						"jwt": [
-							"admin",
-							"resident"
+							"SA",
+							"RES"
 						]
 					}
 				],
@@ -1160,8 +1212,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],
