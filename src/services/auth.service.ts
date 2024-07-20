@@ -1,6 +1,7 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateCurrentUser } from "firebase/auth";
 import { JwtPayloadDto, LoginDto, RegisterUserDto } from "../dtos/auth.dto";
-import firebase from "../config/firebase";
+import firebaseAdmin from "../config/firebaseAdmin";
+import firebase from "../config/initFirebase";
 import { createToken } from "../config/jwt";
 import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
@@ -8,6 +9,7 @@ import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
 
 const auth = firebase.FIREBASE_AUTH
+const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
 
 export const registerService = async (registerUserDto: RegisterUserDto) => {
     try {
@@ -18,8 +20,11 @@ export const registerService = async (registerUserDto: RegisterUserDto) => {
                 HttpStatusCode.INTERNAL_SERVER_ERROR
             )
         }
-        await createUserWithEmailAndPassword(auth, registerUserDto.email, registerUserDto.password);
+        const userCredentials = await createUserWithEmailAndPassword(auth, registerUserDto.email, registerUserDto.password);
+        const user = userCredentials.user;
+        await authAdmin.updateUser(user.uid, {disabled: true})
     } catch (error: any) {
+        console.log(error)
         if(error instanceof (FirebaseError)){
             throw new OperationError(
                 convertFirebaseAuthEnumMessage(error.code),
