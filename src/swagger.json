@@ -154,6 +154,12 @@
 					},
 					"floorNumber": {
 						"type": "string"
+					},
+					"supportedFiles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -164,7 +170,8 @@
 					"gender",
 					"dateOfBirth",
 					"unitNumber",
-					"floorNumber"
+					"floorNumber",
+					"supportedFiles"
 				],
 				"type": "object",
 				"additionalProperties": false

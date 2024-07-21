@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -23,6 +24,7 @@ const firebaseConfig = {
 const FIREBASE_APP = initializeApp(firebaseConfig);
 const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 const FIRESTORE = getFirestore(FIREBASE_APP);
+export const CLOUD_STORAGE = getStorage(FIREBASE_APP, "https://console.firebase.google.com/u/0/project/guardpro-1f2fc/storage/guardpro-1f2fc.appspot.com/files");
 const DB = getDatabase(FIREBASE_APP)
 
 export default { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE, DB }

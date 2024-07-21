@@ -1,6 +1,6 @@
 import express from "express";
 import { ValidateError } from "tsoa";
-import { log } from "./utils/log";
+import { log } from "./helper/log";
 import { RegisterRoutes } from "./routes";
 import { HttpStatusCode } from "./common/http-status-code";
 import { OperationError } from "./common/operation-error";

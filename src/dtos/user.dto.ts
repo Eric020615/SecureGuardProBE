@@ -10,4 +10,5 @@ export interface CreateUserDto {
 export interface CreateResidentDto extends CreateUserDto {
     unitNumber: string;
     floorNumber: string;
+    supportedFiles: string[]
 }

@@ -80,6 +80,7 @@ const models: TsoaRoute.Models = {
             "dateOfBirth": {"dataType":"string","required":true},
             "unitNumber": {"dataType":"string","required":true},
             "floorNumber": {"dataType":"string","required":true},
+            "supportedFiles": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": false,
     },

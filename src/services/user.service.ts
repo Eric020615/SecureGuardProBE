@@ -5,8 +5,9 @@ import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
 import { CreateResidentDto } from "../dtos/user.dto";
 import { Resident, User, UserRole } from "../models/user.model";
 import { createResidentRepository } from "../repositories/user.repository";
-import { convertDateStringToTimestamp, getNowTimestamp } from "../utils/time";
+import { convertDateStringToTimestamp, getNowTimestamp } from "../helper/time";
 import firebaseAdmin from "../config/firebaseAdmin";
+import { uploadFile } from "../helper/file";
 
 const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
 
@@ -36,6 +37,8 @@ export const createUserService = async (
       userId
     );
     await authAdmin.updateUser(userId, {displayName: createUserDto.userName})
+    console.log(createUserDto.supportedFiles)
+    uploadFile(createUserDto.supportedFiles);
   } catch (error: any) {
     if (error instanceof FirebaseError) {
       throw new OperationError(
