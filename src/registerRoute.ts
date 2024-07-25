@@ -26,8 +26,8 @@ const corsOptions = {
 export const registerRoutes = (app: express.Express) => {
   app
     .use(cors(corsOptions))
-    .use(express.urlencoded({ extended: true }))
-    .use(express.json())
+    .use(express.urlencoded({ extended: true, limit: '50mb' }))
+    .use(express.json({limit: '50mb'}))
     .use(["/openapi", "/docs", "/swagger"], swaggerUi.serve, swaggerUi.setup(swaggerJson))
     .use((_req, res, next) => {
       
