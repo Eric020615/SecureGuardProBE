@@ -129,6 +129,22 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GeneralFileDto": {
+				"properties": {
+					"fileName": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"fileName",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateResidentDto": {
 				"properties": {
 					"firstName": {
@@ -157,7 +173,7 @@
 					},
 					"supportedFiles": {
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/GeneralFileDto"
 						},
 						"type": "array"
 					}

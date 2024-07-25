@@ -75,6 +75,7 @@ export const checkUserStatus = async (userId: string) => {
                 HttpStatusCode.INTERNAL_SERVER_ERROR
             )
         }
+        console.log(user)
         if(user.disabled){
             throw new OperationError(
                 "User Account Disabled",

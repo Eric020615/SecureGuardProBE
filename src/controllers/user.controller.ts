@@ -51,7 +51,6 @@ export class UserController extends Controller {
         status: "500",
         data: null,
       };
-      console.log(response);
       return response;
     }
   }

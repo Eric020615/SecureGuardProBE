@@ -1,3 +1,5 @@
+import { GeneralFileDto } from "./index.dto";
+
 export interface CreateUserDto {
     firstName: string;
     lastName: string;
@@ -10,5 +12,5 @@ export interface CreateUserDto {
 export interface CreateResidentDto extends CreateUserDto {
     unitNumber: string;
     floorNumber: string;
-    supportedFiles: string[]
+    supportedFiles: GeneralFileDto[]
 }

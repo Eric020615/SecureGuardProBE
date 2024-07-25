@@ -69,6 +69,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GeneralFileDto": {
+        "dataType": "refObject",
+        "properties": {
+            "fileName": {"dataType":"string","required":true},
+            "data": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateResidentDto": {
         "dataType": "refObject",
         "properties": {
@@ -80,7 +89,7 @@ const models: TsoaRoute.Models = {
             "dateOfBirth": {"dataType":"string","required":true},
             "unitNumber": {"dataType":"string","required":true},
             "floorNumber": {"dataType":"string","required":true},
-            "supportedFiles": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "supportedFiles": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
         },
         "additionalProperties": false,
     },

@@ -42,16 +42,19 @@ export class Resident {
   floorNumber: string;
   createdDateTime: Timestamp;
   updatedDateTime: Timestamp;
+  supportedDocumentUrl: string[];
 
   constructor(
     unitNumber: string,
     floorNumber: string,
     createdDateTime: Timestamp,
-    updatedDateTime: Timestamp
+    updatedDateTime: Timestamp,
+    supprtedDocumentUrl: string[]
   ) {
     this.unitNumber = unitNumber,
     this.floorNumber = floorNumber,
     this.createdDateTime = createdDateTime;
     this.updatedDateTime = updatedDateTime;
+    this.supportedDocumentUrl = supprtedDocumentUrl;
   }  
 }

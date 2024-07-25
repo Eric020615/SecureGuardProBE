@@ -17,6 +17,7 @@ export const createUserService = async (
   role: UserRole
 ) => {
   try {
+    const FileURL = await uploadFile(createUserDto.supportedFiles, userId);
     await createResidentRepository(
       new User(
         createUserDto.firstName,
@@ -32,13 +33,12 @@ export const createUserService = async (
         createUserDto.floorNumber,
         createUserDto.unitNumber,
         getNowTimestamp(),
-        getNowTimestamp()
+        getNowTimestamp(),
+        FileURL ? FileURL : []
       ),
       userId
     );
     await authAdmin.updateUser(userId, {displayName: createUserDto.userName})
-    console.log(createUserDto.supportedFiles)
-    uploadFile(createUserDto.supportedFiles);
   } catch (error: any) {
     if (error instanceof FirebaseError) {
       throw new OperationError(
