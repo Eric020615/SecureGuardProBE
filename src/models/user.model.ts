@@ -1,9 +1,5 @@
+import { RoleEnum } from "../common/role";
 import { Timestamp } from "firebase/firestore";
-
-export enum UserRole {
-  Resident = "RES",
-  System_Admin = "SA",
-}
 
 export class User {
     id?: string; // Optional
@@ -12,7 +8,9 @@ export class User {
     contactNumber: string;
     gender: string;
     dateOfBirth: Timestamp | null;
-    role: UserRole;
+    role: RoleEnum;
+    createdBy: string;
+    updatedBy: string;
     createdDateTime: Timestamp;
     updatedDateTime: Timestamp;
   
@@ -22,7 +20,9 @@ export class User {
       contactNumber: string,
       gender: string,
       dateOfBirth: Timestamp | null,
-      role: UserRole,
+      role: RoleEnum,
+      createdBy: string,
+      updatedBy: string,
       createdDateTime: Timestamp,
       updatedDateTime: Timestamp,
     ) {
@@ -32,6 +32,8 @@ export class User {
       this.gender = gender;
       this.dateOfBirth = dateOfBirth;
       this.role = role;
+      this.createdBy = createdBy;
+      this.updatedBy = updatedBy;
       this.createdDateTime = createdDateTime;
       this.updatedDateTime = updatedDateTime;
     }  

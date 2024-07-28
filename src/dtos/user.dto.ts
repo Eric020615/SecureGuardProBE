@@ -1,3 +1,4 @@
+import { RoleEnum } from "../common/role";
 import { GeneralFileDto } from "./index.dto";
 
 export interface CreateUserDto {
@@ -7,6 +8,20 @@ export interface CreateUserDto {
     contactNumber: string;
     gender: string;
     dateOfBirth: string;
+}
+
+export interface GetUserInformationDto {
+    firstName: string;
+    lastName: string;
+    userName: string;
+    contactNumber: string;
+    gender: string;
+    role: RoleEnum;
+    dateOfBirth: string;
+    createdBy: string;
+    createdDateTime: string;
+    updatedBy: string;
+    updatedDateTime: string;
 }
 
 export interface CreateResidentDto extends CreateUserDto {

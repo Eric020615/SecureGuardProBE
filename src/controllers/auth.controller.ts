@@ -1,9 +1,10 @@
 import { LoginDto, RegisterUserDto } from "../dtos/auth.dto"
-import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, Body, Security, Get } from "tsoa"
+import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, Body, Security, Get, Query } from "tsoa"
 import { IResponse } from "../dtos/response.dto"
 import { loginService, registerService } from "../services/auth.service"
 import { HttpStatusCode } from "../common/http-status-code"
 import { OperationError } from "../common/operation-error"
+import { RoleEnum, RoleParam } from "../common/role"
   
 @Route("auth")
 export class AuthController extends Controller {
@@ -14,10 +15,11 @@ export class AuthController extends Controller {
     @SuccessResponse('200', 'OK')
     @Post('/sign-up')
     public async signUp(
-      @Body() registerUserDto: RegisterUserDto
+      @Body() registerUserDto: RegisterUserDto,
+      @Query() role: RoleEnum
     ): Promise<IResponse<any>> {
       try {
-        const token = await registerService(registerUserDto);
+        const token = await registerService(registerUserDto, role);
         const response = {
           message: "Account Created successfully",
           status: "200",
@@ -50,10 +52,11 @@ export class AuthController extends Controller {
     @SuccessResponse('200', 'OK')
     @Post('/log-in')
     public async login(
-      @Body() loginDto: LoginDto
+      @Body() loginDto: LoginDto,
+      @Query() role: RoleEnum
     ): Promise<IResponse<any>> {
       try {
-        const token = await loginService(loginDto);
+        const token = await loginService(loginDto, role);
         const response = {
           message: "Account login successfully",
           status: "200",

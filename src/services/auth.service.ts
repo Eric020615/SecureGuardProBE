@@ -7,11 +7,13 @@ import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
 import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
+import { getUserInformationService } from "./user.service";
+import { RoleEnum } from "../common/role";
 
 const auth = firebase.FIREBASE_AUTH
 const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
 
-export const registerService = async (registerUserDto: RegisterUserDto) => {
+export const registerService = async (registerUserDto: RegisterUserDto, userRole: string) => {
     try {
         if(registerUserDto.confirmPassword 
             !== registerUserDto.password){
@@ -25,11 +27,10 @@ export const registerService = async (registerUserDto: RegisterUserDto) => {
         await authAdmin.updateUser(user.uid, {disabled: true})
         const token = createToken({
             userGUID: user.uid,
-            role: "RES"
+            role: userRole
         } as JwtPayloadDto)
         return token
     } catch (error: any) {
-        console.log(error)
         if(error instanceof (FirebaseError)){
             throw new OperationError(
                 convertFirebaseAuthEnumMessage(error.code),
@@ -43,12 +44,26 @@ export const registerService = async (registerUserDto: RegisterUserDto) => {
     }
 }
 
-export const loginService = async (loginDto: LoginDto) => {
+export const loginService = async (loginDto: LoginDto, role: RoleEnum) => {
     try {
         const response = await signInWithEmailAndPassword(auth, loginDto.email, loginDto.password);
+        const user = await authAdmin.getUser(response.user.uid)
+        if(user.disabled){
+            throw new OperationError(
+                "User Account Disabled",
+                HttpStatusCode.INTERNAL_SERVER_ERROR
+            )
+        }
+        const userInformation = await getUserInformationService(response.user.uid);
+        if(userInformation.role !== role){
+            throw new OperationError(
+                "Account Login Failed",
+                HttpStatusCode.INTERNAL_SERVER_ERROR
+            )
+        }
         const token = createToken({
             userGUID: response.user.uid,
-            role: "RES"
+            role: userInformation.role
         } as JwtPayloadDto)
         return token
     }
@@ -75,7 +90,6 @@ export const checkUserStatus = async (userId: string) => {
                 HttpStatusCode.INTERNAL_SERVER_ERROR
             )
         }
-        console.log(user)
         if(user.disabled){
             throw new OperationError(
                 "User Account Disabled",

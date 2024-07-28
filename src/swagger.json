@@ -514,6 +514,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"RoleParam": {
+				"type": "string",
+				"enum": [
+					"SA",
+					"RES"
+				]
+			},
 			"LoginDto": {
 				"properties": {
 					"email": {
@@ -1183,7 +1190,16 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "role",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/RoleParam"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -1228,7 +1244,16 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "role",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/RoleParam"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {

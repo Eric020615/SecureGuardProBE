@@ -12,7 +12,7 @@ export const convertDateStringToTimestamp = (dateString: string) => {
 }
 
 
-export const convertTimestampToUserTimezone = (timestamp: Timestamp) => {
+export const convertTimestampToUserTimezone = (timestamp: Timestamp | null) => {
   if(!timestamp){
     return ""
   }

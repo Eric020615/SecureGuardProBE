@@ -30,3 +30,13 @@ export const createResidentRepository = async (
   await setDoc(userDocRef, {...user});
   await setDoc(residentDocRef, {...resident});
 };
+
+export const getUserInformationRepository = async (
+  userId: string
+) => {
+  const docRef = doc(userCollection, userId);
+  const userDoc = await getDoc(docRef);
+  let result: User = {} as User;
+  result = userDoc.data() as User;
+  return result;
+};

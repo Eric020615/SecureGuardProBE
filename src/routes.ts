@@ -222,6 +222,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RoleParam": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["SA"]},{"dataType":"enum","enums":["RES"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LoginDto": {
         "dataType": "refObject",
         "properties": {
@@ -236,11 +241,18 @@ const templateService = new ExpressTemplateService(models, {"noImplicitAdditiona
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
+
+
 export function RegisterRoutes(app: Router) {
+
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+
+
+    
         app.post('/visitor/create',
             authenticateMiddleware([{"jwt":["RES","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
@@ -650,6 +662,7 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_signUp(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     registerUserDto: {"in":"body","name":"registerUserDto","required":true,"ref":"RegisterUserDto"},
+                    role: {"in":"query","name":"role","required":true,"ref":"RoleParam"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -680,6 +693,7 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_login(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     loginDto: {"in":"body","name":"loginDto","required":true,"ref":"LoginDto"},
+                    role: {"in":"query","name":"role","required":true,"ref":"RoleParam"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
