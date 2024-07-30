@@ -3,7 +3,7 @@ import {
   CreateFacilityBookingDto,
   GetFacilityBookingHistoryDto,
 } from "../dtos/facility.dto";
-import { IResponse } from "../dtos/response.dto";
+import { IResponse } from "../dtos/index.dto"
 import {
   Body,
   Controller,

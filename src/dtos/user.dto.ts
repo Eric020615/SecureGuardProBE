@@ -10,7 +10,8 @@ export interface CreateUserDto {
     dateOfBirth: string;
 }
 
-export interface GetUserInformationDto {
+export interface GetUserDto {
+    userId: string;
     firstName: string;
     lastName: string;
     userName: string;

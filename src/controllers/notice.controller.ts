@@ -1,4 +1,4 @@
-import { IResponse } from "../dtos/response.dto"
+import { IResponse } from "../dtos/index.dto"
 import { createNoticeService, deleteNoticeByIdService, editNoticeByIdService, getAllNoticeService, getNoticeByIdService, getNoticeService } from "../services/notice.service";
 import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Put, Delete, Security, Request, Query } from "tsoa";
 import { CreateNoticeDto, DeleteNoticeDto, GetNoticeDto, UpdateNoticeDto } from "../dtos/notice.dto";

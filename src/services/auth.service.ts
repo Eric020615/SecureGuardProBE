@@ -7,7 +7,7 @@ import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
 import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
-import { getUserInformationService } from "./user.service";
+import { GetUserByIdService } from "./user.service";
 import { RoleEnum } from "../common/role";
 
 const auth = firebase.FIREBASE_AUTH
@@ -54,7 +54,7 @@ export const loginService = async (loginDto: LoginDto, role: RoleEnum) => {
                 HttpStatusCode.INTERNAL_SERVER_ERROR
             )
         }
-        const userInformation = await getUserInformationService(response.user.uid);
+        const userInformation = await GetUserByIdService(response.user.uid);
         if(userInformation.role !== role){
             throw new OperationError(
                 "Account Login Failed",

@@ -1,4 +1,4 @@
-import { IResponse } from "../dtos/response.dto"
+import { IResponse } from "../dtos/index.dto"
 import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Put, Delete, Security, Request, Query } from "tsoa";
 import { HttpStatusCode } from "../common/http-status-code";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";

@@ -192,6 +192,101 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"RoleEnum": {
+				"enum": [
+					"SA",
+					"RES"
+				],
+				"type": "string"
+			},
+			"GetUserDto": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/RoleEnum"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"firstName",
+					"lastName",
+					"userName",
+					"contactNumber",
+					"gender",
+					"role",
+					"dateOfBirth",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetUserDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetUserDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetUserDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -514,13 +609,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"RoleParam": {
-				"type": "string",
-				"enum": [
-					"SA",
-					"RES"
-				]
-			},
 			"LoginDto": {
 				"properties": {
 					"email": {
@@ -693,6 +781,47 @@
 						}
 					}
 				}
+			}
+		},
+		"/user/user-list": {
+			"get": {
+				"operationId": "getUserList",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/notice/create": {
@@ -1196,7 +1325,7 @@
 						"name": "role",
 						"required": true,
 						"schema": {
-							"$ref": "#/components/schemas/RoleParam"
+							"$ref": "#/components/schemas/RoleEnum"
 						}
 					}
 				],
@@ -1250,7 +1379,7 @@
 						"name": "role",
 						"required": true,
 						"schema": {
-							"$ref": "#/components/schemas/RoleParam"
+							"$ref": "#/components/schemas/RoleEnum"
 						}
 					}
 				],

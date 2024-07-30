@@ -1,6 +1,6 @@
 import { LoginDto, RegisterUserDto } from "../dtos/auth.dto"
 import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, Body, Security, Get, Query } from "tsoa"
-import { IResponse } from "../dtos/response.dto"
+import { IResponse } from "../dtos/index.dto"
 import { loginService, registerService } from "../services/auth.service"
 import { HttpStatusCode } from "../common/http-status-code"
 import { OperationError } from "../common/operation-error"

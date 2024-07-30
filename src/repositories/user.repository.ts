@@ -31,7 +31,7 @@ export const createResidentRepository = async (
   await setDoc(residentDocRef, {...resident});
 };
 
-export const getUserInformationRepository = async (
+export const GetUserByIdRepository = async (
   userId: string
 ) => {
   const docRef = doc(userCollection, userId);
@@ -40,3 +40,16 @@ export const getUserInformationRepository = async (
   result = userDoc.data() as User;
   return result;
 };
+
+export const GetUserListRepository = async (
+) => {
+  const q = query(userCollection);
+  const querySnapshot = await getDocs(q);
+  let result: User[] = [];
+  querySnapshot.forEach((doc) => {
+    let data = doc.data() as User;
+    data.id = doc.id;
+    result.push(data);
+  });
+  return result;
+}

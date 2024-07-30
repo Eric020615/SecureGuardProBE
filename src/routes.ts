@@ -94,6 +94,40 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RoleEnum": {
+        "dataType": "refEnum",
+        "enums": ["SA","RES"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "userId": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "userName": {"dataType":"string","required":true},
+            "contactNumber": {"dataType":"string","required":true},
+            "gender": {"dataType":"string","required":true},
+            "role": {"ref":"RoleEnum","required":true},
+            "dateOfBirth": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetUserDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateNoticeDto": {
         "dataType": "refObject",
         "properties": {
@@ -222,11 +256,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "RoleParam": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["SA"]},{"dataType":"enum","enums":["RES"]}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LoginDto": {
         "dataType": "refObject",
         "properties": {
@@ -335,6 +364,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'createUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/user/user-list',
+            authenticateMiddleware([{"jwt":["SA"]}]),
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getUserList)),
+
+            async function UserController_getUserList(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'getUserList',
                 controller,
                 response,
                 next,
@@ -662,7 +721,7 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_signUp(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     registerUserDto: {"in":"body","name":"registerUserDto","required":true,"ref":"RegisterUserDto"},
-                    role: {"in":"query","name":"role","required":true,"ref":"RoleParam"},
+                    role: {"in":"query","name":"role","required":true,"ref":"RoleEnum"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -693,7 +752,7 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_login(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     loginDto: {"in":"body","name":"loginDto","required":true,"ref":"LoginDto"},
-                    role: {"in":"query","name":"role","required":true,"ref":"RoleParam"},
+                    role: {"in":"query","name":"role","required":true,"ref":"RoleEnum"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

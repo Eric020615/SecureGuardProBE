@@ -11,12 +11,12 @@ import {
   Get,
   Request,
 } from "tsoa";
-import { IResponse } from "../dtos/response.dto";
+import { IResponse } from "../dtos/index.dto"
 import { HttpStatusCode } from "../common/http-status-code";
 import { OperationError } from "../common/operation-error";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
-import { createUserService } from "../services/user.service";
-import { CreateResidentDto } from "../dtos/user.dto";
+import { createUserService, GetUserListService } from "../services/user.service";
+import { CreateResidentDto, GetUserDto } from "../dtos/user.dto";
 
 @Route("user")
 export class UserController extends Controller {
@@ -54,4 +54,32 @@ export class UserController extends Controller {
       return response;
     }
   }
+
+  @Tags("User")
+  @OperationId("getUserList")
+  @Response<IResponse<GetUserDto[]>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+  @SuccessResponse(HttpStatusCode.OK, "OK")
+  @Get("/user-list")
+  @Security("jwt", ["SA"])
+  public async getUserList(
+  ): Promise<IResponse<any>> {
+    try {
+      const data = await GetUserListService()
+      const response = {
+        message: "User list retrieve successfully",
+        status: "200",
+        data: data,
+      };
+      return response;
+    } catch (err) {
+      this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      const response = {
+        message: "Failed to retrieve user list",
+        status: "500",
+        data: null,
+      };
+      return response;
+    }
+  }
+
 }
