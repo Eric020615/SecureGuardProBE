@@ -2,9 +2,9 @@ import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
 import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
-import { CreateResidentDto, GetUserDto } from "../dtos/user.dto";
+import { CreateResidentDto, GetUserDetailsByIdDto, GetUserDto, ResidentInformationDto } from "../dtos/user.dto";
 import { Resident, User } from "../models/user.model";
-import { createResidentRepository, GetUserByIdRepository, GetUserListRepository } from "../repositories/user.repository";
+import { createResidentRepository, GetResidentDetailsRepository, GetUserByIdRepository, GetUserListRepository } from "../repositories/user.repository";
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getNowTimestamp } from "../helper/time";
 import firebaseAdmin from "../config/firebaseAdmin";
 import { uploadFile } from "../helper/file";
@@ -106,3 +106,37 @@ export const GetUserListService = async () => {
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 }
+
+export const GetUserDetailsByIdService = async (
+  userId: string
+) => {
+  try {
+    const userDetails = await GetUserByIdRepository(userId);
+    let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto;
+    data = {
+      userId: userDetails.id ? userDetails.id : "",
+      userName: "",
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
+      gender: userDetails.gender,
+      role: userDetails.role,
+      dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
+      contactNumber: userDetails.contactNumber,
+      createdBy: userDetails.createdBy,
+      createdDateTime: convertTimestampToUserTimezone(userDetails.createdDateTime),
+      updatedBy: userDetails.updatedBy,
+      updatedDateTime: convertTimestampToUserTimezone(userDetails.updatedDateTime)
+    };
+    if(userDetails.role === RoleEnum.RESIDENT){
+      const residentDetails = await GetResidentDetailsRepository(userId);
+      data.roleInformation = {
+        floorNumber: residentDetails.floorNumber,
+        unitNumber: residentDetails.unitNumber,
+        supportedFiles: residentDetails.supportedDocumentUrl
+      };
+    }
+    return data;
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};

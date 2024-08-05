@@ -53,3 +53,13 @@ export const GetUserListRepository = async (
   });
   return result;
 }
+
+export const GetResidentDetailsRepository = async (
+  userId: string
+) => {
+  const docRef = doc(residentCollection, userId);
+  const resDoc = await getDoc(docRef);
+  let result: Resident = {} as Resident;
+  result = resDoc.data() as Resident;
+  return result;
+};

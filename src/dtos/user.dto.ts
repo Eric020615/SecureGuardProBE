@@ -30,3 +30,25 @@ export interface CreateResidentDto extends CreateUserDto {
     floorNumber: string;
     supportedFiles: GeneralFileDto[]
 }
+
+export interface GetUserDetailsByIdDto {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    contactNumber: string;
+    gender: string;
+    role: RoleEnum;
+    roleInformation?: ResidentInformationDto;
+    dateOfBirth: string;
+    createdBy: string;
+    createdDateTime: string;
+    updatedBy: string;
+    updatedDateTime: string;
+}
+
+export interface ResidentInformationDto {
+    floorNumber: string
+	unitNumber: string
+	supportedFiles: string[]
+}

@@ -10,13 +10,14 @@ import {
   Security,
   Get,
   Request,
+  Query,
 } from "tsoa";
 import { IResponse } from "../dtos/index.dto"
 import { HttpStatusCode } from "../common/http-status-code";
 import { OperationError } from "../common/operation-error";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
-import { createUserService, GetUserListService } from "../services/user.service";
-import { CreateResidentDto, GetUserDto } from "../dtos/user.dto";
+import { createUserService, GetUserDetailsByIdService, GetUserListService } from "../services/user.service";
+import { CreateResidentDto, GetUserDetailsByIdDto, GetUserDto } from "../dtos/user.dto";
 
 @Route("user")
 export class UserController extends Controller {
@@ -82,4 +83,31 @@ export class UserController extends Controller {
     }
   }
 
+  @Tags("User")
+  @OperationId("getUserDetailsById")
+  @Response<IResponse<GetUserDetailsByIdDto>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+  @SuccessResponse(HttpStatusCode.OK, "OK")
+  @Get("/details")
+  @Security("jwt", ["SA"])
+  public async getUserDetailsById(
+    @Query() userId: string
+  ): Promise<IResponse<any>> {
+    try {
+      const data = await GetUserDetailsByIdService(userId)
+      const response = {
+        message: "User details retrieve successfully",
+        status: "200",
+        data: data,
+      };
+      return response;
+    } catch (err) {
+      this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      const response = {
+        message: "Failed to retrieve user details",
+        status: "500",
+        data: null,
+      };
+      return response;
+    }
+  }
 }
