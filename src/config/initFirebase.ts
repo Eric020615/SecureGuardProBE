@@ -1,9 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -24,7 +24,7 @@ const firebaseConfig = {
 const FIREBASE_APP = initializeApp(firebaseConfig);
 const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 const FIRESTORE = getFirestore(FIREBASE_APP);
+export const CLOUD_STORAGE = getStorage(FIREBASE_APP);
 const DB = getDatabase(FIREBASE_APP)
-// const FIREBASE_ANALYTICS = getAnalytics(FIREBASE_APP);
 
 export default { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE, DB }

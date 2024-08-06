@@ -13,6 +13,7 @@ yarn-error.*
 
 # local env files
 .env*.*
+service-account-file.json
 
 # typescript
 *.tsbuildinfo

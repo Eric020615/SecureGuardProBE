@@ -1,6 +1,6 @@
 export enum FirebaseAuthError {
     'auth/claims-too-large' = 'The claims payload provided to setCustomUserClaims() exceeds the maximum allowed size of 1,000 bytes.',
-    'auth/email-already-exists' = 'The email address is already in use by another account.',
+    'auth/email-already-in-use' = 'The email address is already in use by another account.',
     'auth/id-token-expired' = 'The provided Firebase ID token is expired.',
     'auth/id-token-revoked' = 'The Firebase ID token has been revoked.',
     'auth/insufficient-permission' = 'The credential used to authenticate this SDK does not have permission to access the requested resource.',

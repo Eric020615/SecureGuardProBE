@@ -3,7 +3,7 @@ import {
   CreateFacilityBookingDto,
   GetFacilityBookingHistoryDto,
 } from "../dtos/facility.dto";
-import { IResponse } from "../dtos/response.dto";
+import { IResponse } from "../dtos/index.dto"
 import {
   Body,
   Controller,
@@ -32,7 +32,7 @@ export class FacilityController extends Controller {
   @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
   @SuccessResponse(HttpStatusCode.OK, "OK")
   @Post("/create")
-  @Security("jwt", ["resident", "admin"])
+  @Security("jwt", ["RES", "SA"])
   public async createFacilityBooking(
     @Body() createFacilityBookingDto: CreateFacilityBookingDto,
     @Request() request: IGetUserAuthInfoRequest
@@ -67,7 +67,7 @@ export class FacilityController extends Controller {
   @Response<IResponse<GetFacilityBookingHistoryDto[]>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
   @SuccessResponse(HttpStatusCode.OK, "OK")
   @Get("/")
-  @Security("jwt", ["resident", "admin"])
+  @Security("jwt", ["RES", "SA"])
   public async getFacilityBooking(
     @Request() request: IGetUserAuthInfoRequest,
     @Query() isPast: boolean
@@ -102,7 +102,7 @@ export class FacilityController extends Controller {
   @Response<IResponse<GetFacilityBookingHistoryDto[]>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
   @SuccessResponse(HttpStatusCode.OK, "OK")
   @Get("/admin")
-  @Security("jwt", ["admin"])
+  @Security("jwt", ["SA"])
   public async getAllFacilityBooking(
   ): Promise<IResponse<any>> {
     try {
@@ -129,7 +129,7 @@ export class FacilityController extends Controller {
   @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
   @SuccessResponse(HttpStatusCode.OK, "OK")
   @Put("/cancel")
-  @Security("jwt", ["admin", "resident"])
+  @Security("jwt", ["SA", "RES"])
   public async cancelFacilityBooking(
     @Request() request: IGetUserAuthInfoRequest,
     @Body() cancelFacilityBookingDto: CancelFacilityBookingDto,

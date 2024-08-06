@@ -1,6 +1,8 @@
+import { RoleEnum } from "../common/role";
+
 export interface JwtPayloadDto{
     userGUID: string;
-    role: string;
+    role: RoleEnum;
 }
 
 export interface LoginDto {

@@ -11,7 +11,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import firebase from "../config/firebase";
+import firebase from "../config/initFirebase";
 import moment from "moment";
 import "moment-timezone";
 import { Visitor } from "../models/visitor.model";

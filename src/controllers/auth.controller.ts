@@ -1,9 +1,10 @@
 import { LoginDto, RegisterUserDto } from "../dtos/auth.dto"
-import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, Body, Security, Get } from "tsoa"
-import { IResponse } from "../dtos/response.dto"
+import { Controller, Route, Post, Tags, OperationId, Response, SuccessResponse, Body, Security, Get, Query } from "tsoa"
+import { IResponse } from "../dtos/index.dto"
 import { loginService, registerService } from "../services/auth.service"
 import { HttpStatusCode } from "../common/http-status-code"
 import { OperationError } from "../common/operation-error"
+import { RoleEnum, RoleParam } from "../common/role"
   
 @Route("auth")
 export class AuthController extends Controller {
@@ -13,22 +14,31 @@ export class AuthController extends Controller {
     @Response<IResponse<any>>('400', 'Bad Request')
     @SuccessResponse('200', 'OK')
     @Post('/sign-up')
-    public async createUser(
-      @Body() registerUserDto: RegisterUserDto
+    public async signUp(
+      @Body() registerUserDto: RegisterUserDto,
+      @Query() role: RoleEnum
     ): Promise<IResponse<any>> {
       try {
-        await registerService(registerUserDto);
+        const token = await registerService(registerUserDto, role);
         const response = {
           message: "Account Created successfully",
           status: "200",
-          data: null,
+          data: token,
         }
         return response;
       }
       catch(err: any) {
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+        if(err instanceof OperationError){
+          const response = {
+            message: err.message ? err.message : "",
+            status: "500",
+            data: null,
+          }
+          return response;
+        }
         const response = {
-          message: err,
+          message: "",
           status: "500",
           data: null,
         }
@@ -42,10 +52,11 @@ export class AuthController extends Controller {
     @SuccessResponse('200', 'OK')
     @Post('/log-in')
     public async login(
-      @Body() loginDto: LoginDto
+      @Body() loginDto: LoginDto,
+      @Query() role: RoleEnum
     ): Promise<IResponse<any>> {
       try {
-        const token = await loginService(loginDto);
+        const token = await loginService(loginDto, role);
         const response = {
           message: "Account login successfully",
           status: "200",
@@ -54,11 +65,10 @@ export class AuthController extends Controller {
         return response;
       }
       catch(err: any) {
-        console.log(err)
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
         if(err instanceof OperationError){
           const response = {
-            message: err.message,
+            message: err.message ? err.message : "",
             status: "500",
             data: null,
           }
@@ -78,7 +88,7 @@ export class AuthController extends Controller {
     @Response<IResponse<any>>('400', 'Bad Request')
     @SuccessResponse('200', 'OK')
     @Get('/check-auth')
-    @Security("jwt", ["resident", "admin"])
+    @Security("jwt", ["RES", "SA"])
     public async checkAuth(
     ): Promise<IResponse<any>> {
       try {
@@ -92,7 +102,7 @@ export class AuthController extends Controller {
       catch(err: any) {
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
         const response = {
-          message: err,
+          message: err.message ? err.message : "",
           status: "500",
           data: err,
         }

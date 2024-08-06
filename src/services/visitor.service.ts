@@ -8,7 +8,7 @@ import {
 } from "../repositories/visitor.repository";
 import { Visitor } from "../models/visitor.model";
 import { Timestamp } from "firebase/firestore";
-import { convertTimestampToUserTimezone } from "../utils/time";
+import { convertTimestampToUserTimezone } from "../helper/time";
 
 export const createVisitorService = async (
   createVisitorDto: CreateVisitorDto,

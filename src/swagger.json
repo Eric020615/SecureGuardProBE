@@ -129,6 +129,272 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GeneralFileDto": {
+				"properties": {
+					"fileName": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"fileName",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateResidentDto": {
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"unitNumber": {
+						"type": "string"
+					},
+					"floorNumber": {
+						"type": "string"
+					},
+					"supportedFiles": {
+						"items": {
+							"$ref": "#/components/schemas/GeneralFileDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"userName",
+					"contactNumber",
+					"gender",
+					"dateOfBirth",
+					"unitNumber",
+					"floorNumber",
+					"supportedFiles"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RoleEnum": {
+				"enum": [
+					"SA",
+					"RES"
+				],
+				"type": "string"
+			},
+			"GetUserDto": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/RoleEnum"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"firstName",
+					"lastName",
+					"userName",
+					"contactNumber",
+					"gender",
+					"role",
+					"dateOfBirth",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetUserDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetUserDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetUserDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResidentInformationDto": {
+				"properties": {
+					"floorNumber": {
+						"type": "string"
+					},
+					"unitNumber": {
+						"type": "string"
+					},
+					"supportedFiles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"floorNumber",
+					"unitNumber",
+					"supportedFiles"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetUserDetailsByIdDto": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/RoleEnum"
+					},
+					"roleInformation": {
+						"$ref": "#/components/schemas/ResidentInformationDto"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"firstName",
+					"lastName",
+					"userName",
+					"contactNumber",
+					"gender",
+					"role",
+					"dateOfBirth",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetUserDetailsByIdDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetUserDetailsByIdDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetUserDetailsByIdDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -520,8 +786,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],
@@ -573,6 +839,158 @@
 				"parameters": []
 			}
 		},
+		"/user/create": {
+			"post": {
+				"operationId": "createUser",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"newUser": [
+							"RES",
+							"SA"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateResidentDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/user-list": {
+			"get": {
+				"operationId": "getUserList",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/user/details": {
+			"get": {
+				"operationId": "getUserDetailsById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/notice/create": {
 			"post": {
 				"operationId": "createNotice",
@@ -607,7 +1025,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -658,7 +1076,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -778,7 +1196,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -874,8 +1292,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],
@@ -926,8 +1344,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],
@@ -977,7 +1395,7 @@
 				"security": [
 					{
 						"jwt": [
-							"admin"
+							"SA"
 						]
 					}
 				],
@@ -1018,8 +1436,8 @@
 				"security": [
 					{
 						"jwt": [
-							"admin",
-							"resident"
+							"SA",
+							"RES"
 						]
 					}
 				],
@@ -1068,7 +1486,16 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "role",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/RoleEnum"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -1113,7 +1540,16 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "role",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/RoleEnum"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -1160,8 +1596,8 @@
 				"security": [
 					{
 						"jwt": [
-							"resident",
-							"admin"
+							"RES",
+							"SA"
 						]
 					}
 				],

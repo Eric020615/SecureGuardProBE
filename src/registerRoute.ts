@@ -1,6 +1,6 @@
 import express from "express";
 import { ValidateError } from "tsoa";
-import { log } from "./utils/log";
+import { log } from "./helper/log";
 import { RegisterRoutes } from "./routes";
 import { HttpStatusCode } from "./common/http-status-code";
 import { OperationError } from "./common/operation-error";
@@ -26,8 +26,8 @@ const corsOptions = {
 export const registerRoutes = (app: express.Express) => {
   app
     .use(cors(corsOptions))
-    .use(express.urlencoded({ extended: true }))
-    .use(express.json())
+    .use(express.urlencoded({ extended: true, limit: '50mb' }))
+    .use(express.json({limit: '50mb'}))
     .use(["/openapi", "/docs", "/swagger"], swaggerUi.serve, swaggerUi.setup(swaggerJson))
     .use((_req, res, next) => {
       
