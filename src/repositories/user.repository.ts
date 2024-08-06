@@ -15,6 +15,7 @@ import {
 import firebase from "../config/initFirebase";
 import "moment-timezone";
 import { Resident, User } from "../models/user.model";
+import { UserRecord } from "firebase-admin/auth";
 
 const userDB = firebase.FIRESTORE;
 const userCollection = collection(userDB, "user");
@@ -42,14 +43,16 @@ export const GetUserByIdRepository = async (
 };
 
 export const GetUserListRepository = async (
+  userList: UserRecord[]
 ) => {
-  const q = query(userCollection);
-  const querySnapshot = await getDocs(q);
+  const userDocsPromise = userList.map(async (user) => {
+    return await getDoc(doc(userCollection, user.uid));
+  });
   let result: User[] = [];
-  querySnapshot.forEach((doc) => {
-    let data = doc.data() as User;
-    data.id = doc.id;
-    result.push(data);
+  const userDocs = await Promise.all(userDocsPromise);
+  result = userDocs.map((doc) => { 
+    return doc.data() as User;
+
   });
   return result;
 }

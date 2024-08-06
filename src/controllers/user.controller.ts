@@ -63,9 +63,10 @@ export class UserController extends Controller {
   @Get("/user-list")
   @Security("jwt", ["SA"])
   public async getUserList(
+    @Query() isActive: boolean
   ): Promise<IResponse<any>> {
     try {
-      const data = await GetUserListService()
+      const data = await GetUserListService(isActive)
       const response = {
         message: "User list retrieve successfully",
         status: "200",

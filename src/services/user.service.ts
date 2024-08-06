@@ -9,6 +9,7 @@ import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getNowTim
 import firebaseAdmin from "../config/firebaseAdmin";
 import { uploadFile } from "../helper/file";
 import { RoleEnum } from "../common/role";
+import { UserRecord } from "firebase-admin/auth";
 
 const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
 
@@ -79,9 +80,21 @@ export const GetUserByIdService = async (
   }
 };
 
-export const GetUserListService = async () => {
+export const GetUserListService = async (isActive: boolean) => {
   try {
-    const userInformationList = await GetUserListRepository();
+    const userResult = await authAdmin.listUsers()
+    let userList : UserRecord[] = [];
+    if(isActive){
+      userList = userResult.users.filter((user) => 
+        !user.disabled
+      )
+    }
+    else{
+      userList = userResult.users.filter((user) => 
+        user.disabled
+      )
+    }
+    const userInformationList = await GetUserListRepository(userList);
     let data: GetUserDto[] = [];
     data = userInformationList
       ? userInformationList.map((userInformation) => {
