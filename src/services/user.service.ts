@@ -157,3 +157,31 @@ export const GetUserDetailsByIdService = async (
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
+
+export const activateUserByIdService = async (
+  userId: string
+) => {
+  try {
+    const userRecord = await authAdmin.getUser(userId);
+    if(!userRecord.disabled){
+      throw new OperationError("User was activated before.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    await authAdmin.updateUser(userId, {disabled: false})
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const deactivateUserByIdService = async (
+  userId: string
+) => {
+  try {
+    const userRecord = await authAdmin.getUser(userId);
+    if(userRecord.disabled){
+      throw new OperationError("User was deactivated before.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    await authAdmin.updateUser(userId, {disabled: true})
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};
