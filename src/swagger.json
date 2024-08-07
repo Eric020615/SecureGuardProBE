@@ -324,6 +324,9 @@
 					"userName": {
 						"type": "string"
 					},
+					"email": {
+						"type": "string"
+					},
 					"contactNumber": {
 						"type": "string"
 					},
@@ -338,6 +341,9 @@
 					},
 					"dateOfBirth": {
 						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
 					},
 					"createdBy": {
 						"type": "string"
@@ -357,6 +363,7 @@
 					"firstName",
 					"lastName",
 					"userName",
+					"email",
 					"contactNumber",
 					"gender",
 					"role",

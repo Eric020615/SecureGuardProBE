@@ -39,6 +39,7 @@ export const GetUserByIdRepository = async (
   const userDoc = await getDoc(docRef);
   let result: User = {} as User;
   result = userDoc.data() as User;
+  result.id = userDoc.id;
   return result;
 };
 
@@ -51,8 +52,9 @@ export const GetUserListRepository = async (
   let result: User[] = [];
   const userDocs = await Promise.all(userDocsPromise);
   result = userDocs.map((doc) => { 
-    return doc.data() as User;
-
+    let user = doc.data() as User;
+    user.id = doc.id;
+    return user;
   });
   return result;
 }

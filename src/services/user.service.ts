@@ -10,6 +10,7 @@ import firebaseAdmin from "../config/firebaseAdmin";
 import { uploadFile } from "../helper/file";
 import { RoleEnum } from "../common/role";
 import { UserRecord } from "firebase-admin/auth";
+import { fetchSignInMethodsForEmail } from "firebase/auth";
 
 const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
 
@@ -126,14 +127,17 @@ export const GetUserDetailsByIdService = async (
   try {
     const userDetails = await GetUserByIdRepository(userId);
     let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto;
+    const userRecord = await authAdmin.getUser(userId);
     data = {
       userId: userDetails.id ? userDetails.id : "",
-      userName: "",
+      userName: userRecord.displayName ? userRecord.displayName : "",
       firstName: userDetails.firstName,
       lastName: userDetails.lastName,
+      email: userRecord.email ? userRecord.email : "",
       gender: userDetails.gender,
       role: userDetails.role,
       dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
+      isActive: !userRecord.disabled,
       contactNumber: userDetails.contactNumber,
       createdBy: userDetails.createdBy,
       createdDateTime: convertTimestampToUserTimezone(userDetails.createdDateTime),
@@ -147,7 +151,7 @@ export const GetUserDetailsByIdService = async (
         unitNumber: residentDetails.unitNumber,
         supportedFiles: residentDetails.supportedDocumentUrl
       };
-    }
+    }        
     return data;
   } catch (error: any) {
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
