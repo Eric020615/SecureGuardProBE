@@ -129,6 +129,32 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IResponse_GetVisitorDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetVisitorDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetVisitorDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GeneralFileDto": {
 				"properties": {
 					"fileName": {
@@ -857,6 +883,56 @@
 						"required": true,
 						"schema": {
 							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/visitor/details": {
+			"get": {
+				"operationId": "getVisitorDetailsByResident",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "visitorId",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]

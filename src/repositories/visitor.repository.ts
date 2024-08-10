@@ -61,6 +61,17 @@ export const getVisitorByResidentRepository = async (
   return result;
 };
 
+export const getVisitorDetailsByResidentRepository = async (
+  visitorId: string
+) => {
+  const visitorDocRef = doc(visitorCollection, visitorId);
+  const visitorDoc = await getDoc(visitorDocRef);
+  let result: Visitor = {} as Visitor;
+  result = visitorDoc.data() as Visitor;
+  result.visitorId = visitorDoc.id;
+  return result;
+};
+
 export const getAllVisitorsRepository = async () => {
     const q = query(visitorCollection);
     const querySnapshot = await getDocs(q);

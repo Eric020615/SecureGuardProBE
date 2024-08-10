@@ -69,6 +69,16 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetVisitorDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetVisitorDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GeneralFileDto": {
         "dataType": "refObject",
         "properties": {
@@ -377,6 +387,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getVisitorByResident',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/visitor/details',
+            authenticateMiddleware([{"jwt":["RES"]}]),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorDetailsByResident)),
+
+            async function VisitorController_getVisitorDetailsByResident(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    visitorId: {"in":"query","name":"visitorId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new VisitorController();
+
+              await templateService.apiHandler({
+                methodName: 'getVisitorDetailsByResident',
                 controller,
                 response,
                 next,

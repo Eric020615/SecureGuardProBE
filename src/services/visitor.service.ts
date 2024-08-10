@@ -6,6 +6,7 @@ import {
   createVisitorRepository,
   getAllVisitorsRepository,
   getVisitorByResidentRepository,
+  getVisitorDetailsByResidentRepository,
 } from "../repositories/visitor.repository";
 import { Visitor } from "../models/visitor.model";
 import { Timestamp } from "firebase/firestore";
@@ -64,6 +65,29 @@ export const getVisitorByResidentService = async (userId: string, isPast: boolea
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
+
+export const getVisitorDetailsByResidentService = async (visitorId: string) => {
+  try {
+    const visitors = await getVisitorDetailsByResidentRepository(visitorId);
+    let data: GetVisitorDto = {} as GetVisitorDto;
+    data = {
+      visitorId: visitors.visitorId ? visitors.visitorId : "",
+      visitorName: visitors.visitorName,
+      visitorCategory: visitors.visitorCategory,
+      visitorContactNumber: visitors.visitorContactNumber,
+      visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
+      createdBy: visitors.createdBy,
+      updatedBy: visitors.updatedBy,
+      createdDateTime: convertTimestampToUserTimezone(visitors.createdDateTime),
+      updatedDateTime: convertTimestampToUserTimezone(visitors.updatedDateTime),
+    };
+    return data;
+  } catch (error: any) {
+    console.log(error)
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};
+
 
 export const getAllVisitorService = async () => {
   try {
