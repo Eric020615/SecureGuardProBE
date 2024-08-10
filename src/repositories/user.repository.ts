@@ -47,10 +47,14 @@ export const GetUserListRepository = async (
   userList: UserRecord[]
 ) => {
   const userDocsPromise = userList.map(async (user) => {
-    return await getDoc(doc(userCollection, user.uid));
+    const userDoc = await getDoc(doc(userCollection, user.uid));
+    if(userDoc.exists()){
+      return userDoc;
+    }
+    return null;
   });
   let result: User[] = [];
-  const userDocs = await Promise.all(userDocsPromise);
+  let userDocs = (await Promise.all(userDocsPromise)).filter(doc => doc != null);
   result = userDocs.map((doc) => { 
     let user = doc.data() as User;
     user.id = doc.id;

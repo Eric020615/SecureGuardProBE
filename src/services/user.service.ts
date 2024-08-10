@@ -97,7 +97,7 @@ export const GetUserListService = async (isActive: boolean) => {
     }
     const userInformationList = await GetUserListRepository(userList);
     let data: GetUserDto[] = [];
-    data = userInformationList
+    data = userInformationList && userInformationList.length > 0
       ? userInformationList.map((userInformation) => {
           return {
               userId: userInformation.id ? userInformation.id : "",

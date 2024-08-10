@@ -33,7 +33,6 @@ export const expressAuthentication = async (
   if (securityName === "newUser") {
     try {
       const userData: JwtPayloadDto = verifyToken(token, scopes);
-      await checkUserStatus(userData.userGUID);
       request.userId = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});

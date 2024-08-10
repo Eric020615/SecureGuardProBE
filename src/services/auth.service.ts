@@ -79,6 +79,7 @@ export const loginService = async (loginDto: LoginDto, role: RoleEnum) => {
     return token;
   } catch (error: any) {
     if (error instanceof FirebaseError) {
+        console.log(error)
       throw new OperationError(
         convertFirebaseAuthEnumMessage(error.code),
         HttpStatusCode.INTERNAL_SERVER_ERROR
