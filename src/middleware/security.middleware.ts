@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { NextFunction, Request } from "express";
 import { verifyToken } from "../config/jwt";
 import { JwtPayloadDto } from "../dtos/auth.dto";
 import { checkUserStatus } from "../services/auth.service";
@@ -9,35 +9,37 @@ export interface IGetUserAuthInfoRequest extends Request {
   role: RoleEnum;
 }
 
-export const expressAuthentication = (
+export const expressAuthentication = async (
   request: IGetUserAuthInfoRequest,
   securityName: string,
   scopes?: string[]
 ): Promise<any> => {
+  const token =
+    request.body.token ||
+    request.query.token ||
+    request.headers["authorization"];
+
   if (securityName === "jwt") {
-    const token =
-      request.body.token ||
-      request.query.token ||
-      request.headers["authorization"];
-    return new Promise((resolve) => {
+    try {
       const userData: JwtPayloadDto = verifyToken(token, scopes);
-      checkUserStatus(userData.userGUID);
+      await checkUserStatus(userData.userGUID);
       request.userId = userData.userGUID;
       request.role = userData.role;
-      resolve({});
-    });
+      return Promise.resolve({});
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
   if (securityName === "newUser") {
-    const token =
-      request.body.token ||
-      request.query.token ||
-      request.headers["authorization"];
-    return new Promise((resolve) => {
+    try {
       const userData: JwtPayloadDto = verifyToken(token, scopes);
+      await checkUserStatus(userData.userGUID);
       request.userId = userData.userGUID;
       request.role = userData.role;
-      resolve({});
-    });
+      return Promise.resolve({});
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
   return Promise.reject({});
 };
