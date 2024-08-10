@@ -357,6 +357,38 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/visitor',
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorByResident)),
+
+            async function VisitorController_getVisitorByResident(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    isPast: {"in":"query","name":"isPast","required":true,"dataType":"boolean"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new VisitorController();
+
+              await templateService.apiHandler({
+                methodName: 'getVisitorByResident',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/visitor/admin',
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
             ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getAllVisitors)),
 

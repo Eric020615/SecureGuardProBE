@@ -4,7 +4,7 @@ import { HttpStatusCode } from "../common/http-status-code";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
 import { OperationError } from "../common/operation-error";
 import { CreateVisitorDto, GetVisitorDto } from "../dtos/visitor.dto";
-import { createVisitorService, getAllVisitorService } from "../services/visitor.service";
+import { createVisitorService, getAllVisitorService, getVisitorByResidentService } from "../services/visitor.service";
 
 @Route("visitor")
 export class VisitorController extends Controller {
@@ -46,10 +46,45 @@ export class VisitorController extends Controller {
     }
 
     @Tags("Visitor")
-    @OperationId("getAllVisitor")
+    @OperationId("getVisitorByResident")
     @Response<IResponse<GetVisitorDto[]>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
     @SuccessResponse(HttpStatusCode.OK, "OK")
     @Get("/")
+    @Security("jwt", ["RES", "SA"])
+    public async getVisitorByResident(
+      @Request() request: IGetUserAuthInfoRequest,
+      @Query() isPast: boolean
+    ): Promise<IResponse<any>> {
+      try {
+        if(!request.userId){
+          throw new OperationError(
+            "User not found",
+            HttpStatusCode.INTERNAL_SERVER_ERROR
+          )
+        }
+        const data = await getVisitorByResidentService(request.userId, isPast);
+        const response = {
+          message: "Visitors retrieve successfully",
+          status: "200",
+          data: data,
+        };
+        return response;
+      } catch (err) {
+        this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+        const response = {
+          message: "Failed to retrieve visitors",
+          status: "500",
+          data: null,
+        };
+        return response;
+      }
+    }
+
+    @Tags("Visitor")
+    @OperationId("getAllVisitor")
+    @Response<IResponse<GetVisitorDto[]>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+    @SuccessResponse(HttpStatusCode.OK, "OK")
+    @Get("/admin")
     // @Security("jwt", ["SA"])
     public async getAllVisitors(
     ): Promise<IResponse<any>> {

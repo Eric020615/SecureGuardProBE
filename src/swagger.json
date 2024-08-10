@@ -813,6 +813,57 @@
 		},
 		"/visitor": {
 			"get": {
+				"operationId": "getVisitorByResident",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "isPast",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/visitor/admin": {
+			"get": {
 				"operationId": "getAllVisitor",
 				"responses": {
 					"200": {
