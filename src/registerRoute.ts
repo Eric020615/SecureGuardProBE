@@ -1,13 +1,9 @@
 import express, { Response } from "express";
 import { ValidateError } from "tsoa";
-import { log } from "./helper/log";
 import { RegisterRoutes } from "./routes";
-import { HttpStatusCode } from "./common/http-status-code";
-import { OperationError } from "./common/operation-error";
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJson from './swagger.json';
-import { IResponse } from "./dtos/index.dto";
 
 interface IError {
   status?: number;
@@ -65,24 +61,21 @@ export const registerRoutes = (app: express.Express) => {
       res: express.Response,
       next: express.NextFunction
     ) : Response | void => {
-      console.log(err);
-      console.log("haiya")
       if (err instanceof ValidateError) {
         console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
-        return res.status(422).send({
+        return res.status(422).json({
           message: `Validation Failed, ${err?.fields}`,
           status: 500,
           data: null
         });
       }
       if (err instanceof Error) {
-        return res.status(500).send({
+        return res.status(500).json({
           message: "Internal Server Error",
           status: 500,
           data: null
         });
       }
-      // next();
     });
 
   RegisterRoutes(app);

@@ -14,7 +14,8 @@ export interface IGetUserAuthInfoRequest extends Request {
 export const expressAuthentication = async (
   request: IGetUserAuthInfoRequest,
   securityName: string,
-  scopes?: string[]
+  scopes?: string[],
+  response?: any
 ): Promise<any> => {
   const token =
     request.body.token ||
@@ -35,8 +36,11 @@ export const expressAuthentication = async (
       request.role = userData.role;
       return Promise.resolve({});
     }
-  } catch (error) {
-    return Promise.reject(error)
+  } catch (error: any) {
+    return response.status(402).json({
+      message: error.message,
+      status: 402,
+      data: null
+    });
   }
-  return Promise.reject({})
 };
