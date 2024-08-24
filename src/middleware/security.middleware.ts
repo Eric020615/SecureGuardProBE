@@ -3,6 +3,8 @@ import { verifyToken } from "../config/jwt";
 import { JwtPayloadDto } from "../dtos/auth.dto";
 import { checkUserStatus } from "../services/auth.service";
 import { RoleEnum } from "../common/role";
+import { OperationError } from "../common/operation-error";
+import { HttpStatusCode } from "../common/http-status-code";
 
 export interface IGetUserAuthInfoRequest extends Request {
   userId: string;
@@ -19,26 +21,22 @@ export const expressAuthentication = async (
     request.query.token ||
     request.headers["authorization"];
 
-  if (securityName === "jwt") {
-    try {
+  try {
+    if (securityName === "jwt") {  
       const userData: JwtPayloadDto = verifyToken(token, scopes);
       await checkUserStatus(userData.userGUID);
       request.userId = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});
-    } catch (error) {
-      return Promise.reject(error);
     }
-  }
-  if (securityName === "newUser") {
-    try {
+    if (securityName === "newUser") {
       const userData: JwtPayloadDto = verifyToken(token, scopes);
       request.userId = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});
-    } catch (error) {
-      return Promise.reject(error);
     }
+  } catch (error) {
+    return Promise.reject(error)
   }
-  return Promise.reject({});
+  return Promise.reject({})
 };

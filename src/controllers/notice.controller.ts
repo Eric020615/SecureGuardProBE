@@ -1,7 +1,7 @@
 import { IResponse } from "../dtos/index.dto"
 import { createNoticeService, deleteNoticeByIdService, editNoticeByIdService, getAllNoticeService, getNoticeByIdService, getNoticeService } from "../services/notice.service";
 import { Body, Controller, OperationId, Post, Get, Response, Route, SuccessResponse, Tags, Put, Delete, Security, Request, Query } from "tsoa";
-import { CreateNoticeDto, DeleteNoticeDto, GetNoticeDto, UpdateNoticeDto } from "../dtos/notice.dto";
+import { CreateNoticeDto, DeleteNoticeDto, EditNoticeDto, GetNoticeDto } from "../dtos/notice.dto";
 import { HttpStatusCode } from "../common/http-status-code";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
 import { OperationError } from "../common/operation-error";
@@ -35,7 +35,6 @@ export class NoticeController extends Controller {
         return response;
       }
       catch(err) {
-        console.log(err)
         this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
         const response = {
             message: "Failed to create notice",
@@ -133,10 +132,10 @@ export class NoticeController extends Controller {
     @OperationId('editNoticeById')
     @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
     @SuccessResponse(HttpStatusCode.OK, 'OK')
-    @Put('/update')
+    @Put('/edit')
     @Security("jwt", ["SA"])
     public async editNoticeById(
-      @Body() updateNoticeDto: UpdateNoticeDto,
+      @Body() editNoticeDto: EditNoticeDto,
       @Request() request: IGetUserAuthInfoRequest
     ): Promise<IResponse<any>> {
       try {
@@ -146,7 +145,7 @@ export class NoticeController extends Controller {
             HttpStatusCode.INTERNAL_SERVER_ERROR
           )
         }
-        await editNoticeByIdService(updateNoticeDto, request.userId);
+        await editNoticeByIdService(editNoticeDto, request.userId);
         const response = {
             message: "Notice updated successfully",
             status: "200",

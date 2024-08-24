@@ -60,27 +60,29 @@ export const registerRoutes = (app: express.Express) => {
       next();
     })
     .use((
-      err: IError,
-      _req: express.Request,
+      err: any,
+      req: express.Request,
       res: express.Response,
       next: express.NextFunction
     ) : Response | void => {
+      console.log(err);
+      console.log("haiya")
       if (err instanceof ValidateError) {
-        console.warn(`Caught Validation Error for ${_req.path}:`, err.fields);
-        return res.status(422).json({
+        console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+        return res.status(422).send({
           message: `Validation Failed, ${err?.fields}`,
           status: 500,
           data: null
         });
       }
       if (err instanceof Error) {
-        return res.status(500).json({
+        return res.status(500).send({
           message: "Internal Server Error",
           status: 500,
           data: null
         });
       }
-      next();
+      // next();
     });
 
   RegisterRoutes(app);

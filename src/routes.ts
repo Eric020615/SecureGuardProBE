@@ -79,6 +79,18 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EditVisitorByIdDto": {
+        "dataType": "refObject",
+        "properties": {
+            "visitorId": {"dataType":"string","required":true},
+            "visitorName": {"dataType":"string","required":true},
+            "visitorCategory": {"dataType":"string","required":true},
+            "visitorContactNumber": {"dataType":"string","required":true},
+            "visitDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GeneralFileDto": {
         "dataType": "refObject",
         "properties": {
@@ -227,7 +239,7 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateNoticeDto": {
+    "EditNoticeDto": {
         "dataType": "refObject",
         "properties": {
             "noticeId": {"dataType":"string","required":true},
@@ -448,6 +460,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getAllVisitors',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/visitor/edit',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.editVisitorById)),
+
+            async function VisitorController_editVisitorById(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    editVisitorByIdDto: {"in":"body","name":"editVisitorByIdDto","required":true,"ref":"EditVisitorByIdDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new VisitorController();
+
+              await templateService.apiHandler({
+                methodName: 'editVisitorById',
                 controller,
                 response,
                 next,
@@ -736,14 +780,14 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/notice/update',
+        app.put('/notice/edit',
             authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.editNoticeById)),
 
             async function NoticeController_editNoticeById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    updateNoticeDto: {"in":"body","name":"updateNoticeDto","required":true,"ref":"UpdateNoticeDto"},
+                    editNoticeDto: {"in":"body","name":"editNoticeDto","required":true,"ref":"EditNoticeDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 

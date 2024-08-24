@@ -5,7 +5,7 @@ export interface CreateNoticeDto {
     endDate: string;
 }
 
-export interface UpdateNoticeDto {
+export interface EditNoticeDto {
     noticeId: string;
     title: string;
     description: string;

@@ -1,9 +1,14 @@
 import moment from "moment";
 import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
-import { CreateVisitorDto, GetVisitorDto } from "../dtos/visitor.dto";
+import {
+  CreateVisitorDto,
+  GetVisitorDto,
+  EditVisitorByIdDto,
+} from "../dtos/visitor.dto";
 import {
   createVisitorRepository,
+  editVisitorByIdRepository,
   getAllVisitorsRepository,
   getVisitorByResidentRepository,
   getVisitorDetailsByResidentRepository,
@@ -34,7 +39,32 @@ export const createVisitorService = async (
   }
 };
 
-export const getVisitorByResidentService = async (userId: string, isPast: boolean) => {
+export const editVisitorByIdService = async (
+  editVisitorByIdDto: EditVisitorByIdDto,
+  userId: string
+) => {
+  try {
+    let visitor: Visitor = {
+      visitorId: editVisitorByIdDto.visitorId,
+      visitorName: editVisitorByIdDto.visitorName,
+      visitorCategory: editVisitorByIdDto.visitorCategory,
+      visitorContactNumber: editVisitorByIdDto.visitorContactNumber,
+      visitDateTime: Timestamp.fromDate(
+        moment(editVisitorByIdDto.visitDateTime).toDate()
+      ),
+      updatedBy: userId,
+      updatedDateTime: Timestamp.fromDate(moment().toDate())
+    } as Visitor;
+    await editVisitorByIdRepository(visitor);
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const getVisitorByResidentService = async (
+  userId: string,
+  isPast: boolean
+) => {
   try {
     const visitors = await getVisitorByResidentRepository(userId, isPast);
     let data: GetVisitorDto[] = [];
@@ -61,7 +91,7 @@ export const getVisitorByResidentService = async (userId: string, isPast: boolea
       : [];
     return data;
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
@@ -83,11 +113,10 @@ export const getVisitorDetailsByResidentService = async (visitorId: string) => {
     };
     return data;
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
-
 
 export const getAllVisitorService = async () => {
   try {
@@ -116,7 +145,7 @@ export const getAllVisitorService = async () => {
       : [];
     return data;
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };

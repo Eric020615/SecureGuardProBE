@@ -1,7 +1,7 @@
 import {
   CreateNoticeDto,
   GetNoticeDto,
-  UpdateNoticeDto,
+  EditNoticeDto
 } from "../dtos/notice.dto";
 import {
   createNoticeRepository,
@@ -142,19 +142,19 @@ export const getNoticeByIdService = async (id: string) => {
 };
 
 export const editNoticeByIdService = async (
-  updateNoticeDto: UpdateNoticeDto,
+  editNoticeDto: EditNoticeDto,
   userId: string
 ) => {
   try {
     let notice: Notice = {
-      title: updateNoticeDto.title,
-      description: updateNoticeDto.description,
-      startDate: moment(updateNoticeDto.startDate).valueOf(),
-      endDate: moment(updateNoticeDto.endDate).valueOf(),
+      title: editNoticeDto.title,
+      description: editNoticeDto.description,
+      startDate: moment(editNoticeDto.startDate).valueOf(),
+      endDate: moment(editNoticeDto.endDate).valueOf(),
       updatedBy: userId,
       updatedDateTime: moment().valueOf(),
     } as Notice;
-    await editNoticeByIdRepository(updateNoticeDto.noticeId, notice);
+    await editNoticeByIdRepository(editNoticeDto.noticeId, notice);
   } catch (error: any) {
     throw new OperationError(
       error,

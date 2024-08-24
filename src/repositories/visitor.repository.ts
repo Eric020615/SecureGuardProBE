@@ -24,6 +24,11 @@ export const createVisitorRepository = async (visitor: Visitor) => {
   await addDoc(visitorCollection, Object.assign({}, visitor));
 };
 
+export const editVisitorByIdRepository = async (visitor: Visitor) => {
+  const docRef = doc(visitorCollection, visitor.visitorId);
+  await updateDoc(docRef, { ...visitor });
+};
+
 export const get = async () => {
   const q = query(visitorCollection);
   const querySnapshot = await getDocs(q);
