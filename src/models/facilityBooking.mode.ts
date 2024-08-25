@@ -1,29 +1,31 @@
+import { Timestamp } from "firebase/firestore"
+
 export class FacilityBooking { 
     bookingId?: string
     facilityId: string
-    startDate: number
-    endDate: number
+    startDate: Timestamp
+    endDate: Timestamp
     bookedBy: string
     numOfGuest: number
     isCancelled: boolean
     cancelRemark: string
     createdBy: string
     updatedBy: string
-    createdDateTime: number
-    updatedDateTime: number
+    createdDateTime: Timestamp
+    updatedDateTime: Timestamp
 
     constructor(
         facilityId: string,
-        startDate: number,
-        endDate: number,
+        startDate: Timestamp,
+        endDate: Timestamp,
         bookedBy: string,
         numOfGuest: number,
         isCancelled: boolean,
         cancelRemark: string,
         createdBy: string,
         updatedBy: string,
-        createdDateTime: number,
-        updatedDateTime: number,
+        createdDateTime: Timestamp,
+        updatedDateTime: Timestamp,
     ){
         this.facilityId = facilityId;
         this.startDate = startDate;

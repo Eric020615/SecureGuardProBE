@@ -15,6 +15,7 @@ import firebase from "../config/initFirebase";
 import { Notice } from "../models/notice.model";
 import moment from "moment";
 import "moment-timezone";
+import { convertDateStringToTimestamp } from "../helper/time";
 
 const noticesDB = firebase.FIRESTORE;
 const noticeCollection = collection(noticesDB, "notice");
@@ -39,8 +40,8 @@ export const getNoticeRepository = async () => {
   const q = query(
     noticeCollection,
     and(
-      where("startDate", "<=", moment().tz("Asia/Kuala_Lumpur").valueOf()),
-      where("endDate", ">", moment().tz("Asia/Kuala_Lumpur").valueOf())
+      where("startDate", "<=",  convertDateStringToTimestamp(moment().tz("Asia/Kuala_Lumpur").toISOString())),
+      where("endDate", ">",  convertDateStringToTimestamp(moment().tz("Asia/Kuala_Lumpur").toISOString()))
     ),
     orderBy("startDate")
   );
