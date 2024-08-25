@@ -15,6 +15,7 @@ import firebase from "../config/initFirebase";
 import moment from "moment";
 import "moment-timezone";
 import { FacilityBooking } from "../models/facilityBooking.mode";
+import { convertDateStringToTimestamp } from "../helper/time";
 
 const facilityDB = firebase.FIRESTORE;
 const facilityCollection = collection(facilityDB, "facilityBooking");
@@ -36,7 +37,8 @@ export const getFacilityBookingRepository = async (
       where(
         "startDate",
         isPast ? "<=" : ">",
-        moment().tz("Asia/Kuala_Lumpur").valueOf()
+        // take note of the timezone here
+        convertDateStringToTimestamp(moment().tz("Asia/Kuala_Lumpur").toISOString())
       )
     )
   );

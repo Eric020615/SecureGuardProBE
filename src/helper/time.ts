@@ -2,13 +2,13 @@ import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 import "moment-timezone";
 
-const serverTimezone = "Asia/Kuala_Lumpur"
-
 export const convertDateStringToTimestamp = (dateString: string) => {
   if(!dateString){
-    return null
+    return Timestamp.fromDate(moment(0).utc().toDate())
   }
-  return Timestamp.fromDate(moment(dateString).toDate())
+  console.log(dateString)
+  console.log(moment(dateString).utc().toDate())  
+  return Timestamp.fromDate(moment(dateString).utc().toDate())
 }
 
 
@@ -16,9 +16,9 @@ export const convertTimestampToUserTimezone = (timestamp: Timestamp | null) => {
   if(!timestamp){
     return ""
   }
-  return moment(timestamp.toDate()).tz(serverTimezone).format('YYYY-MM-DD HH:mm:ss');
+  return moment(timestamp.toDate()).utc().format('YYYY-MM-DD HH:mm:ss');
 }
 
 export const getNowTimestamp = () => {
-  return Timestamp.fromDate(moment().tz(serverTimezone).toDate());
+  return Timestamp.fromDate(moment().utc().toDate());
 }

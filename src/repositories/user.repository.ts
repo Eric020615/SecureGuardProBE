@@ -39,6 +39,7 @@ export const GetUserByIdRepository = async (
   const userDoc = await getDoc(docRef);
   let result: User = {} as User;
   result = userDoc.data() as User;
+  result.id = userDoc.id;
   return result;
 };
 
@@ -46,13 +47,18 @@ export const GetUserListRepository = async (
   userList: UserRecord[]
 ) => {
   const userDocsPromise = userList.map(async (user) => {
-    return await getDoc(doc(userCollection, user.uid));
+    const userDoc = await getDoc(doc(userCollection, user.uid));
+    if(userDoc.exists()){
+      return userDoc;
+    }
+    return null;
   });
   let result: User[] = [];
-  const userDocs = await Promise.all(userDocsPromise);
+  let userDocs = (await Promise.all(userDocsPromise)).filter(doc => doc != null);
   result = userDocs.map((doc) => { 
-    return doc.data() as User;
-
+    let user = doc.data() as User;
+    user.id = doc.id;
+    return user;
   });
   return result;
 }

@@ -36,11 +36,13 @@ export interface GetUserDetailsByIdDto {
     firstName: string;
     lastName: string;
     userName: string;
+    email: string;
     contactNumber: string;
     gender: string;
     role: RoleEnum;
     roleInformation?: ResidentInformationDto;
     dateOfBirth: string;
+    isActive?: boolean;
     createdBy: string;
     createdDateTime: string;
     updatedBy: string;

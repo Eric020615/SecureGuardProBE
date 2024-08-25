@@ -1,15 +1,24 @@
 import moment from "moment";
 import "moment-timezone";
-import { CancelFacilityBookingDto, CreateFacilityBookingDto, GetFacilityBookingHistoryDto } from "../dtos/facility.dto";
+import {
+  CancelFacilityBookingDto,
+  CreateFacilityBookingDto,
+  GetFacilityBookingHistoryDto,
+} from "../dtos/facility.dto";
 import { FacilityBooking } from "../models/facilityBooking.mode";
 import {
-    cancelFacilityBookingRepository,
+  cancelFacilityBookingRepository,
   createFacilityBookingRepository,
   getAllFacilityBookingRepository,
   getFacilityBookingRepository,
 } from "../repositories/facility.repository";
 import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
+import {
+  convertDateStringToTimestamp,
+  convertTimestampToUserTimezone,
+  getNowTimestamp,
+} from "../helper/time";
 
 export const createFacilityBookingService = async (
   createFacilityBookingDto: CreateFacilityBookingDto,
@@ -19,12 +28,8 @@ export const createFacilityBookingService = async (
     await createFacilityBookingRepository(
       new FacilityBooking(
         createFacilityBookingDto.facilityId,
-        createFacilityBookingDto.startDate
-          ? moment(createFacilityBookingDto.startDate).tz("Asia/Kuala_Lumpur").valueOf()
-          : 0,
-        createFacilityBookingDto.endDate
-          ? moment(createFacilityBookingDto.endDate).tz("Asia/Kuala_Lumpur").valueOf()
-          : 0,
+        convertDateStringToTimestamp(createFacilityBookingDto.startDate),
+        convertDateStringToTimestamp(createFacilityBookingDto.endDate),
         createFacilityBookingDto.bookedBy
           ? createFacilityBookingDto.bookedBy
           : userId,
@@ -33,12 +38,12 @@ export const createFacilityBookingService = async (
         "",
         userId,
         userId,
-        moment().tz("Asia/Kuala_Lumpur").valueOf(),
-        moment().tz("Asia/Kuala_Lumpur").valueOf()
+        getNowTimestamp(),
+        getNowTimestamp()
       )
     );
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
@@ -54,88 +59,82 @@ export const getFacilityBookingService = async (
       ? facilityBookings.map((facilityBooking) => {
           return {
             bookingId: facilityBooking.bookingId,
-            startDate: facilityBooking.startDate
-              ? moment(facilityBooking.startDate).tz("Asia/Kuala_Lumpur").toString()
-              : "",
-            endDate: facilityBooking.endDate 
-              ? moment(facilityBooking.endDate).tz("Asia/Kuala_Lumpur").toString() 
-              : "",
+            startDate: convertTimestampToUserTimezone(
+              facilityBooking.startDate
+            ),
+            endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
             facilityId: facilityBooking.facilityId,
             bookedBy: facilityBooking.bookedBy,
             numOfGuest: facilityBooking.numOfGuest,
             isCancelled: facilityBooking.isCancelled,
             createdBy: facilityBooking.createdBy,
-            createdDateTime: facilityBooking.createdDateTime 
-                ? moment(facilityBooking.createdDateTime).tz("Asia/Kuala_Lumpur").toString() 
-                : "",
+            createdDateTime: convertTimestampToUserTimezone(
+              facilityBooking.createdDateTime
+            ),
             updatedBy: facilityBooking.updatedBy,
-            updatedDateTime: facilityBooking.updatedDateTime 
-                ? moment(facilityBooking.updatedDateTime).tz("Asia/Kuala_Lumpur").toString() 
-                : ""
+            updatedDateTime: convertTimestampToUserTimezone(
+              facilityBooking.updatedDateTime
+            ),
           } as GetFacilityBookingHistoryDto;
         })
       : [];
     return data;
   } catch (error: any) {
-    console.log(error)
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
 
-export const getAllFacilityBookingService = async (
-  ) => {
-    try {
-      const facilityBookings = await getAllFacilityBookingRepository();
-      let data: GetFacilityBookingHistoryDto[] = [];
-      data = facilityBookings
-        ? facilityBookings.map((facilityBooking) => {
-            return {
-              bookingId: facilityBooking.bookingId,
-              startDate: facilityBooking.startDate
-                ? moment(facilityBooking.startDate).tz("Asia/Kuala_Lumpur").toString()
-                : "",
-              endDate: facilityBooking.endDate 
-                ? moment(facilityBooking.endDate).tz("Asia/Kuala_Lumpur").toString() 
-                : "",
-              facilityId: facilityBooking.facilityId,
-              bookedBy: facilityBooking.bookedBy,
-              numOfGuest: facilityBooking.numOfGuest,
-              isCancelled: facilityBooking.isCancelled,
-              createdBy: facilityBooking.createdBy,
-              createdDateTime: facilityBooking.createdDateTime 
-                  ? moment(facilityBooking.createdDateTime).tz("Asia/Kuala_Lumpur").toString() 
-                  : "",
-              updatedBy: facilityBooking.updatedBy,
-              updatedDateTime: facilityBooking.updatedDateTime 
-                  ? moment(facilityBooking.updatedDateTime).tz("Asia/Kuala_Lumpur").toString() 
-                  : ""
-            } as GetFacilityBookingHistoryDto;
-          })
-        : [];
-      return data;
-    } catch (error: any) {
-      throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
+export const getAllFacilityBookingService = async () => {
+  try {
+    const facilityBookings = await getAllFacilityBookingRepository();
+    let data: GetFacilityBookingHistoryDto[] = [];
+    data = facilityBookings
+      ? facilityBookings.map((facilityBooking) => {
+          return {
+            bookingId: facilityBooking.bookingId,
+            startDate: convertTimestampToUserTimezone(
+              facilityBooking.startDate
+            ),
+            endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
+            facilityId: facilityBooking.facilityId,
+            bookedBy: facilityBooking.bookedBy,
+            numOfGuest: facilityBooking.numOfGuest,
+            isCancelled: facilityBooking.isCancelled,
+            createdBy: facilityBooking.createdBy,
+            createdDateTime: convertTimestampToUserTimezone(
+              facilityBooking.createdDateTime
+            ),
+            updatedBy: facilityBooking.updatedBy,
+            updatedDateTime: convertTimestampToUserTimezone(
+              facilityBooking.updatedDateTime
+            ),
+          } as GetFacilityBookingHistoryDto;
+        })
+      : [];
+    return data;
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
 };
 
 export const cancelFacilityBookingService = async (
-    userId: string,
-    cancelFacilityBookingDto: CancelFacilityBookingDto, 
-  ) => {
-    try {
-      let facilityBooking : FacilityBooking = {
-        isCancelled : true,
-        cancelRemark : cancelFacilityBookingDto.cancelRemark ? 
-            cancelFacilityBookingDto.cancelRemark 
-            : "Cancel by user",
-        updatedBy : userId,
-        updatedDateTime : moment().tz("Asia/Kuala_Lumpur").valueOf(),
-      } as FacilityBooking;
-      await cancelFacilityBookingRepository(facilityBooking, cancelFacilityBookingDto.bookingId);
-    } catch (error: any) {
-      throw new OperationError(
-        error,
-        HttpStatusCode.INTERNAL_SERVER_ERROR
-      )
-    }
-  };
+  userId: string,
+  cancelFacilityBookingDto: CancelFacilityBookingDto
+) => {
+  try {
+    let facilityBooking: FacilityBooking = {
+      isCancelled: true,
+      cancelRemark: cancelFacilityBookingDto.cancelRemark
+        ? cancelFacilityBookingDto.cancelRemark
+        : "Cancel by user",
+      updatedBy: userId,
+      updatedDateTime: getNowTimestamp(),
+    } as FacilityBooking;
+    await cancelFacilityBookingRepository(
+      facilityBooking,
+      cancelFacilityBookingDto.bookingId
+    );
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};

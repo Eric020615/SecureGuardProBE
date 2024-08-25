@@ -129,6 +129,60 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IResponse_GetVisitorDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetVisitorDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetVisitorDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"EditVisitorByIdDto": {
+				"properties": {
+					"visitorId": {
+						"type": "string"
+					},
+					"visitorName": {
+						"type": "string"
+					},
+					"visitorCategory": {
+						"type": "string"
+					},
+					"visitorContactNumber": {
+						"type": "string"
+					},
+					"visitDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"visitorId",
+					"visitorName",
+					"visitorCategory",
+					"visitorContactNumber",
+					"visitDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GeneralFileDto": {
 				"properties": {
 					"fileName": {
@@ -324,6 +378,9 @@
 					"userName": {
 						"type": "string"
 					},
+					"email": {
+						"type": "string"
+					},
 					"contactNumber": {
 						"type": "string"
 					},
@@ -338,6 +395,9 @@
 					},
 					"dateOfBirth": {
 						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
 					},
 					"createdBy": {
 						"type": "string"
@@ -357,6 +417,7 @@
 					"firstName",
 					"lastName",
 					"userName",
+					"email",
 					"contactNumber",
 					"gender",
 					"role",
@@ -521,7 +582,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UpdateNoticeDto": {
+			"EditNoticeDto": {
 				"properties": {
 					"noticeId": {
 						"type": "string"
@@ -806,6 +867,107 @@
 		},
 		"/visitor": {
 			"get": {
+				"operationId": "getVisitorByResident",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "isPast",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/visitor/details": {
+			"get": {
+				"operationId": "getVisitorDetailsByResident",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "visitorId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/visitor/admin": {
+			"get": {
 				"operationId": "getAllVisitor",
 				"responses": {
 					"200": {
@@ -837,6 +999,55 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/visitor/edit": {
+			"put": {
+				"operationId": "editVisitorById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EditVisitorByIdDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/user/create": {
@@ -961,6 +1172,106 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/activate": {
+			"put": {
+				"operationId": "activateUserById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/deactivate": {
+			"put": {
+				"operationId": "deactivateUserById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
 								},
 								"examples": {
 									"Example 1": {}
@@ -1162,7 +1473,7 @@
 				]
 			}
 		},
-		"/notice/update": {
+		"/notice/edit": {
 			"put": {
 				"operationId": "editNoticeById",
 				"responses": {
@@ -1206,7 +1517,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UpdateNoticeDto"
+								"$ref": "#/components/schemas/EditNoticeDto"
 							}
 						}
 					}

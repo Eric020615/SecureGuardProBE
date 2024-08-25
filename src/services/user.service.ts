@@ -10,6 +10,7 @@ import firebaseAdmin from "../config/firebaseAdmin";
 import { uploadFile } from "../helper/file";
 import { RoleEnum } from "../common/role";
 import { UserRecord } from "firebase-admin/auth";
+import { fetchSignInMethodsForEmail } from "firebase/auth";
 
 const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
 
@@ -96,7 +97,7 @@ export const GetUserListService = async (isActive: boolean) => {
     }
     const userInformationList = await GetUserListRepository(userList);
     let data: GetUserDto[] = [];
-    data = userInformationList
+    data = userInformationList && userInformationList.length > 0
       ? userInformationList.map((userInformation) => {
           return {
               userId: userInformation.id ? userInformation.id : "",
@@ -126,14 +127,17 @@ export const GetUserDetailsByIdService = async (
   try {
     const userDetails = await GetUserByIdRepository(userId);
     let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto;
+    const userRecord = await authAdmin.getUser(userId);
     data = {
       userId: userDetails.id ? userDetails.id : "",
-      userName: "",
+      userName: userRecord.displayName ? userRecord.displayName : "",
       firstName: userDetails.firstName,
       lastName: userDetails.lastName,
+      email: userRecord.email ? userRecord.email : "",
       gender: userDetails.gender,
       role: userDetails.role,
       dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
+      isActive: !userRecord.disabled,
       contactNumber: userDetails.contactNumber,
       createdBy: userDetails.createdBy,
       createdDateTime: convertTimestampToUserTimezone(userDetails.createdDateTime),
@@ -147,8 +151,36 @@ export const GetUserDetailsByIdService = async (
         unitNumber: residentDetails.unitNumber,
         supportedFiles: residentDetails.supportedDocumentUrl
       };
-    }
+    }        
     return data;
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const activateUserByIdService = async (
+  userId: string
+) => {
+  try {
+    const userRecord = await authAdmin.getUser(userId);
+    if(!userRecord.disabled){
+      throw new OperationError("User was activated before.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    await authAdmin.updateUser(userId, {disabled: false})
+  } catch (error: any) {
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const deactivateUserByIdService = async (
+  userId: string
+) => {
+  try {
+    const userRecord = await authAdmin.getUser(userId);
+    if(userRecord.disabled){
+      throw new OperationError("User was deactivated before.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    await authAdmin.updateUser(userId, {disabled: true})
   } catch (error: any) {
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }

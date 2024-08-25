@@ -1,43 +1,46 @@
-import { Request } from "express";
+import { NextFunction, Request } from "express";
 import { verifyToken } from "../config/jwt";
 import { JwtPayloadDto } from "../dtos/auth.dto";
 import { checkUserStatus } from "../services/auth.service";
 import { RoleEnum } from "../common/role";
+import { OperationError } from "../common/operation-error";
+import { HttpStatusCode } from "../common/http-status-code";
 
 export interface IGetUserAuthInfoRequest extends Request {
   userId: string;
   role: RoleEnum;
 }
 
-export const expressAuthentication = (
+export const expressAuthentication = async (
   request: IGetUserAuthInfoRequest,
   securityName: string,
-  scopes?: string[]
+  scopes?: string[],
+  response?: any
 ): Promise<any> => {
-  if (securityName === "jwt") {
-    const token =
-      request.body.token ||
-      request.query.token ||
-      request.headers["authorization"];
-    return new Promise((resolve) => {
+  const token =
+    request.body.token ||
+    request.query.token ||
+    request.headers["authorization"];
+
+  try {
+    if (securityName === "jwt") {  
       const userData: JwtPayloadDto = verifyToken(token, scopes);
-      checkUserStatus(userData.userGUID);
+      await checkUserStatus(userData.userGUID);
       request.userId = userData.userGUID;
       request.role = userData.role;
-      resolve({});
-    });
-  }
-  if (securityName === "newUser") {
-    const token =
-      request.body.token ||
-      request.query.token ||
-      request.headers["authorization"];
-    return new Promise((resolve) => {
+      return Promise.resolve({});
+    }
+    if (securityName === "newUser") {
       const userData: JwtPayloadDto = verifyToken(token, scopes);
       request.userId = userData.userGUID;
       request.role = userData.role;
-      resolve({});
+      return Promise.resolve({});
+    }
+  } catch (error: any) {
+    return response.status(402).json({
+      message: error.message,
+      status: 402,
+      data: null
     });
   }
-  return Promise.reject({});
 };

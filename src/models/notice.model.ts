@@ -1,23 +1,25 @@
+import { Timestamp } from "firebase/firestore";
+
 export class Notice { 
     noticeId?: string;
     title: string;
     description: string;
-    startDate: number;
-    endDate: number;
+    startDate: Timestamp;
+    endDate: Timestamp;
     createdBy: string;
     updatedBy: string;
-    createdDateTime: number;
-    updatedDateTime: number;
+    createdDateTime: Timestamp;
+    updatedDateTime: Timestamp;
 
     constructor(
         title: string,
         description: string,
-        startDate: number,
-        endDate: number,
+        startDate: Timestamp,
+        endDate: Timestamp,
         createdBy: string,
         updatedBy: string,
-        createdDateTime: number,
-        updatedDateTime: number,
+        createdDateTime: Timestamp,
+        updatedDateTime: Timestamp,
     ){
         this.title = title;
         this.description = description;

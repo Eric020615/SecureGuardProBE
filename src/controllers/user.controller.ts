@@ -11,12 +11,13 @@ import {
   Get,
   Request,
   Query,
+  Put,
 } from "tsoa";
 import { IResponse } from "../dtos/index.dto"
 import { HttpStatusCode } from "../common/http-status-code";
 import { OperationError } from "../common/operation-error";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
-import { createUserService, GetUserDetailsByIdService, GetUserListService } from "../services/user.service";
+import { activateUserByIdService, createUserService, deactivateUserByIdService, GetUserDetailsByIdService, GetUserListService } from "../services/user.service";
 import { CreateResidentDto, GetUserDetailsByIdDto, GetUserDto } from "../dtos/user.dto";
 
 @Route("user")
@@ -75,6 +76,7 @@ export class UserController extends Controller {
       return response;
     } catch (err) {
       this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      console.log(err)
       const response = {
         message: "Failed to retrieve user list",
         status: "500",
@@ -105,6 +107,62 @@ export class UserController extends Controller {
       this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
       const response = {
         message: "Failed to retrieve user details",
+        status: "500",
+        data: null,
+      };
+      return response;
+    }
+  }
+
+  @Tags("User")
+  @OperationId("activateUserById")
+  @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+  @SuccessResponse(HttpStatusCode.OK, "OK")
+  @Put("/activate")
+  @Security("jwt", ["SA"])
+  public async activateUserById(
+    @Query() userId: string
+  ): Promise<IResponse<any>> {
+    try {
+      await activateUserByIdService(userId)
+      const response = {
+        message: "User activated successfully",
+        status: "200",
+        data: null,
+      };
+      return response;
+    } catch (err) {
+      this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      const response = {
+        message: "Failed to activate user",
+        status: "500",
+        data: null,
+      };
+      return response;
+    }
+  }
+
+  @Tags("User")
+  @OperationId("deactivateUserById")
+  @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+  @SuccessResponse(HttpStatusCode.OK, "OK")
+  @Put("/deactivate")
+  @Security("jwt", ["SA"])
+  public async deactivateUserById(
+    @Query() userId: string
+  ): Promise<IResponse<any>> {
+    try {
+      await deactivateUserByIdService(userId)
+      const response = {
+        message: "User was deactivated successfully",
+        status: "200",
+        data: null,
+      };
+      return response;
+    } catch (err) {
+      this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      const response = {
+        message: "Failed to deactivate user",
         status: "500",
         data: null,
       };

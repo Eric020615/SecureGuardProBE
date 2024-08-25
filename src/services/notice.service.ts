@@ -1,7 +1,7 @@
 import {
   CreateNoticeDto,
   GetNoticeDto,
-  UpdateNoticeDto,
+  EditNoticeDto,
 } from "../dtos/notice.dto";
 import {
   createNoticeRepository,
@@ -15,28 +15,31 @@ import { Notice } from "../models/notice.model";
 import moment from "moment";
 import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
+import {
+  convertDateStringToTimestamp,
+  convertTimestampToUserTimezone,
+  getNowTimestamp,
+} from "../helper/time";
 
-export const createNoticeService = async (createNoticeDto: CreateNoticeDto, userId: string) => {
+export const createNoticeService = async (
+  createNoticeDto: CreateNoticeDto,
+  userId: string
+) => {
   try {
     await createNoticeRepository(
       new Notice(
         createNoticeDto.title,
         createNoticeDto.description,
-        createNoticeDto.startDate
-          ? moment(createNoticeDto.startDate).valueOf()
-          : 0,
-        createNoticeDto.endDate ? moment(createNoticeDto.endDate).valueOf() : 0,
+        convertDateStringToTimestamp(createNoticeDto.startDate),
+        convertDateStringToTimestamp(createNoticeDto.endDate),
         userId,
         userId,
-        moment().valueOf(),
-        moment().valueOf()
+        getNowTimestamp(),
+        getNowTimestamp()
       )
     );
   } catch (error: any) {
-    throw new OperationError(
-      error,
-      HttpStatusCode.INTERNAL_SERVER_ERROR
-    )
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -50,27 +53,22 @@ export const getAllNoticeService = async () => {
             noticeId: notice.noticeId,
             title: notice.title,
             description: notice.description,
-            startDate: notice.startDate
-              ? moment(notice.startDate).toString()
-              : "",
-            endDate: notice.endDate ? moment(notice.endDate).toString() : "",
+            startDate: convertTimestampToUserTimezone(notice.startDate),
+            endDate: convertTimestampToUserTimezone(notice.endDate),
             createdBy: notice.createdBy,
-            createdDateTime: notice.createdDateTime
-              ? moment(notice.createdDateTime).toString()
-              : "",
+            createdDateTime: convertTimestampToUserTimezone(
+              notice.createdDateTime
+            ),
             updatedBy: notice.updatedBy,
-            updatedDateTime: notice.updatedDateTime
-              ? moment(notice.updatedDateTime).toString()
-              : "",
+            updatedDateTime: convertTimestampToUserTimezone(
+              notice.updatedDateTime
+            ),
           } as GetNoticeDto;
         })
       : [];
     return data;
   } catch (error: any) {
-    throw new OperationError(
-      error,
-      HttpStatusCode.INTERNAL_SERVER_ERROR
-    )
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -85,29 +83,22 @@ export const getNoticeService = async () => {
             noticeId: notice.noticeId,
             title: notice.title,
             description: notice.description,
-            startDate: notice.startDate
-              ? moment(notice.startDate).toString()
-              : "",
-            endDate: notice.endDate 
-              ? moment(notice.endDate).toString() 
-              : "",
+            startDate: convertTimestampToUserTimezone(notice.startDate),
+            endDate: convertTimestampToUserTimezone(notice.endDate),
             createdBy: notice.createdBy,
-            createdDateTime: notice.createdDateTime
-              ? moment(notice.createdDateTime).toString()
-              : "",
+            createdDateTime: convertTimestampToUserTimezone(
+              notice.createdDateTime
+            ),
             updatedBy: notice.updatedBy,
-            updatedDateTime: notice.updatedDateTime
-              ? moment(notice.updatedDateTime).toString()
-              : "",
+            updatedDateTime: convertTimestampToUserTimezone(
+              notice.updatedDateTime
+            ),
           } as GetNoticeDto;
         })
       : [];
     return data;
   } catch (error: any) {
-    throw new OperationError(
-      error,
-      HttpStatusCode.INTERNAL_SERVER_ERROR
-    )
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -134,32 +125,26 @@ export const getNoticeByIdService = async (id: string) => {
     }
     return data;
   } catch (error: any) {
-    throw new OperationError(
-      error,
-      HttpStatusCode.INTERNAL_SERVER_ERROR
-    )
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
 
 export const editNoticeByIdService = async (
-  updateNoticeDto: UpdateNoticeDto,
+  editNoticeDto: EditNoticeDto,
   userId: string
 ) => {
   try {
     let notice: Notice = {
-      title: updateNoticeDto.title,
-      description: updateNoticeDto.description,
-      startDate: moment(updateNoticeDto.startDate).valueOf(),
-      endDate: moment(updateNoticeDto.endDate).valueOf(),
+      title: editNoticeDto.title,
+      description: editNoticeDto.description,
+      startDate: convertDateStringToTimestamp(editNoticeDto.startDate),
+      endDate: convertDateStringToTimestamp(editNoticeDto.endDate),
       updatedBy: userId,
-      updatedDateTime: moment().valueOf(),
+      updatedDateTime: getNowTimestamp()
     } as Notice;
-    await editNoticeByIdRepository(updateNoticeDto.noticeId, notice);
+    await editNoticeByIdRepository(editNoticeDto.noticeId, notice);
   } catch (error: any) {
-    throw new OperationError(
-      error,
-      HttpStatusCode.INTERNAL_SERVER_ERROR
-    )
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -167,9 +152,6 @@ export const deleteNoticeByIdService = async (id: string) => {
   try {
     await deleteNoticeByIdRepository(id);
   } catch (error: any) {
-    throw new OperationError(
-      error,
-      HttpStatusCode.INTERNAL_SERVER_ERROR
-    )
+    throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
