@@ -4,10 +4,8 @@ import "moment-timezone";
 
 export const convertDateStringToTimestamp = (dateString: string) => {
   if(!dateString){
-    return Timestamp.fromDate(moment(0).utc().toDate())
+    return Timestamp.fromDate(new Date())
   }
-  console.log(dateString)
-  console.log(moment(dateString).utc().toDate())  
   return Timestamp.fromDate(moment(dateString).utc().toDate())
 }
 
