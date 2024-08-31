@@ -604,6 +604,7 @@ export function RegisterRoutes(app: Router) {
 
             async function UserController_activateUserById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     userId: {"in":"query","name":"userId","required":true,"dataType":"string"},
             };
 
@@ -635,6 +636,7 @@ export function RegisterRoutes(app: Router) {
 
             async function UserController_deactivateUserById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     userId: {"in":"query","name":"userId","required":true,"dataType":"string"},
             };
 

@@ -72,3 +72,8 @@ export const GetResidentDetailsRepository = async (
   result = resDoc.data() as Resident;
   return result;
 };
+
+export const updateUserStatusByIdRepository = async (id: string, user: User) => {
+  const docRef = doc(userCollection, id);
+  await updateDoc(docRef, { ...user });
+};

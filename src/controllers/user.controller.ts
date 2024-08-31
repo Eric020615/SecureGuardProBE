@@ -121,10 +121,17 @@ export class UserController extends Controller {
   @Put("/activate")
   @Security("jwt", ["SA"])
   public async activateUserById(
+    @Request() request: IGetUserAuthInfoRequest,
     @Query() userId: string
   ): Promise<IResponse<any>> {
     try {
-      await activateUserByIdService(userId)
+      if (!request.userId) {
+        throw new OperationError(
+          "User not found",
+          HttpStatusCode.INTERNAL_SERVER_ERROR
+        );
+      }
+      await activateUserByIdService(userId, request.userId)
       const response = {
         message: "User activated successfully",
         status: "200",
@@ -149,10 +156,17 @@ export class UserController extends Controller {
   @Put("/deactivate")
   @Security("jwt", ["SA"])
   public async deactivateUserById(
+    @Request() request: IGetUserAuthInfoRequest,
     @Query() userId: string
   ): Promise<IResponse<any>> {
     try {
-      await deactivateUserByIdService(userId)
+      if (!request.userId) {
+        throw new OperationError(
+          "User not found",
+          HttpStatusCode.INTERNAL_SERVER_ERROR
+        );
+      }
+      await deactivateUserByIdService(userId, request.userId)
       const response = {
         message: "User was deactivated successfully",
         status: "200",

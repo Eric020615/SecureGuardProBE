@@ -4,7 +4,7 @@ import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
 import { CreateResidentDto, GetUserDetailsByIdDto, GetUserDto, ResidentInformationDto } from "../dtos/user.dto";
 import { Resident, User } from "../models/user.model";
-import { createResidentRepository, GetResidentDetailsRepository, GetUserByIdRepository, GetUserListRepository } from "../repositories/user.repository";
+import { createResidentRepository, GetResidentDetailsRepository, GetUserByIdRepository, GetUserListRepository, updateUserStatusByIdRepository } from "../repositories/user.repository";
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getNowTimestamp } from "../helper/time";
 import firebaseAdmin from "../config/firebaseAdmin";
 import { uploadFile } from "../helper/file";
@@ -159,7 +159,8 @@ export const GetUserDetailsByIdService = async (
 };
 
 export const activateUserByIdService = async (
-  userId: string
+  userId: string,
+  updatedBy: string
 ) => {
   try {
     const userRecord = await authAdmin.getUser(userId);
@@ -167,13 +168,18 @@ export const activateUserByIdService = async (
       throw new OperationError("User was activated before.", HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     await authAdmin.updateUser(userId, {disabled: false})
+    await updateUserStatusByIdRepository(userId, {
+      updatedBy: updatedBy,
+      updatedDateTime: getNowTimestamp()
+    } as User)
   } catch (error: any) {
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
 
 export const deactivateUserByIdService = async (
-  userId: string
+  userId: string,
+  updatedBy: string
 ) => {
   try {
     const userRecord = await authAdmin.getUser(userId);
@@ -181,6 +187,10 @@ export const deactivateUserByIdService = async (
       throw new OperationError("User was deactivated before.", HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     await authAdmin.updateUser(userId, {disabled: true})
+    await updateUserStatusByIdRepository(userId, {
+      updatedBy: updatedBy,
+      updatedDateTime: getNowTimestamp()
+    } as User)
   } catch (error: any) {
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
