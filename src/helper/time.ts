@@ -1,12 +1,11 @@
 import { Timestamp } from "firebase/firestore";
-import moment from "moment";
-import "moment-timezone";
+import moment from "moment-timezone";
 
 export const convertDateStringToTimestamp = (dateString: string) => {
   if(!dateString){
     return Timestamp.fromDate(new Date())
   }
-  return Timestamp.fromDate(moment(dateString).utc().toDate())
+  return Timestamp.fromDate(moment.utc(dateString).toDate())
 }
 
 
