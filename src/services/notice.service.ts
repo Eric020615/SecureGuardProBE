@@ -105,23 +105,20 @@ export const getNoticeService = async () => {
 export const getNoticeByIdService = async (id: string) => {
   try {
     const notice = await getNoticeByIdRepository(id);
-    let data: GetNoticeDto[] = [];
+    let data: GetNoticeDto = {} as GetNoticeDto;
     if (notice != null) {
-      data.push({
+      data ={
         noticeId: notice.noticeId,
         title: notice.title,
         description: notice.description,
-        startDate: notice.startDate ? moment(notice.startDate).toString() : "",
-        endDate: notice.endDate ? moment(notice.endDate).toString() : "",
+        startDate: convertTimestampToUserTimezone(notice.startDate),
+        endDate: convertTimestampToUserTimezone(notice.endDate),
         createdBy: notice.createdBy,
-        createdDateTime: notice.createdDateTime
-          ? moment(notice.createdDateTime).toString()
-          : "",
+        createdDateTime: convertTimestampToUserTimezone(notice.createdDateTime),
         updatedBy: notice.updatedBy,
-        updatedDateTime: notice.updatedDateTime
-          ? moment(notice.updatedDateTime).toString()
-          : "",
-      } as GetNoticeDto);
+        updatedDateTime: convertTimestampToUserTimezone(notice.updatedDateTime)
+      } as GetNoticeDto;
+      console.log(data)
     }
     return data;
   } catch (error: any) {
