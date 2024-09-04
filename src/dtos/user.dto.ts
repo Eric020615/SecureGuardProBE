@@ -1,4 +1,4 @@
-import { RoleEnum } from "../common/role";
+import { GenderEnum, RoleEnum } from "../common/role";
 import { GeneralFileDto } from "./index.dto";
 
 export interface CreateUserDto {
@@ -6,7 +6,7 @@ export interface CreateUserDto {
     lastName: string;
     userName: string;
     contactNumber: string;
-    gender: string;
+    gender: GenderEnum;
     dateOfBirth: string;
 }
 
@@ -45,7 +45,7 @@ export interface GetUserDetailsByIdDto {
     contactNumber: string;
     gender: string;
     role: RoleEnum;
-    roleInformation?: ResidentInformationDto;
+    roleInformation?: ResidentInformationDto | SystemInformationDto;
     dateOfBirth: string;
     isActive?: boolean;
     createdBy: string;
@@ -57,5 +57,10 @@ export interface GetUserDetailsByIdDto {
 export interface ResidentInformationDto {
     floorNumber: string
 	unitNumber: string
+	supportedFiles: string[]
+}
+
+export interface SystemInformationDto {
+    staffId: string
 	supportedFiles: string[]
 }

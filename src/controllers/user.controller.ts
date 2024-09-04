@@ -39,7 +39,6 @@ export class UserController extends Controller {
           HttpStatusCode.INTERNAL_SERVER_ERROR
         );
       }
-      console.log(request.userId)
       await createUserService(createUserDto, request.userId, request.role);
       const response = {
         message: "User Created successfully",

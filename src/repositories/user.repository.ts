@@ -38,7 +38,6 @@ export const createSystemAdminRepository = async (
   systemAdmin: SystemAdmin,
   userId: string
 ) => {
-  console.log("hello")
   const userDocRef = doc(userCollection, userId);
   const systemAdminDocRef = doc(systemAdminCollection, userId);
   await setDoc(userDocRef, {...user});
@@ -84,6 +83,16 @@ export const GetResidentDetailsRepository = async (
   const resDoc = await getDoc(docRef);
   let result: Resident = {} as Resident;
   result = resDoc.data() as Resident;
+  return result;
+};
+
+export const GetSystemAdminDetailsRepository = async (
+  userId: string
+) => {
+  const docRef = doc(systemAdminCollection, userId);
+  const resDoc = await getDoc(docRef);
+  let result: SystemAdmin = {} as SystemAdmin;
+  result = resDoc.data() as SystemAdmin;
   return result;
 };
 

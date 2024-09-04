@@ -4,7 +4,7 @@ import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
 import { CreateResidentDto, CreateSystemAdminDto, GetUserDetailsByIdDto, GetUserDto } from "../dtos/user.dto";
 import { Resident, SystemAdmin, User } from "../models/user.model";
-import { createResidentRepository, createSystemAdminRepository, GetResidentDetailsRepository, GetUserByIdRepository, GetUserListRepository, updateUserStatusByIdRepository } from "../repositories/user.repository";
+import { createResidentRepository, createSystemAdminRepository, GetResidentDetailsRepository, GetSystemAdminDetailsRepository, GetUserByIdRepository, GetUserListRepository, updateUserStatusByIdRepository } from "../repositories/user.repository";
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getNowTimestamp } from "../helper/time";
 import firebaseAdmin from "../config/firebaseAdmin";
 import { uploadFile } from "../helper/file";
@@ -20,8 +20,6 @@ export const createUserService = async (
 ) => {
   try {
     const fileUrl = await uploadFile(createUserDto.supportedFiles, userId);
-    console.log(role)
-    console.log(instanceOfCreateSystemAdminDto(createUserDto))
     if(role === RoleEnum.RESIDENT && instanceOfCreateResidentDto(createUserDto)){
       await createResidentRepository(
         new User(
@@ -49,7 +47,6 @@ export const createUserService = async (
       );
     }
     else if(role === RoleEnum.SYSTEM_ADMIN && instanceOfCreateSystemAdminDto(createUserDto)){
-      console.log("hellojj")
       await createSystemAdminRepository(
         new User(
           createUserDto.firstName,
@@ -183,6 +180,13 @@ export const GetUserDetailsByIdService = async (
         supportedFiles: residentDetails.supportedDocumentUrl
       };
     }        
+    if(data.role === RoleEnum.SYSTEM_ADMIN){
+      const systemAdminDetails = await GetSystemAdminDetailsRepository(userId);
+      data.roleInformation = {
+        staffId: systemAdminDetails.staffId,
+        supportedFiles: systemAdminDetails.supportedDocumentUrl
+      };
+    }
     return data;
   } catch (error: any) {
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);

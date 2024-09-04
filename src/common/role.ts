@@ -3,6 +3,11 @@ export enum RoleEnum {
     'RESIDENT' = 'RES',
 }  
 
+export enum GenderEnum {
+    'MALE' = 'M',
+    'FEMALE' = 'F'
+}
+
 export type RoleParam =
   | "SA"
   | "RES"

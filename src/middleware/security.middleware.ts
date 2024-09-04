@@ -30,11 +30,7 @@ export const expressAuthentication = async (
       return Promise.resolve({});
     }
     if (securityName === "newUser") {
-      const token2 = createToken({
-        userGUID: token,
-        role: RoleEnum.SYSTEM_ADMIN,
-      } as JwtPayloadDto);
-      const userData: JwtPayloadDto = verifyToken(token2, scopes);
+      const userData: JwtPayloadDto = verifyToken(token, scopes);
       request.userId = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});
