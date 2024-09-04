@@ -118,7 +118,6 @@ export const getNoticeByIdService = async (id: string) => {
         updatedBy: notice.updatedBy,
         updatedDateTime: convertTimestampToUserTimezone(notice.updatedDateTime)
       } as GetNoticeDto;
-      console.log(data)
     }
     return data;
   } catch (error: any) {

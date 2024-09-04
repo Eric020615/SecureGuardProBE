@@ -246,6 +246,49 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CreateSystemAdminDto": {
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"staffId": {
+						"type": "string"
+					},
+					"supportedFiles": {
+						"items": {
+							"$ref": "#/components/schemas/GeneralFileDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"userName",
+					"contactNumber",
+					"gender",
+					"dateOfBirth",
+					"staffId",
+					"supportedFiles"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"RoleEnum": {
 				"enum": [
 					"SA",
@@ -1095,7 +1138,14 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateResidentDto"
+								"anyOf": [
+									{
+										"$ref": "#/components/schemas/CreateResidentDto"
+									},
+									{
+										"$ref": "#/components/schemas/CreateSystemAdminDto"
+									}
+								]
 							}
 						}
 					}

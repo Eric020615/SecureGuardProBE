@@ -2,47 +2,78 @@ import { OperationError } from "../common/operation-error";
 import { HttpStatusCode } from "../common/http-status-code";
 import { FirebaseError } from "firebase/app";
 import { convertFirebaseAuthEnumMessage } from "../common/firebase-error-code";
-import { CreateResidentDto, GetUserDetailsByIdDto, GetUserDto, ResidentInformationDto } from "../dtos/user.dto";
-import { Resident, User } from "../models/user.model";
-import { createResidentRepository, GetResidentDetailsRepository, GetUserByIdRepository, GetUserListRepository, updateUserStatusByIdRepository } from "../repositories/user.repository";
+import { CreateResidentDto, CreateSystemAdminDto, GetUserDetailsByIdDto, GetUserDto } from "../dtos/user.dto";
+import { Resident, SystemAdmin, User } from "../models/user.model";
+import { createResidentRepository, createSystemAdminRepository, GetResidentDetailsRepository, GetUserByIdRepository, GetUserListRepository, updateUserStatusByIdRepository } from "../repositories/user.repository";
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getNowTimestamp } from "../helper/time";
 import firebaseAdmin from "../config/firebaseAdmin";
 import { uploadFile } from "../helper/file";
 import { RoleEnum } from "../common/role";
 import { UserRecord } from "firebase-admin/auth";
-import { fetchSignInMethodsForEmail } from "firebase/auth";
 
 const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
 
 export const createUserService = async (
-  createUserDto: CreateResidentDto,
+  createUserDto: CreateResidentDto | CreateSystemAdminDto,
   userId: string,
   role: RoleEnum
 ) => {
   try {
-    const FileURL = await uploadFile(createUserDto.supportedFiles, userId);
-    await createResidentRepository(
-      new User(
-        createUserDto.firstName,
-        createUserDto.lastName,
-        createUserDto.contactNumber,
-        createUserDto.gender,
-        convertDateStringToTimestamp(createUserDto.dateOfBirth),
-        role,
-        userId,
-        userId,
-        getNowTimestamp(),
-        getNowTimestamp()
-      ),
-      new Resident(
-        createUserDto.floorNumber,
-        createUserDto.unitNumber,
-        getNowTimestamp(),
-        getNowTimestamp(),
-        FileURL ? FileURL : []
-      ),
-      userId
-    );
+    const fileUrl = await uploadFile(createUserDto.supportedFiles, userId);
+    console.log(role)
+    console.log(instanceOfCreateSystemAdminDto(createUserDto))
+    if(role === RoleEnum.RESIDENT && instanceOfCreateResidentDto(createUserDto)){
+      await createResidentRepository(
+        new User(
+          createUserDto.firstName,
+          createUserDto.lastName,
+          createUserDto.contactNumber,
+          createUserDto.gender,
+          convertDateStringToTimestamp(createUserDto.dateOfBirth),
+          role,
+          userId,
+          userId,
+          getNowTimestamp(),
+          getNowTimestamp()
+        ),
+        new Resident(
+          createUserDto.floorNumber,
+          createUserDto.unitNumber,
+          userId,
+          userId,
+          getNowTimestamp(),
+          getNowTimestamp(),
+          fileUrl ? fileUrl : []
+        ),
+        userId
+      );
+    }
+    else if(role === RoleEnum.SYSTEM_ADMIN && instanceOfCreateSystemAdminDto(createUserDto)){
+      console.log("hellojj")
+      await createSystemAdminRepository(
+        new User(
+          createUserDto.firstName,
+          createUserDto.lastName,
+          createUserDto.contactNumber,
+          createUserDto.gender,
+          convertDateStringToTimestamp(createUserDto.dateOfBirth),
+          role,
+          userId,
+          userId,
+          getNowTimestamp(),
+          getNowTimestamp()
+        ),
+        new SystemAdmin(
+          createUserDto.staffId,
+          userId,
+          userId,
+          getNowTimestamp(),
+          getNowTimestamp(),
+          fileUrl ? fileUrl : []
+        ),
+        userId
+      );
+    }
     await authAdmin.updateUser(userId, {displayName: createUserDto.userName})
   } catch (error: any) {
     if (error instanceof FirebaseError) {
@@ -195,3 +226,11 @@ export const deactivateUserByIdService = async (
     throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 };
+
+const instanceOfCreateResidentDto = (object: any): object is CreateResidentDto => {
+  return 'floor' && 'unitNumber' in object;
+}
+
+const instanceOfCreateSystemAdminDto = (object: any): object is CreateSystemAdminDto => {
+  return 'staffId' in object;
+}

@@ -31,6 +31,11 @@ export interface CreateResidentDto extends CreateUserDto {
     supportedFiles: GeneralFileDto[]
 }
 
+export interface CreateSystemAdminDto extends CreateUserDto {
+    staffId: string;
+    supportedFiles: GeneralFileDto[]
+}
+
 export interface GetUserDetailsByIdDto {
     userId: string;
     firstName: string;

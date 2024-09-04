@@ -19,7 +19,7 @@ const authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH;
 
 export const registerService = async (
   registerUserDto: RegisterUserDto,
-  userRole: string
+  userRole: RoleEnum
 ) => {
   try {
     if (registerUserDto.confirmPassword !== registerUserDto.password) {

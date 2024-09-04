@@ -18,7 +18,7 @@ import { HttpStatusCode } from "../common/http-status-code";
 import { OperationError } from "../common/operation-error";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
 import { activateUserByIdService, createUserService, deactivateUserByIdService, GetUserDetailsByIdService, GetUserListService } from "../services/user.service";
-import { CreateResidentDto, GetUserDetailsByIdDto, GetUserDto } from "../dtos/user.dto";
+import { CreateResidentDto, CreateSystemAdminDto, GetUserDetailsByIdDto, GetUserDto } from "../dtos/user.dto";
 
 @Route("user")
 export class UserController extends Controller {
@@ -30,7 +30,7 @@ export class UserController extends Controller {
   @Security("newUser", ["RES", "SA"])
   public async createUser(
     @Request() request: IGetUserAuthInfoRequest,
-    @Body() createUserDto: CreateResidentDto
+    @Body() createUserDto: CreateResidentDto | CreateSystemAdminDto
   ): Promise<IResponse<any>> {
     try {
       if (!request.userId || !request.role) {
@@ -39,6 +39,7 @@ export class UserController extends Controller {
           HttpStatusCode.INTERNAL_SERVER_ERROR
         );
       }
+      console.log(request.userId)
       await createUserService(createUserDto, request.userId, request.role);
       const response = {
         message: "User Created successfully",

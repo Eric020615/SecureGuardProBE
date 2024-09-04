@@ -14,12 +14,13 @@ import {
 } from "firebase/firestore";
 import firebase from "../config/initFirebase";
 import "moment-timezone";
-import { Resident, User } from "../models/user.model";
+import { Resident, SystemAdmin, User } from "../models/user.model";
 import { UserRecord } from "firebase-admin/auth";
 
 const userDB = firebase.FIRESTORE;
 const userCollection = collection(userDB, "user");
 const residentCollection = collection(userDB, "resident");
+const systemAdminCollection = collection(userDB, "systemAdmin");
 
 export const createResidentRepository = async (
   user: User,
@@ -31,6 +32,19 @@ export const createResidentRepository = async (
   await setDoc(userDocRef, {...user});
   await setDoc(residentDocRef, {...resident});
 };
+
+export const createSystemAdminRepository = async (
+  user: User,
+  systemAdmin: SystemAdmin,
+  userId: string
+) => {
+  console.log("hello")
+  const userDocRef = doc(userCollection, userId);
+  const systemAdminDocRef = doc(systemAdminCollection, userId);
+  await setDoc(userDocRef, {...user});
+  await setDoc(systemAdminDocRef, {...systemAdmin});
+};
+
 
 export const GetUserByIdRepository = async (
   userId: string

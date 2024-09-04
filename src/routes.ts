@@ -116,6 +116,21 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateSystemAdminDto": {
+        "dataType": "refObject",
+        "properties": {
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "userName": {"dataType":"string","required":true},
+            "contactNumber": {"dataType":"string","required":true},
+            "gender": {"dataType":"string","required":true},
+            "dateOfBirth": {"dataType":"string","required":true},
+            "staffId": {"dataType":"string","required":true},
+            "supportedFiles": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoleEnum": {
         "dataType": "refEnum",
         "enums": ["SA","RES"],
@@ -511,7 +526,7 @@ export function RegisterRoutes(app: Router) {
             async function UserController_createUser(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    createUserDto: {"in":"body","name":"createUserDto","required":true,"ref":"CreateResidentDto"},
+                    createUserDto: {"in":"body","name":"createUserDto","required":true,"dataType":"union","subSchemas":[{"ref":"CreateResidentDto"},{"ref":"CreateSystemAdminDto"}]},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
