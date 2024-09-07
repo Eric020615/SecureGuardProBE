@@ -15,7 +15,11 @@ import {
 } from "../repositories/visitor.repository";
 import { Visitor } from "../models/visitor.model";
 import { Timestamp } from "firebase/firestore";
-import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getNowTimestamp } from "../helper/time";
+import {
+  convertDateStringToTimestamp,
+  convertTimestampToUserTimezone,
+  getNowTimestamp,
+} from "../helper/time";
 
 export const createVisitorService = async (
   createVisitorDto: CreateVisitorDto,
@@ -49,9 +53,11 @@ export const editVisitorByIdService = async (
       visitorName: editVisitorByIdDto.visitorName,
       visitorCategory: editVisitorByIdDto.visitorCategory,
       visitorContactNumber: editVisitorByIdDto.visitorContactNumber,
-      visitDateTime: convertDateStringToTimestamp(editVisitorByIdDto.visitDateTime),
+      visitDateTime: convertDateStringToTimestamp(
+        editVisitorByIdDto.visitDateTime
+      ),
       updatedBy: userId,
-      updatedDateTime: getNowTimestamp()
+      updatedDateTime: getNowTimestamp(),
     } as Visitor;
     await editVisitorByIdRepository(visitor);
   } catch (error: any) {

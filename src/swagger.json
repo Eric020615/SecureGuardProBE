@@ -532,6 +532,46 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"EditUserDetailsByIdDto": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"firstName",
+					"lastName",
+					"userName",
+					"email",
+					"contactNumber",
+					"gender",
+					"dateOfBirth"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -1275,6 +1315,56 @@
 					}
 				],
 				"parameters": []
+			},
+			"put": {
+				"operationId": "editUserProfileById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"RES"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EditUserDetailsByIdDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/user/details": {
