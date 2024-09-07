@@ -64,3 +64,14 @@ export interface SystemInformationDto {
     staffId: string
 	supportedFiles: string[]
 }
+
+export interface EditUserDetailsByIdDto {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    email: string;
+    contactNumber: string;
+    gender: string;
+    dateOfBirth: string;
+}

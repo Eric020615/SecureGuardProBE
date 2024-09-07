@@ -100,3 +100,8 @@ export const updateUserStatusByIdRepository = async (id: string, user: User) => 
   const docRef = doc(userCollection, id);
   await updateDoc(docRef, { ...user });
 };
+
+export const editUserDetailsByIdRepository = async (id: string, user: User) => {
+  const docRef = doc(userCollection, id);
+  await updateDoc(docRef, { ...user });
+};

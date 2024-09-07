@@ -100,6 +100,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GenderEnum": {
+        "dataType": "refEnum",
+        "enums": ["M","F"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateResidentDto": {
         "dataType": "refObject",
         "properties": {
@@ -107,7 +112,7 @@ const models: TsoaRoute.Models = {
             "lastName": {"dataType":"string","required":true},
             "userName": {"dataType":"string","required":true},
             "contactNumber": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
+            "gender": {"ref":"GenderEnum","required":true},
             "dateOfBirth": {"dataType":"string","required":true},
             "unitNumber": {"dataType":"string","required":true},
             "floorNumber": {"dataType":"string","required":true},
@@ -123,7 +128,7 @@ const models: TsoaRoute.Models = {
             "lastName": {"dataType":"string","required":true},
             "userName": {"dataType":"string","required":true},
             "contactNumber": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
+            "gender": {"ref":"GenderEnum","required":true},
             "dateOfBirth": {"dataType":"string","required":true},
             "staffId": {"dataType":"string","required":true},
             "supportedFiles": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
@@ -175,6 +180,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SystemInformationDto": {
+        "dataType": "refObject",
+        "properties": {
+            "staffId": {"dataType":"string","required":true},
+            "supportedFiles": {"dataType":"array","array":{"dataType":"string"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetUserDetailsByIdDto": {
         "dataType": "refObject",
         "properties": {
@@ -186,7 +200,7 @@ const models: TsoaRoute.Models = {
             "contactNumber": {"dataType":"string","required":true},
             "gender": {"dataType":"string","required":true},
             "role": {"ref":"RoleEnum","required":true},
-            "roleInformation": {"ref":"ResidentInformationDto"},
+            "roleInformation": {"dataType":"union","subSchemas":[{"ref":"ResidentInformationDto"},{"ref":"SystemInformationDto"}]},
             "dateOfBirth": {"dataType":"string","required":true},
             "isActive": {"dataType":"boolean"},
             "createdBy": {"dataType":"string","required":true},
@@ -570,6 +584,37 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getUserList',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/user/profile',
+            authenticateMiddleware([{"jwt":["SA","RES"]}]),
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getUserProfileById)),
+
+            async function UserController_getUserProfileById(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'getUserProfileById',
                 controller,
                 response,
                 next,

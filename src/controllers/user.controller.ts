@@ -13,12 +13,25 @@ import {
   Query,
   Put,
 } from "tsoa";
-import { IResponse } from "../dtos/index.dto"
+import { IResponse } from "../dtos/index.dto";
 import { HttpStatusCode } from "../common/http-status-code";
 import { OperationError } from "../common/operation-error";
 import { IGetUserAuthInfoRequest } from "../middleware/security.middleware";
-import { activateUserByIdService, createUserService, deactivateUserByIdService, GetUserDetailsByIdService, GetUserListService } from "../services/user.service";
-import { CreateResidentDto, CreateSystemAdminDto, GetUserDetailsByIdDto, GetUserDto } from "../dtos/user.dto";
+import {
+  activateUserByIdService,
+  createUserService,
+  deactivateUserByIdService,
+  editUserDetailsByIdService,
+  GetUserDetailsByIdService,
+  GetUserListService,
+} from "../services/user.service";
+import {
+  CreateResidentDto,
+  CreateSystemAdminDto,
+  EditUserDetailsByIdDto,
+  GetUserDetailsByIdDto,
+  GetUserDto,
+} from "../dtos/user.dto";
 
 @Route("user")
 export class UserController extends Controller {
@@ -67,7 +80,7 @@ export class UserController extends Controller {
     @Query() isActive: boolean
   ): Promise<IResponse<any>> {
     try {
-      const data = await GetUserListService(isActive)
+      const data = await GetUserListService(isActive);
       const response = {
         message: "User list retrieve successfully",
         status: "200",
@@ -76,7 +89,7 @@ export class UserController extends Controller {
       return response;
     } catch (err) {
       this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
-      console.log(err)
+      console.log(err);
       const response = {
         message: "Failed to retrieve user list",
         status: "500",
@@ -87,8 +100,83 @@ export class UserController extends Controller {
   }
 
   @Tags("User")
+  @OperationId("getUserProfileById")
+  @Response<IResponse<GetUserDetailsByIdDto>>(
+    HttpStatusCode.BAD_REQUEST,
+    "Bad Request"
+  )
+  @SuccessResponse(HttpStatusCode.OK, "OK")
+  @Get("/profile")
+  @Security("jwt", ["SA", "RES"])
+  public async getUserProfileById(
+    @Request() request: IGetUserAuthInfoRequest
+  ): Promise<IResponse<any>> {
+    try {
+      if (!request.userId || !request.role) {
+        throw new OperationError(
+          "User not found",
+          HttpStatusCode.INTERNAL_SERVER_ERROR
+        );
+      }
+      const data = await GetUserDetailsByIdService(request.userId);
+      const response = {
+        message: "User details retrieve successfully",
+        status: "200",
+        data: data,
+      };
+      return response;
+    } catch (err) {
+      this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      const response = {
+        message: "Failed to retrieve user details",
+        status: "500",
+        data: null,
+      };
+      return response;
+    }
+  }
+
+  @Tags("User")
+  @OperationId("editUserProfileById")
+  @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+  @SuccessResponse(HttpStatusCode.OK, "OK")
+  @Put("/profile")
+  @Security("jwt", ["SA", "RES"])
+  public async editUserProfileById(
+    @Body() editUserDetailsByIdDto: EditUserDetailsByIdDto,
+    @Request() request: IGetUserAuthInfoRequest
+  ): Promise<IResponse<any>> {
+    try {
+      if (!request.userId) {
+        throw new OperationError(
+          "User not found",
+          HttpStatusCode.INTERNAL_SERVER_ERROR
+        );
+      }
+      await editUserDetailsByIdService(editUserDetailsByIdDto, request.userId);
+      const response = {
+        message: "User profile updated successfully",
+        status: "200",
+        data: null,
+      };
+      return response;
+    } catch (err) {
+      this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      const response = {
+        message: "Failed to update user profile",
+        status: "500",
+        data: null,
+      };
+      return response;
+    }
+  }
+
+  @Tags("User")
   @OperationId("getUserDetailsById")
-  @Response<IResponse<GetUserDetailsByIdDto>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+  @Response<IResponse<GetUserDetailsByIdDto>>(
+    HttpStatusCode.BAD_REQUEST,
+    "Bad Request"
+  )
   @SuccessResponse(HttpStatusCode.OK, "OK")
   @Get("/details")
   @Security("jwt", ["SA"])
@@ -96,7 +184,7 @@ export class UserController extends Controller {
     @Query() userId: string
   ): Promise<IResponse<any>> {
     try {
-      const data = await GetUserDetailsByIdService(userId)
+      const data = await GetUserDetailsByIdService(userId);
       const response = {
         message: "User details retrieve successfully",
         status: "200",
@@ -131,7 +219,7 @@ export class UserController extends Controller {
           HttpStatusCode.INTERNAL_SERVER_ERROR
         );
       }
-      await activateUserByIdService(userId, request.userId)
+      await activateUserByIdService(userId, request.userId);
       const response = {
         message: "User activated successfully",
         status: "200",
@@ -166,7 +254,7 @@ export class UserController extends Controller {
           HttpStatusCode.INTERNAL_SERVER_ERROR
         );
       }
-      await deactivateUserByIdService(userId, request.userId)
+      await deactivateUserByIdService(userId, request.userId);
       const response = {
         message: "User was deactivated successfully",
         status: "200",

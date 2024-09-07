@@ -199,6 +199,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GenderEnum": {
+				"enum": [
+					"M",
+					"F"
+				],
+				"type": "string"
+			},
 			"CreateResidentDto": {
 				"properties": {
 					"firstName": {
@@ -214,7 +221,7 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"$ref": "#/components/schemas/GenderEnum"
 					},
 					"dateOfBirth": {
 						"type": "string"
@@ -261,7 +268,7 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"$ref": "#/components/schemas/GenderEnum"
 					},
 					"dateOfBirth": {
 						"type": "string"
@@ -407,6 +414,25 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SystemInformationDto": {
+				"properties": {
+					"staffId": {
+						"type": "string"
+					},
+					"supportedFiles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"staffId",
+					"supportedFiles"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GetUserDetailsByIdDto": {
 				"properties": {
 					"userId": {
@@ -434,7 +460,14 @@
 						"$ref": "#/components/schemas/RoleEnum"
 					},
 					"roleInformation": {
-						"$ref": "#/components/schemas/ResidentInformationDto"
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/ResidentInformationDto"
+							},
+							{
+								"$ref": "#/components/schemas/SystemInformationDto"
+							}
+						]
 					},
 					"dateOfBirth": {
 						"type": "string"
@@ -1200,6 +1233,48 @@
 						}
 					}
 				]
+			}
+		},
+		"/user/profile": {
+			"get": {
+				"operationId": "getUserProfileById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"RES"
+						]
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/user/details": {
