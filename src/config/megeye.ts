@@ -286,6 +286,10 @@ export const IType: map = {
 
 export const listUrl = {
   personnelManagement: {
+    create: {
+        path: "/api/persons/item",
+        type: IType.post,
+    },
     query: {
       path: "/api/persons/query",
       type: IType.post,

@@ -1786,7 +1786,7 @@
 		},
 		"/image-auth": {
 			"get": {
-				"operationId": "test",
+				"operationId": "createPerson",
 				"responses": {
 					"200": {
 						"description": "OK",

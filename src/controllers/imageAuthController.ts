@@ -28,12 +28,14 @@ export class ImageAuthController extends Controller {
   }
 
   @Tags("ImageAuth")
-  @OperationId("test")
+  @OperationId("createPerson")
   @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
   @SuccessResponse(HttpStatusCode.OK, "OK")
   @Get("/")
   //   @Security("jwt", ["RES", "SA"])
-  public async getPersonnel(): Promise<IResponse<any>> {
+  public async createPerson(
+    
+  ): Promise<IResponse<any>> {
     try {
       const data = await this.megeyeService.queryPersonnel();
       const response = {
@@ -52,4 +54,30 @@ export class ImageAuthController extends Controller {
       return response;
     }
   }
+
+//   @Tags("ImageAuth")
+//   @OperationId("test")
+//   @Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, "Bad Request")
+//   @SuccessResponse(HttpStatusCode.OK, "OK")
+//   @Post("/")
+//   //   @Security("jwt", ["RES", "SA"])
+//   public async getPersonnel(): Promise<IResponse<any>> {
+//     try {
+//       const data = await this.megeyeService.queryPersonnel();
+//       const response = {
+//         message: "Successfully retrieved personnel",
+//         status: "200",
+//         data: data,
+//       };
+//       return response;
+//     } catch (err) {
+//       this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+//       const response = {
+//         message: "Failed to retrieve personnel",
+//         status: "500",
+//         data: null,
+//       };
+//       return response;
+//     }
+//   }
 }

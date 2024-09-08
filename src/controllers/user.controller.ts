@@ -32,9 +32,18 @@ import {
   GetUserDetailsByIdDto,
   GetUserDto,
 } from "../dtos/user.dto";
+import { MegeyeService } from "../services/megeye.service";
+import { RoleRecognitionTypeEnum } from "../common/megeye";
 
 @Route("user")
 export class UserController extends Controller {
+  private megeyeService: MegeyeService;
+
+  constructor() {
+    super();
+    this.megeyeService = new MegeyeService();
+  }
+
   @Tags("User")
   @OperationId("createUser")
   @Response<IResponse<any>>("400", "Bad Request")
@@ -53,6 +62,13 @@ export class UserController extends Controller {
         );
       }
       await createUserService(createUserDto, request.userId, request.role);
+      await this.megeyeService.createPerson({
+        recognition_type: RoleRecognitionTypeEnum[request.role],
+        is_admin: false,
+        person_name: createUserDto.firstName + " " + createUserDto.lastName,
+        group_list: ["1"],
+        phone_num: createUserDto.contactNumber,
+      });
       const response = {
         message: "User Created successfully",
         status: "200",

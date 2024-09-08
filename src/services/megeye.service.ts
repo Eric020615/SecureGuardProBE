@@ -1,12 +1,29 @@
 import { HttpStatusCode } from "../common/http-status-code";
 import { OperationError } from "../common/operation-error";
 import {listUrl, MegeyeManager } from "../config/megeye";
+import { CreatePersonDto } from "../dtos/megeye.dto";
 
 export class MegeyeService {
   private megeyeManager: MegeyeManager;
 
   constructor() {
     this.megeyeManager = new MegeyeManager();
+  }
+
+  public async createPerson(createPersonDto: CreatePersonDto) {
+    try {
+        console.log(createPersonDto)
+        await this.megeyeManager.requestNewCookie();
+        const [success, response] = await this.megeyeManager.MegeyeGlobalHandler(
+          {
+            path: listUrl.personnelManagement.create.path,
+            type: listUrl.personnelManagement.create.type,
+            data: createPersonDto,
+          },
+        );
+      } catch (error: any) {
+        throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
   }
 
   public async queryPersonnel() {
@@ -23,21 +40,7 @@ export class MegeyeService {
           },
         },
       );
-      console.log(response);
-      // const result : IResponse<any> = {
-      //     success,
-      //     msg: success ? 'success': response?.message,
-      //     data: success ? response?.data : undefined
-      // }
-      // return result;
     } catch (error: any) {
-      console.log(error);
-      //   const result : IResponse<any> = {
-      //     success: false,
-      //     msg: error,
-      //     data: null
-      // }
-      // return result;
       throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
   };

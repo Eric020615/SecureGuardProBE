@@ -955,9 +955,9 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/image-auth',
             ...(fetchMiddlewares<RequestHandler>(ImageAuthController)),
-            ...(fetchMiddlewares<RequestHandler>(ImageAuthController.prototype.getPersonnel)),
+            ...(fetchMiddlewares<RequestHandler>(ImageAuthController.prototype.createPerson)),
 
-            async function ImageAuthController_getPersonnel(request: ExRequest, response: ExResponse, next: any) {
+            async function ImageAuthController_createPerson(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
             };
 
@@ -970,7 +970,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ImageAuthController();
 
               await templateService.apiHandler({
-                methodName: 'getPersonnel',
+                methodName: 'createPerson',
                 controller,
                 response,
                 next,
