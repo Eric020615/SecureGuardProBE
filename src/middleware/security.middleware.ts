@@ -1,10 +1,8 @@
-import { NextFunction, Request } from "express";
-import { createToken, verifyToken } from "../config/jwt";
+import { Request } from "express";
+import { verifyToken } from "../config/jwt";
 import { JwtPayloadDto } from "../dtos/auth.dto";
 import { checkUserStatus } from "../services/auth.service";
 import { RoleEnum } from "../common/role";
-import { OperationError } from "../common/operation-error";
-import { HttpStatusCode } from "../common/http-status-code";
 
 export interface IGetUserAuthInfoRequest extends Request {
   userId: string;
