@@ -874,6 +874,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CreateUserFaceAuthDto": {
+				"properties": {
+					"faceData": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"faceData"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"RegisterUserDto": {
 				"properties": {
 					"email": {
@@ -1784,41 +1796,6 @@
 				}
 			}
 		},
-		"/image-auth": {
-			"get": {
-				"operationId": "createPerson",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"ImageAuth"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
 		"/facility/create": {
 			"post": {
 				"operationId": "createFacilityBooking",
@@ -2009,6 +1986,93 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/CancelFacilityBookingDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/face-auth": {
+			"get": {
+				"operationId": "createPerson",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"FaceAuth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/face-auth/user/upload": {
+			"post": {
+				"operationId": "uploadUserFaceAuth",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"FaceAuth"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SA"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserFaceAuthDto"
 							}
 						}
 					}

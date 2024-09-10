@@ -1,19 +1,19 @@
-import { RoleEnum } from "../common/role";
+import { RoleEnum } from '../common/role'
 
-export interface JwtPayloadDto{
-    userGUID: string;
-    role: RoleEnum;
+export interface JwtPayloadDto {
+	userGUID: string
+	role: RoleEnum
 }
 
 export interface LoginDto {
-    email: string;
-    password: string;
+	email: string
+	password: string
 }
 
 export interface RegisterUserDto {
-    email: string;
-    password: string;
-    confirmPassword: string;
+	email: string
+	password: string
+	confirmPassword: string
 }
 
 // export type UserCreationParams = Pick<LoginDto, "email" | "password">;

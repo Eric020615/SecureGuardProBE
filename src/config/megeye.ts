@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 import { Cookie, CookieJar } from "tough-cookie";
 import { wrapper } from "axios-cookiejar-support";
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import queryString from "querystring";
 import CryptoJS from "crypto-js";
 
@@ -211,7 +211,11 @@ export class MegeyeManager {
               success = true;
             } catch (error: any) {
               response = error.response;
-              console.log(error);
+              let a : AxiosError = new AxiosError();
+              console.log(error.response.data);
+              error.response.data.forEach((element: any) => {
+                console.log(element);
+              });
             }
           }
           if (!success) {

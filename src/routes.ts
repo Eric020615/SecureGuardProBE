@@ -9,9 +9,9 @@ import { UserController } from './controllers/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { NoticeController } from './controllers/notice.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { ImageAuthController } from './controllers/imageAuthController';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FacilityController } from './controllers/facility.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { FaceAuthController } from './controllers/faceAuthController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './controllers/auth.controller';
 import { expressAuthentication } from './middleware/security.middleware';
@@ -352,6 +352,14 @@ const models: TsoaRoute.Models = {
         "properties": {
             "bookingId": {"dataType":"string","required":true},
             "cancelRemark": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateUserFaceAuthDto": {
+        "dataType": "refObject",
+        "properties": {
+            "faceData": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -953,35 +961,6 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/image-auth',
-            ...(fetchMiddlewares<RequestHandler>(ImageAuthController)),
-            ...(fetchMiddlewares<RequestHandler>(ImageAuthController.prototype.createPerson)),
-
-            async function ImageAuthController_createPerson(request: ExRequest, response: ExResponse, next: any) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args, request, response });
-
-                const controller = new ImageAuthController();
-
-              await templateService.apiHandler({
-                methodName: 'createPerson',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: 200,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/facility/create',
             authenticateMiddleware([{"jwt":["RES","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
@@ -1097,6 +1076,67 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'cancelFacilityBooking',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/face-auth',
+            ...(fetchMiddlewares<RequestHandler>(FaceAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(FaceAuthController.prototype.createPerson)),
+
+            async function FaceAuthController_createPerson(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new FaceAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'createPerson',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/face-auth/user/upload',
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            ...(fetchMiddlewares<RequestHandler>(FaceAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(FaceAuthController.prototype.uploadUserFaceAuth)),
+
+            async function FaceAuthController_uploadUserFaceAuth(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    createUserFaceAuthDto: {"in":"body","name":"createUserFaceAuthDto","required":true,"ref":"CreateUserFaceAuthDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new FaceAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadUserFaceAuth',
                 controller,
                 response,
                 next,
