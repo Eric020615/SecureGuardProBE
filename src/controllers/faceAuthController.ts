@@ -77,7 +77,7 @@ export class FaceAuthController extends Controller {
                 throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
             }
 			const data = await this.megeyeService.createPerson({
-                recognition_type: RoleRecognitionTypeEnum.SA,
+                recognition_type: RoleRecognitionTypeEnum[userData.role],
                 id: userData.userId,
                 is_admin: false,
                 person_name: userData.firstName + ' ' + userData.lastName,

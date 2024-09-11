@@ -1,4 +1,5 @@
 export enum RoleRecognitionTypeEnum {
     'SA' = "staff",
-    'RES' = 'visitor',
+    'RES' = "staff",
+    'VI' = 'visitor',
 }

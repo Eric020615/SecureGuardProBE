@@ -95,7 +95,7 @@ export class MegeyeManager {
       }
       this.setCookie(response.data.session_id);
     } catch (error) {
-      console.error("Failed to obtain new cookie:", error);
+      console.log("Failed to obtain new cookie:", error);
       throw error;
     }
   }
@@ -111,7 +111,7 @@ export class MegeyeManager {
         const token = payload._token;
         const baseURL = `${megeyeConfig.apiBaseUrl}${path}`;
         let success = false;
-        const maxAttempt = 2;
+        const maxAttempt = 1;
         let attempt = 0;
 
         const performRequest = async (): Promise<AxiosInstance> => {
