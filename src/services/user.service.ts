@@ -184,20 +184,26 @@ export const GetUserDetailsByIdService = async (userId: string) => {
 		}
 		if (userDetails.role === RoleEnum.RESIDENT) {
 			const residentDetails = await GetResidentDetailsRepository(userId)
+			if(!residentDetails){
+				return data
+			}
 			data.roleInformation = {
 				floorNumber: residentDetails.floorNumber,
 				unitNumber: residentDetails.unitNumber,
 				supportedFiles: residentDetails.supportedDocumentUrl,
 			}
-      return data
+			return data
 		}
 		if (data.role === RoleEnum.SYSTEM_ADMIN) {
 			const systemAdminDetails = await GetSystemAdminDetailsRepository(userId)
+			if(!systemAdminDetails){
+				return data
+			}
 			data.roleInformation = {
 				staffId: systemAdminDetails.staffId,
 				supportedFiles: systemAdminDetails.supportedDocumentUrl,
 			}
-      return data
+			return data
 		}
 		return null
 	} catch (error: any) {
