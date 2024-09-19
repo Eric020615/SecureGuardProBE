@@ -22,6 +22,7 @@ import { CreateUserFaceAuthDto } from '../dtos/faceAuth.dto'
 import { OperationError } from '../common/operation-error'
 import { GetUserDetailsByIdService } from '../services/user.service'
 import { RoleRecognitionTypeEnum } from '../common/megeye'
+import { RoleEnum } from '../common/role'
 
 @Route('face-auth')
 export class FaceAuthController extends Controller {
@@ -79,7 +80,7 @@ export class FaceAuthController extends Controller {
 			const data = await this.megeyeService.createPerson({
                 recognition_type: RoleRecognitionTypeEnum[userData.role],
                 id: userData.userId,
-                is_admin: false,
+                is_admin: userData.role === RoleEnum.SYSTEM_ADMIN ? true : false,
                 person_name: userData.firstName + ' ' + userData.lastName,
                 group_list: [
                     "1"
