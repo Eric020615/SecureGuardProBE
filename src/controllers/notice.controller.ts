@@ -1,11 +1,6 @@
 import { IResponse } from '../dtos/index.dto'
 import {
-	createNoticeService,
-	deleteNoticeByIdService,
-	editNoticeByIdService,
-	getAllNoticeService,
-	getNoticeByIdService,
-	getNoticeService,
+	NoticeService
 } from '../services/notice.service'
 import {
 	Body,
@@ -27,9 +22,18 @@ import { CreateNoticeDto, DeleteNoticeDto, EditNoticeDto, GetNoticeDto } from '.
 import { HttpStatusCode } from '../common/http-status-code'
 import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
+import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
 
 @Route('notice')
+@provideSingleton(NoticeController)
 export class NoticeController extends Controller {
+	constructor(
+		@inject(NoticeService) private noticeService: NoticeService
+	) {
+		super()
+	}
+
 	@Tags('Notice')
 	@OperationId('createNotice')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
@@ -44,7 +48,7 @@ export class NoticeController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await createNoticeService(createNoticeDto, request.userId)
+			await this.noticeService.createNoticeService(createNoticeDto, request.userId)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
 				message: 'Notices created successfully',
@@ -71,7 +75,7 @@ export class NoticeController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getAllNotice(): Promise<IResponse<GetNoticeDto[]>> {
 		try {
-			let data = await getAllNoticeService()
+			let data = await this.noticeService.getAllNoticeService()
 			const response = {
 				message: 'Notices retrieved successfully',
 				status: '200',
@@ -96,7 +100,7 @@ export class NoticeController extends Controller {
 	@Get('/')
 	public async getNotice(): Promise<IResponse<GetNoticeDto[]>> {
 		try {
-			let data = await getNoticeService()
+			let data = await this.noticeService.getNoticeService()
 			const response = {
 				message: 'Notices retrieved successfully',
 				status: '200',
@@ -121,7 +125,7 @@ export class NoticeController extends Controller {
 	@Get('/detail')
 	public async getNoticeById(@Query() noticeId: string): Promise<IResponse<GetNoticeDto>> {
 		try {
-			let data = await getNoticeByIdService(noticeId)
+			let data = await this.noticeService.getNoticeByIdService(noticeId)
 			const response = {
 				message: 'Notice retrieved successfully',
 				status: '200',
@@ -153,7 +157,7 @@ export class NoticeController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await editNoticeByIdService(editNoticeDto, request.userId)
+			await this.noticeService.editNoticeByIdService(editNoticeDto, request.userId)
 			const response = {
 				message: 'Notice updated successfully',
 				status: '200',
@@ -178,7 +182,7 @@ export class NoticeController extends Controller {
 	@Delete('/delete')
 	public async deleteNoticeById(@Body() deleteNoticeDto: DeleteNoticeDto): Promise<IResponse<any>> {
 		try {
-			await deleteNoticeByIdService(deleteNoticeDto.noticeId)
+			await this.noticeService.deleteNoticeByIdService(deleteNoticeDto.noticeId)
 			const response = {
 				message: 'Notice deleted successfully',
 				status: '200',

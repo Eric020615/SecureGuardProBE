@@ -2,7 +2,9 @@ import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
 import { listUrl, MegeyeManager } from '../config/megeye'
 import { CreatePersonDto } from '../dtos/megeye.dto'
+import { provideSingleton } from '../helper/provideSingleton'
 
+@provideSingleton(MegeyeService)
 export class MegeyeService {
 	private megeyeManager: MegeyeManager
 

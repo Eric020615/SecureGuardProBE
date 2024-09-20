@@ -23,15 +23,20 @@ import {
 import { HttpStatusCode } from '../common/http-status-code'
 import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
-import {
-	cancelFacilityBookingService,
-	createFacilityBookingService,
-	getAllFacilityBookingService,
-	getFacilityBookingService,
-} from '../services/facility.service'
+import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
+import { FacilityService } from '../services/facility.service'
 
 @Route('facility')
+@provideSingleton(FacilityController)
 export class FacilityController extends Controller {
+	constructor(
+		@inject(FacilityService)
+		private facilityService: FacilityService,
+	) {
+		super()
+	}
+
 	@Tags('Facility')
 	@OperationId('createFacilityBooking')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
@@ -46,7 +51,10 @@ export class FacilityController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await createFacilityBookingService(createFacilityBookingDto, request.userId)
+			await this.facilityService.createFacilityBookingService(
+				createFacilityBookingDto,
+				request.userId,
+			)
 			const response = {
 				message: 'Facility booking created successfully',
 				status: '200',
@@ -78,7 +86,7 @@ export class FacilityController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await getFacilityBookingService(request.userId, isPast)
+			const data = await this.facilityService.getFacilityBookingService(request.userId, isPast)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
@@ -104,7 +112,7 @@ export class FacilityController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getAllFacilityBooking(): Promise<IResponse<any>> {
 		try {
-			const data = await getAllFacilityBookingService()
+			const data = await this.facilityService.getAllFacilityBookingService()
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
@@ -136,7 +144,10 @@ export class FacilityController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await cancelFacilityBookingService(request.userId, cancelFacilityBookingDto)
+			await this.facilityService.cancelFacilityBookingService(
+				request.userId,
+				cancelFacilityBookingDto,
+			)
 			const response = {
 				message: 'Facility booking cancel successfully',
 				status: '200',

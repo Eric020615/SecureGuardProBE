@@ -13,13 +13,19 @@ import {
 	Query,
 } from 'tsoa'
 import { IResponse } from '../dtos/index.dto'
-import { loginService, registerService } from '../services/auth.service'
 import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
-import { RoleEnum, RoleParam } from '../common/role'
+import { RoleEnum } from '../common/role'
+import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
+import { AuthService } from '../services/auth.service'
 
 @Route('auth')
+@provideSingleton(AuthController)
 export class AuthController extends Controller {
+	constructor(@inject(AuthService) private authService: AuthService) {
+		super()
+	}
 	@Tags('Auth')
 	@OperationId('registerUser')
 	@Response<IResponse<any>>('400', 'Bad Request')
@@ -30,7 +36,7 @@ export class AuthController extends Controller {
 		@Query() role: RoleEnum,
 	): Promise<IResponse<any>> {
 		try {
-			const token = await registerService(registerUserDto, role)
+			const token = await this.authService.registerService(registerUserDto, role)
 			const response = {
 				message: 'Account Created successfully',
 				status: '200',
@@ -63,7 +69,7 @@ export class AuthController extends Controller {
 	@Post('/log-in')
 	public async login(@Body() loginDto: LoginDto, @Query() role: RoleEnum): Promise<IResponse<any>> {
 		try {
-			const token = await loginService(loginDto, role)
+			const token = await this.authService.loginService(loginDto, role)
 			const response = {
 				message: 'Account login successfully',
 				status: '200',

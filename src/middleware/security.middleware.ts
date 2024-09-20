@@ -1,8 +1,9 @@
 import { Request } from "express";
 import { verifyToken } from "../config/jwt";
 import { JwtPayloadDto } from "../dtos/auth.dto";
-import { checkUserStatus } from "../services/auth.service";
+import { AuthService } from "../services/auth.service";
 import { RoleEnum } from "../common/role";
+import { iocContainer } from "../ioc";
 
 export interface IGetUserAuthInfoRequest extends Request {
   userId: string;
@@ -15,6 +16,7 @@ export const expressAuthentication = async (
   scopes?: string[],
   response?: any
 ): Promise<any> => {
+  let authService: AuthService = iocContainer.get(AuthService);
   const token =
     request.body.token ||
     request.query.token ||
@@ -22,7 +24,7 @@ export const expressAuthentication = async (
   try {
     if (securityName === "jwt") {  
       const userData: JwtPayloadDto = verifyToken(token, scopes);
-      await checkUserStatus(userData.userGUID);
+      await authService.checkUserStatus(userData.userGUID);
       request.userId = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});

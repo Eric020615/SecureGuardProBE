@@ -18,12 +18,7 @@ import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
 import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
 import {
-	activateUserByIdService,
-	createUserService,
-	deactivateUserByIdService,
-	editUserDetailsByIdService,
-	GetUserDetailsByIdService,
-	GetUserListService,
+	UserService
 } from '../services/user.service'
 import {
 	CreateResidentDto,
@@ -34,14 +29,17 @@ import {
 } from '../dtos/user.dto'
 import { MegeyeService } from '../services/megeye.service'
 import { RoleRecognitionTypeEnum } from '../common/megeye'
+import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
 
 @Route('user')
+@provideSingleton(UserController)
 export class UserController extends Controller {
-	private megeyeService: MegeyeService
-
-	constructor() {
+	constructor(
+		@inject(UserService) private userService: UserService,
+		@inject(MegeyeService) private megeyeService: MegeyeService,
+	) {
 		super()
-		this.megeyeService = new MegeyeService()
 	}
 
 	@Tags('User')
@@ -58,7 +56,7 @@ export class UserController extends Controller {
 			if (!request.userId || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await createUserService(createUserDto, request.userId, request.role)
+			await this.userService.createUserService(createUserDto, request.userId, request.role)
 			await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[request.role],
 				is_admin: false,
@@ -91,7 +89,7 @@ export class UserController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getUserList(@Query() isActive: boolean): Promise<IResponse<any>> {
 		try {
-			const data = await GetUserListService(isActive)
+			const data = await this.userService.GetUserListService(isActive)
 			const response = {
 				message: 'User list retrieve successfully',
 				status: '200',
@@ -123,7 +121,7 @@ export class UserController extends Controller {
 			if (!request.userId || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await GetUserDetailsByIdService(request.userId)
+			const data = await this.userService.GetUserDetailsByIdService(request.userId)
 			const response = {
 				message: 'User details retrieve successfully',
 				status: '200',
@@ -155,7 +153,7 @@ export class UserController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await editUserDetailsByIdService(editUserDetailsByIdDto, request.userId)
+			await this.userService.editUserDetailsByIdService(editUserDetailsByIdDto, request.userId)
 			const response = {
 				message: 'User profile updated successfully',
 				status: '200',
@@ -181,7 +179,7 @@ export class UserController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getUserDetailsById(@Query() userId: string): Promise<IResponse<any>> {
 		try {
-			const data = await GetUserDetailsByIdService(userId)
+			const data = await this.userService.GetUserDetailsByIdService(userId)
 			const response = {
 				message: 'User details retrieve successfully',
 				status: '200',
@@ -213,7 +211,7 @@ export class UserController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await activateUserByIdService(userId, request.userId)
+			await this.userService.activateUserByIdService(userId, request.userId)
 			const response = {
 				message: 'User activated successfully',
 				status: '200',
@@ -245,7 +243,7 @@ export class UserController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await deactivateUserByIdService(userId, request.userId)
+			await this.userService.deactivateUserByIdService(userId, request.userId)
 			const response = {
 				message: 'User was deactivated successfully',
 				status: '200',

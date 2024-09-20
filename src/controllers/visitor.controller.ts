@@ -19,16 +19,17 @@ import { HttpStatusCode } from '../common/http-status-code'
 import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto } from '../dtos/visitor.dto'
-import {
-	createVisitorService,
-	editVisitorByIdService,
-	getAllVisitorService,
-	getVisitorByResidentService,
-	getVisitorDetailsByResidentService,
-} from '../services/visitor.service'
+import { VisitorService } from '../services/visitor.service'
+import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
 
 @Route('visitor')
+@provideSingleton(VisitorController)
 export class VisitorController extends Controller {
+	constructor(@inject(VisitorService) private visitorService: VisitorService) {
+		super()
+	}
+
 	@Tags('Visitor')
 	@OperationId('createVisitor')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
@@ -43,7 +44,7 @@ export class VisitorController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await createVisitorService(createVisitorDto, request.userId)
+			await this.visitorService.createVisitorService(createVisitorDto, request.userId)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
 				message: 'Visitor created successfully',
@@ -76,7 +77,7 @@ export class VisitorController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await getVisitorByResidentService(request.userId, isPast)
+			const data = await this.visitorService.getVisitorByResidentService(request.userId, isPast)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
@@ -108,7 +109,7 @@ export class VisitorController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await getVisitorDetailsByResidentService(visitorId)
+			const data = await this.visitorService.getVisitorDetailsByResidentService(visitorId)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
@@ -134,7 +135,7 @@ export class VisitorController extends Controller {
 	// @Security("jwt", ["SA"])
 	public async getAllVisitors(): Promise<IResponse<any>> {
 		try {
-			const data = await getAllVisitorService()
+			const data = await this.visitorService.getAllVisitorService()
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
@@ -166,7 +167,7 @@ export class VisitorController extends Controller {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await editVisitorByIdService(editVisitorByIdDto, request.userId)
+			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, request.userId)
 			const response = {
 				message: 'Visitor updated successfully',
 				status: '200',

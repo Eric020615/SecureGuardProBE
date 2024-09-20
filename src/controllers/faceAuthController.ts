@@ -9,28 +9,28 @@ import {
 	Route,
 	SuccessResponse,
 	Tags,
-	Path,
-	Put,
 	Security,
 	Request,
-	Query,
 } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
 import { MegeyeService } from '../services/megeye.service'
 import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
 import { CreateUserFaceAuthDto } from '../dtos/faceAuth.dto'
 import { OperationError } from '../common/operation-error'
-import { GetUserDetailsByIdService } from '../services/user.service'
 import { RoleRecognitionTypeEnum } from '../common/megeye'
 import { RoleEnum } from '../common/role'
+import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
+import { UserService } from '../services/user.service'
 
 @Route('face-auth')
+@provideSingleton(FaceAuthController)
 export class FaceAuthController extends Controller {
-	private megeyeService: MegeyeService
-
-	constructor() {
+	constructor(
+		@inject(UserService) private userService: UserService,
+		@inject(MegeyeService) private megeyeService: MegeyeService,
+	) {
 		super()
-		this.megeyeService = new MegeyeService()
 	}
 
 	@Tags('FaceAuth')
@@ -66,32 +66,32 @@ export class FaceAuthController extends Controller {
 	@Post('/user/upload')
 	@Security('jwt', ['RES', 'SA'])
 	public async uploadUserFaceAuth(
-        @Body() createUserFaceAuthDto: CreateUserFaceAuthDto,
+		@Body() createUserFaceAuthDto: CreateUserFaceAuthDto,
 		@Request() request: IGetUserAuthInfoRequest,
-    ): Promise<IResponse<any>> {
+	): Promise<IResponse<any>> {
 		try {
-            if (!request.userId || !request.role) {
-                throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-            }
-            const userData = await GetUserDetailsByIdService(request.userId);
-            if(userData == null){
-                throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-            }
+			if (!request.userId || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const userData = await this.userService.GetUserDetailsByIdService(request.userId)
+			if (userData == null) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
 			const data = await this.megeyeService.createPerson({
-                recognition_type: RoleRecognitionTypeEnum[userData.role],
-                id: userData.userId,
-                is_admin: userData.role === RoleEnum.SYSTEM_ADMIN ? true : false,
-                person_name: userData.firstName + ' ' + userData.lastName,
-                group_list: [
-                    "1"
-                ],
-                face_list: [{
-                    idx: 0,
-                    data: createUserFaceAuthDto.faceData,
-                }],
+				recognition_type: RoleRecognitionTypeEnum[userData.role],
+				id: userData.userId,
+				is_admin: userData.role === RoleEnum.SYSTEM_ADMIN ? true : false,
+				person_name: userData.firstName + ' ' + userData.lastName,
+				group_list: ['1'],
+				face_list: [
+					{
+						idx: 0,
+						data: createUserFaceAuthDto.faceData,
+					},
+				],
 				person_code: userData.userId,
-                phone_num: userData.contactNumber
-            })
+				phone_num: userData.contactNumber,
+			})
 			const response = {
 				message: 'Successfully create user face auth',
 				status: '200',

@@ -22,6 +22,7 @@
       "entryFile": "./src/index.ts",
       "routesDir": "./src",
       "authenticationModule": "./src/middleware/security.middleware.ts",
-      "middleware": "express"
+      "middleware": "express",
+      "iocModule": "./src/ioc.ts"
     }
 }
