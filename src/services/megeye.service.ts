@@ -1,3 +1,4 @@
+import { inject } from 'inversify'
 import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
 import { listUrl, MegeyeManager } from '../config/megeye'
@@ -6,10 +7,11 @@ import { provideSingleton } from '../helper/provideSingleton'
 
 @provideSingleton(MegeyeService)
 export class MegeyeService {
-	private megeyeManager: MegeyeManager
 
-	constructor() {
-		this.megeyeManager = new MegeyeManager()
+	constructor(
+		@inject(MegeyeManager)
+		private megeyeManager: MegeyeManager
+	) {
 	}
 
 	public async createPerson(createPersonDto: CreatePersonDto) {

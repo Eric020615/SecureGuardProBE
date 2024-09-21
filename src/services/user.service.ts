@@ -17,18 +17,19 @@ import {
 	getNowTimestamp,
 } from '../helper/time'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
-import { uploadFile } from '../helper/file'
 import { RoleEnum } from '../common/role'
 import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { FileService } from '../helper/file'
 
 @provideSingleton(UserService)
 export class UserService {
 	private authAdmin
 	constructor(
 		@inject(UserRepository) private userRepository : UserRepository,
-		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin
+		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
+		@inject(FileService) private fileService: FileService
 	) {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
@@ -39,7 +40,7 @@ export class UserService {
 		role: RoleEnum,
 	) => {
 		try {
-			const fileUrl = await uploadFile(createUserDto.supportedFiles, userId)
+			const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userId)
 			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
 				await this.userRepository.createResidentRepository(
 					new User(

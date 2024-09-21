@@ -32,12 +32,4 @@ export class FirebaseAdmin {
     this.firestore = getFirestore(this.app);
     this.database = getDatabase(this.app);
   }
-
-  // Implement Singleton pattern to ensure one instance of FirebaseAdmin
-  public static getInstance(): FirebaseAdmin {
-    if (!this.instance) {
-      this.instance = new FirebaseAdmin();
-    }
-    return this.instance;
-  }
 }

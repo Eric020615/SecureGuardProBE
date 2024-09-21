@@ -1,7 +1,5 @@
 import { CreateNoticeDto, GetNoticeDto, EditNoticeDto } from '../dtos/notice.dto'
-import {
-	NoticeRepository
-} from '../repositories/notice.repository'
+import { NoticeRepository } from '../repositories/notice.repository'
 import { Notice } from '../models/notice.model'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -15,9 +13,7 @@ import { inject } from 'inversify'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
-	constructor(@inject(NoticeRepository) private noticeRepository: NoticeRepository){
-
-	}
+	constructor(@inject(NoticeRepository) private noticeRepository: NoticeRepository) {}
 	createNoticeService = async (createNoticeDto: CreateNoticeDto, userId: string) => {
 		try {
 			await this.noticeRepository.createNoticeRepository(
