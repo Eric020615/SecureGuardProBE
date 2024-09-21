@@ -1,90 +1,92 @@
 import {
-  addDoc,
-  and,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import firebase from "../config/initFirebase";
-import moment from "moment";
-import "moment-timezone";
-import { Visitor } from "../models/visitor.model";
-import { convertDateStringToTimestamp } from "../helper/time";
+	addDoc,
+	and,
+	collection,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	where,
+	updateDoc
+} from 'firebase/firestore'
+import { FirebaseClient } from '../config/initFirebase'
+import moment from 'moment-timezone'
+import { Visitor } from '../models/visitor.model'
+import { convertDateStringToTimestamp } from '../helper/time'
+import { provideSingleton } from '../helper/provideSingleton'
 
-const visitorDB = firebase.FIRESTORE;
-const visitorCollection = collection(visitorDB, "visitor");
+@provideSingleton(VisitorRepository)
+export class VisitorRepository {
+	private visitorCollection
 
-export const createVisitorRepository = async (visitor: Visitor) => {
-  await addDoc(visitorCollection, Object.assign({}, visitor));
-};
+	constructor(
+		private firebaseClient: FirebaseClient
+	) {
+    this.firebaseClient = new FirebaseClient()
+		this.visitorCollection = collection(this.firebaseClient.firestore, 'visitor')
+	}
 
-export const editVisitorByIdRepository = async (visitor: Visitor) => {
-  const docRef = doc(visitorCollection, visitor.visitorId);
-  await updateDoc(docRef, { ...visitor });
-};
+	async createVisitorRepository(visitor: Visitor) {
+		await addDoc(this.visitorCollection, Object.assign({}, visitor))
+	}
 
-export const get = async () => {
-  const q = query(visitorCollection);
-  const querySnapshot = await getDocs(q);
-  let result: Visitor[] = [];
-  querySnapshot.forEach((doc) => {
-    let data = doc.data() as Visitor;
-    data.visitorId = doc.id;
-    result.push(data);
-  });
-  return result;
-};
+	async editVisitorByIdRepository(visitor: Visitor) {
+		const docRef = doc(this.visitorCollection, visitor.visitorId)
+		await updateDoc(docRef, { ...visitor })
+	}
 
-export const getVisitorByResidentRepository = async (
-  userId: string,
-  isPast: boolean
-) => {
-  const q = query(
-    visitorCollection,
-    and(
-      where("createdBy", "==", userId),
-      where(
-        "visitDateTime",
-        isPast ? "<=" : ">",
-        convertDateStringToTimestamp(moment().tz("Asia/Kuala_Lumpur").toISOString())
-      )
-    )
-  );
-  const querySnapshot = await getDocs(q);
-  let result: Visitor[] = [];
-  querySnapshot.forEach((doc) => {
-    let data = doc.data() as Visitor;
-    data.visitorId = doc.id;
-    result.push(data);
-  });
-  return result;
-};
+	async getVisitorListRepository() {
+		const q = query(this.visitorCollection)
+		const querySnapshot = await getDocs(q)
+		let result: Visitor[] = []
+		querySnapshot.forEach((doc) => {
+			let data = doc.data() as Visitor
+			data.visitorId = doc.id
+			result.push(data)
+		})
+		return result
+	}
 
-export const getVisitorDetailsByResidentRepository = async (
-  visitorId: string
-) => {
-  const visitorDocRef = doc(visitorCollection, visitorId);
-  const visitorDoc = await getDoc(visitorDocRef);
-  let result: Visitor = {} as Visitor;
-  result = visitorDoc.data() as Visitor;
-  result.visitorId = visitorDoc.id;
-  return result;
-};
+	async getVisitorByResidentRepository(userId: string, isPast: boolean) {
+		const q = query(
+			this.visitorCollection,
+			and(
+				where('createdBy', '==', userId),
+				where(
+					'visitDateTime',
+					isPast ? '<=' : '>',
+					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())
+				)
+			)
+		)
+		const querySnapshot = await getDocs(q)
+		let result: Visitor[] = []
+		querySnapshot.forEach((doc) => {
+			let data = doc.data() as Visitor
+			data.visitorId = doc.id
+			result.push(data)
+		})
+		return result
+	}
 
-export const getAllVisitorsRepository = async () => {
-    const q = query(visitorCollection);
-    const querySnapshot = await getDocs(q);
-    let result: Visitor[] = [];
-    querySnapshot.forEach((doc) => {
-      let data = doc.data() as Visitor;
-      data.visitorId = doc.id;
-      result.push(data);
-    });
-    return result;
-};
+	async getVisitorDetailsByResidentRepository(visitorId: string) {
+		const visitorDocRef = doc(this.visitorCollection, visitorId)
+		const visitorDoc = await getDoc(visitorDocRef)
+		let result: Visitor = {} as Visitor
+		result = visitorDoc.data() as Visitor
+		result.visitorId = visitorDoc.id
+		return result
+	}
+
+	async getAllVisitorsRepository() {
+		const q = query(this.visitorCollection)
+		const querySnapshot = await getDocs(q)
+		let result: Visitor[] = []
+		querySnapshot.forEach((doc) => {
+			let data = doc.data() as Visitor
+			data.visitorId = doc.id
+			result.push(data)
+		})
+		return result
+	}
+}

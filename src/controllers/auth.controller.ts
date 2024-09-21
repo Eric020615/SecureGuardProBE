@@ -23,7 +23,9 @@ import { AuthService } from '../services/auth.service'
 @Route('auth')
 @provideSingleton(AuthController)
 export class AuthController extends Controller {
-	constructor(@inject(AuthService) private authService: AuthService) {
+	constructor(
+		@inject(AuthService) private authService: AuthService,
+	) {
 		super()
 	}
 	@Tags('Auth')

@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { JwtPayloadDto, LoginDto, RegisterUserDto } from '../dtos/auth.dto'
-import firebaseAdmin from '../config/firebaseAdmin'
-import firebase from '../config/initFirebase'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { FirebaseClient } from '../config/initFirebase'
 import { createToken } from '../config/jwt'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -16,13 +16,17 @@ import { UserService } from './user.service'
 export class AuthService {
 	private auth: any
 	private authAdmin: any
+	private firebaseClient: FirebaseClient
   
 	constructor(
 		@inject(UserService)
 		private userService: UserService,
+		@inject(FirebaseAdmin)
+		private firebaseAdmin: FirebaseAdmin,
 	) {
-		this.auth = firebase.FIREBASE_AUTH
-		this.authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
+		this.firebaseClient = new FirebaseClient()
+		this.auth = this.firebaseClient.auth
+		this.authAdmin = this.firebaseAdmin.auth
 	}
 
 	registerService = async (registerUserDto: RegisterUserDto, userRole: RoleEnum) => {

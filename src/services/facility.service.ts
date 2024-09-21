@@ -5,10 +5,7 @@ import {
 } from '../dtos/facility.dto'
 import { FacilityBooking } from '../models/facilityBooking.mode'
 import {
-	cancelFacilityBookingRepository,
-	createFacilityBookingRepository,
-	getAllFacilityBookingRepository,
-	getFacilityBookingRepository,
+	FacilityBookingRepository
 } from '../repositories/facility.repository'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -18,15 +15,21 @@ import {
 	getNowTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
 
 @provideSingleton(FacilityService)
 export class FacilityService {
+	constructor(
+		@inject(FacilityBookingRepository)
+		private facilityRepository: FacilityBookingRepository
+	) {
+	}
 	createFacilityBookingService = async (
 		createFacilityBookingDto: CreateFacilityBookingDto,
 		userId: string,
 	) => {
 		try {
-			await createFacilityBookingRepository(
+			await this.facilityRepository.createFacilityBookingRepository(
 				new FacilityBooking(
 					createFacilityBookingDto.facilityId,
 					convertDateStringToTimestamp(createFacilityBookingDto.startDate),
@@ -49,7 +52,7 @@ export class FacilityService {
 
 	getFacilityBookingService = async (userId: string, isPast: boolean) => {
 		try {
-			const facilityBookings = await getFacilityBookingRepository(userId, isPast)
+			const facilityBookings = await this.facilityRepository.getFacilityBookingRepository(userId, isPast)
 			let data: GetFacilityBookingHistoryDto[] = []
 			data = facilityBookings
 				? facilityBookings.map((facilityBooking) => {
@@ -76,7 +79,7 @@ export class FacilityService {
 
 	getAllFacilityBookingService = async () => {
 		try {
-			const facilityBookings = await getAllFacilityBookingRepository()
+			const facilityBookings = await this.facilityRepository.getAllFacilityBookingRepository()
 			let data: GetFacilityBookingHistoryDto[] = []
 			data = facilityBookings
 				? facilityBookings.map((facilityBooking) => {
@@ -114,7 +117,7 @@ export class FacilityService {
 				updatedBy: userId,
 				updatedDateTime: getNowTimestamp(),
 			} as FacilityBooking
-			await cancelFacilityBookingRepository(facilityBooking, cancelFacilityBookingDto.bookingId)
+			await this.facilityRepository.cancelFacilityBookingRepository(facilityBooking, cancelFacilityBookingDto.bookingId)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

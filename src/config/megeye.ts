@@ -4,6 +4,7 @@ import { wrapper } from "axios-cookiejar-support";
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import queryString from "querystring";
 import CryptoJS from "crypto-js";
+import { provideSingleton } from "../helper/provideSingleton";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ export const megeyeConfig = {
   megeyePassword: process.env.MEGEYE_PASSWORD || "",
 };
 
+@provideSingleton(MegeyeManager)
 export class MegeyeManager {
   private cookieJar: CookieJar;
   public client: AxiosInstance;

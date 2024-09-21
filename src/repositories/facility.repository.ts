@@ -1,70 +1,72 @@
 import {
-  addDoc,
-  and,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import firebase from "../config/initFirebase";
-import moment from "moment";
-import "moment-timezone";
-import { FacilityBooking } from "../models/facilityBooking.mode";
-import { convertDateStringToTimestamp } from "../helper/time";
+	addDoc,
+	and,
+	collection,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	where,
+	orderBy,
+	updateDoc,
+	deleteDoc,
+} from 'firebase/firestore'
+import { FirebaseClient } from '../config/initFirebase'
+import moment from 'moment-timezone'
+import { convertDateStringToTimestamp } from '../helper/time'
+import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
+import { FacilityBooking } from '../models/facilityBooking.mode'
 
-const facilityDB = firebase.FIRESTORE;
-const facilityCollection = collection(facilityDB, "facilityBooking");
+@provideSingleton(FacilityBookingRepository)
+export class FacilityBookingRepository {
+	private facilityCollection
 
-export const createFacilityBookingRepository = async (
-  data: FacilityBooking
-) => {
-  await addDoc(facilityCollection, Object.assign({}, data));
-};
+	constructor(private firebaseClient: FirebaseClient) {
+		this.firebaseClient = new FirebaseClient()
+		this.facilityCollection = collection(this.firebaseClient.firestore, 'facilityBooking')
+	}
 
-export const getFacilityBookingRepository = async (
-  userId: string,
-  isPast: boolean
-) => {
-  const q = query(
-    facilityCollection,
-    and(
-      where("bookedBy", "==", userId),
-      where(
-        "startDate",
-        isPast ? "<=" : ">",
-        // take note of the timezone here
-        convertDateStringToTimestamp(moment().tz("Asia/Kuala_Lumpur").toISOString())
-      )
-    )
-  );
-  const querySnapshot = await getDocs(q);
-  let result: FacilityBooking[] = [];
-  querySnapshot.forEach((doc) => {
-    let data = doc.data() as FacilityBooking;
-    data.bookingId = doc.id;
-    result.push(data);
-  });
-  return result;
-};
+	async createFacilityBookingRepository(data: FacilityBooking) {
+		await addDoc(this.facilityCollection, Object.assign({}, data))
+	}
 
-export const getAllFacilityBookingRepository = async () => {
-  const q = query(facilityCollection);
-  const querySnapshot = await getDocs(q);
-  let result: FacilityBooking[] = [];
-  querySnapshot.forEach((doc) => {
-    let data = doc.data() as FacilityBooking;
-    data.bookingId = doc.id;
-    result.push(data);
-  });
-  return result;
-};
+	async getFacilityBookingRepository(userId: string, isPast: boolean) {
+		const q = query(
+			this.facilityCollection,
+			and(
+				where('bookedBy', '==', userId),
+				where(
+					'startDate',
+					isPast ? '<=' : '>',
+					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+				),
+			),
+		)
+		const querySnapshot = await getDocs(q)
+		let result: FacilityBooking[] = []
+		querySnapshot.forEach((doc) => {
+			let data = doc.data() as FacilityBooking
+			data.bookingId = doc.id
+			result.push(data)
+		})
+		return result
+	}
 
-export const cancelFacilityBookingRepository = async (data: FacilityBooking, bookingId: string) => {
-  const docRef = doc(facilityCollection, bookingId);
-  await updateDoc(docRef, { ...data });
-};
+	async getAllFacilityBookingRepository() {
+		const q = query(this.facilityCollection)
+		const querySnapshot = await getDocs(q)
+		let result: FacilityBooking[] = []
+		querySnapshot.forEach((doc) => {
+			let data = doc.data() as FacilityBooking
+			data.bookingId = doc.id
+			result.push(data)
+		})
+		return result
+	}
+
+	async cancelFacilityBookingRepository(data: FacilityBooking, bookingId: string) {
+		const docRef = doc(this.facilityCollection, bookingId)
+		await updateDoc(docRef, { ...data })
+	}
+}

@@ -1,11 +1,6 @@
 import { CreateNoticeDto, GetNoticeDto, EditNoticeDto } from '../dtos/notice.dto'
 import {
-	createNoticeRepository,
-	deleteNoticeByIdRepository,
-	editNoticeByIdRepository,
-	getAllNoticeRepository,
-	getNoticeByIdRepository,
-	getNoticeRepository,
+	NoticeRepository
 } from '../repositories/notice.repository'
 import { Notice } from '../models/notice.model'
 import { OperationError } from '../common/operation-error'
@@ -16,12 +11,16 @@ import {
 	getNowTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
+	constructor(@inject(NoticeRepository) private noticeRepository: NoticeRepository){
+
+	}
 	createNoticeService = async (createNoticeDto: CreateNoticeDto, userId: string) => {
 		try {
-			await createNoticeRepository(
+			await this.noticeRepository.createNoticeRepository(
 				new Notice(
 					createNoticeDto.title,
 					createNoticeDto.description,
@@ -40,7 +39,7 @@ export class NoticeService {
 
 	getAllNoticeService = async () => {
 		try {
-			const notices = await getAllNoticeRepository()
+			const notices = await this.noticeRepository.getAllNoticeRepository()
 			let data: GetNoticeDto[] = []
 			data = notices
 				? notices.map((notice) => {
@@ -66,7 +65,7 @@ export class NoticeService {
 	getNoticeService = async () => {
 		try {
 			// rmb add repository method for this
-			const notices = await getNoticeRepository()
+			const notices = await this.noticeRepository.getNoticeRepository()
 			let data: GetNoticeDto[] = []
 			data = notices
 				? notices.map((notice) => {
@@ -91,7 +90,7 @@ export class NoticeService {
 
 	getNoticeByIdService = async (id: string) => {
 		try {
-			const notice = await getNoticeByIdRepository(id)
+			const notice = await this.noticeRepository.getNoticeByIdRepository(id)
 			let data: GetNoticeDto = {} as GetNoticeDto
 			if (notice != null) {
 				data = {
@@ -122,7 +121,7 @@ export class NoticeService {
 				updatedBy: userId,
 				updatedDateTime: getNowTimestamp(),
 			} as Notice
-			await editNoticeByIdRepository(editNoticeDto.noticeId, notice)
+			await this.noticeRepository.editNoticeByIdRepository(editNoticeDto.noticeId, notice)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -130,7 +129,7 @@ export class NoticeService {
 
 	deleteNoticeByIdService = async (id: string) => {
 		try {
-			await deleteNoticeByIdRepository(id)
+			await this.noticeRepository.deleteNoticeByIdRepository(id)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

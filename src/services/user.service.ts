@@ -10,32 +10,27 @@ import {
 	GetUserDto,
 } from '../dtos/user.dto'
 import { Resident, SystemAdmin, User } from '../models/user.model'
-import {
-	createResidentRepository,
-	createSystemAdminRepository,
-	editUserDetailsByIdRepository,
-	GetResidentDetailsRepository,
-	GetSystemAdminDetailsRepository,
-	GetUserByIdRepository,
-	GetUserListRepository,
-	updateUserStatusByIdRepository,
-} from '../repositories/user.repository'
+import { UserRepository } from '../repositories/user.repository'
 import {
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
 	getNowTimestamp,
 } from '../helper/time'
-import firebaseAdmin from '../config/firebaseAdmin'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { uploadFile } from '../helper/file'
 import { RoleEnum } from '../common/role'
 import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
 
 @provideSingleton(UserService)
 export class UserService {
 	private authAdmin
-	constructor() {
-		this.authAdmin = firebaseAdmin.FIREBASE_ADMIN_AUTH
+	constructor(
+		@inject(UserRepository) private userRepository : UserRepository,
+		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin
+	) {
+		this.authAdmin = this.firebaseAdmin.auth
 	}
 
 	createUserService = async (
@@ -46,7 +41,7 @@ export class UserService {
 		try {
 			const fileUrl = await uploadFile(createUserDto.supportedFiles, userId)
 			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
-				await createResidentRepository(
+				await this.userRepository.createResidentRepository(
 					new User(
 						createUserDto.firstName,
 						createUserDto.lastName,
@@ -71,7 +66,7 @@ export class UserService {
 					userId,
 				)
 			} else if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateSystemAdminDto(createUserDto)) {
-				await createSystemAdminRepository(
+				await this.userRepository.createSystemAdminRepository(
 					new User(
 						createUserDto.firstName,
 						createUserDto.lastName,
@@ -109,7 +104,7 @@ export class UserService {
 
 	GetUserByIdService = async (userId: string) => {
 		try {
-			const userInformation = await GetUserByIdRepository(userId)
+			const userInformation = await this.userRepository.GetUserByIdRepository(userId)
 			let data: GetUserDto = {} as GetUserDto
 			data = {
 				userId: userInformation.id ? userInformation.id : '',
@@ -140,7 +135,7 @@ export class UserService {
 			} else {
 				userList = userResult.users.filter((user) => user.disabled)
 			}
-			const userInformationList = await GetUserListRepository(userList)
+			const userInformationList = await this.userRepository.GetUserListRepository(userList)
 			let data: GetUserDto[] = []
 			data =
 				userInformationList && userInformationList.length > 0
@@ -169,7 +164,7 @@ export class UserService {
 
 	GetUserDetailsByIdService = async (userId: string) => {
 		try {
-			const userDetails = await GetUserByIdRepository(userId)
+			const userDetails = await this.userRepository.GetUserByIdRepository(userId)
 			let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto
 			const userRecord = await this.authAdmin.getUser(userId)
 			data = {
@@ -189,7 +184,7 @@ export class UserService {
 				updatedDateTime: convertTimestampToUserTimezone(userDetails.updatedDateTime),
 			}
 			if (userDetails.role === RoleEnum.RESIDENT) {
-				const residentDetails = await GetResidentDetailsRepository(userId)
+				const residentDetails = await this.userRepository.GetResidentDetailsRepository(userId)
 				if (!residentDetails) {
 					return data
 				}
@@ -201,7 +196,7 @@ export class UserService {
 				return data
 			}
 			if (data.role === RoleEnum.SYSTEM_ADMIN) {
-				const systemAdminDetails = await GetSystemAdminDetailsRepository(userId)
+				const systemAdminDetails = await this.userRepository.GetSystemAdminDetailsRepository(userId)
 				if (!systemAdminDetails) {
 					return data
 				}
@@ -231,7 +226,7 @@ export class UserService {
 				updatedBy: userId,
 				updatedDateTime: getNowTimestamp(),
 			} as User
-			await editUserDetailsByIdRepository(userId, user)
+			await this.userRepository.editUserDetailsByIdRepository(userId, user)
 			await this.authAdmin.updateUser(userId, { displayName: editUserDetailsByIdDto.userName })
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -245,7 +240,7 @@ export class UserService {
 				throw new OperationError('User was activated before.', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.authAdmin.updateUser(userId, { disabled: false })
-			await updateUserStatusByIdRepository(userId, {
+			await this.userRepository.updateUserStatusByIdRepository(userId, {
 				updatedBy: updatedBy,
 				updatedDateTime: getNowTimestamp(),
 			} as User)
@@ -264,7 +259,7 @@ export class UserService {
 				)
 			}
 			await this.authAdmin.updateUser(userId, { disabled: true })
-			await updateUserStatusByIdRepository(userId, {
+			await this.userRepository.updateUserStatusByIdRepository(userId, {
 				updatedBy: updatedBy,
 				updatedDateTime: getNowTimestamp(),
 			} as User)
