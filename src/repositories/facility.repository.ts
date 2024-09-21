@@ -22,8 +22,10 @@ import { FacilityBooking } from '../models/facilityBooking.mode'
 export class FacilityBookingRepository {
 	private facilityCollection
 
-	constructor(private firebaseClient: FirebaseClient) {
-		this.firebaseClient = new FirebaseClient()
+	constructor(
+    @inject(FirebaseClient)
+    private firebaseClient: FirebaseClient
+  ) {
 		this.facilityCollection = collection(this.firebaseClient.firestore, 'facilityBooking')
 	}
 

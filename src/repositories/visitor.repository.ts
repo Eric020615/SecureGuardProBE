@@ -7,22 +7,23 @@ import {
 	getDocs,
 	query,
 	where,
-	updateDoc
+	updateDoc,
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
 import { Visitor } from '../models/visitor.model'
 import { convertDateStringToTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
+import { inject } from 'inversify'
 
 @provideSingleton(VisitorRepository)
 export class VisitorRepository {
 	private visitorCollection
 
 	constructor(
-		private firebaseClient: FirebaseClient
+		@inject(FirebaseClient)
+		private firebaseClient: FirebaseClient,
 	) {
-    this.firebaseClient = new FirebaseClient()
 		this.visitorCollection = collection(this.firebaseClient.firestore, 'visitor')
 	}
 
@@ -55,9 +56,9 @@ export class VisitorRepository {
 				where(
 					'visitDateTime',
 					isPast ? '<=' : '>',
-					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())
-				)
-			)
+					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+				),
+			),
 		)
 		const querySnapshot = await getDocs(q)
 		let result: Visitor[] = []

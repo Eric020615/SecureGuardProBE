@@ -16,15 +16,15 @@ import { UserService } from './user.service'
 export class AuthService {
 	private auth: any
 	private authAdmin: any
-	private firebaseClient: FirebaseClient
   
 	constructor(
 		@inject(UserService)
 		private userService: UserService,
 		@inject(FirebaseAdmin)
 		private firebaseAdmin: FirebaseAdmin,
+		@inject(FirebaseClient)
+		private firebaseClient: FirebaseClient
 	) {
-		this.firebaseClient = new FirebaseClient()
 		this.auth = this.firebaseClient.auth
 		this.authAdmin = this.firebaseAdmin.auth
 	}

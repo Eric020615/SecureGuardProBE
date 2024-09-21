@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore } from "firebase/firestore";
-import { getDatabase, Database } from "firebase/database";
-import { getStorage, FirebaseStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 import * as dotenv from 'dotenv';
 import { provideSingleton } from "../helper/provideSingleton";
 
@@ -12,10 +12,10 @@ dotenv.config();
 export class FirebaseClient {
   private static instance: FirebaseClient;
   public app: ReturnType<typeof initializeApp>;
-  public auth: Auth;
-  public firestore: Firestore;
-  public storage: FirebaseStorage;
-  public database: Database;
+  public auth: ReturnType<typeof getAuth>;
+  public firestore: ReturnType<typeof getFirestore>;
+  public storage: ReturnType<typeof getStorage>;
+  public database: ReturnType<typeof getDatabase>;
 
   constructor() {
     const firebaseConfig = {

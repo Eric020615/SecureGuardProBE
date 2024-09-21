@@ -23,9 +23,9 @@ export class NoticeRepository {
 	private noticeCollection
 
 	constructor(
-		private firebaseClient: FirebaseClient
+    @inject(FirebaseClient)
+    private firebaseClient: FirebaseClient
 	) {
-    this.firebaseClient = new FirebaseClient()
 		this.noticeCollection = collection(this.firebaseClient.firestore, 'notice')
 	}
 

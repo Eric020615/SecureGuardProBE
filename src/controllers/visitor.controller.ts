@@ -10,7 +10,6 @@ import {
 	SuccessResponse,
 	Tags,
 	Put,
-	Delete,
 	Security,
 	Request,
 	Query,

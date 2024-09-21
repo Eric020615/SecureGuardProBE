@@ -10,6 +10,7 @@ import { iocContainer } from "../ioc";
 
 export const uploadFile = async (files: GeneralFileDto[], userId: string) => {
   try {
+    // problem
     let cloudStorage = new FirebaseClient().storage
     const fileURLs = await Promise.all(files.map(async (file, index) => {
       const storageRef = ref(cloudStorage, `supportedFiles/${userId}/${file.fileName}`);

@@ -24,10 +24,11 @@ export class UserRepository {
 	private userCollection
 	private residentCollection
 	private systemAdminCollection
-	private firebaseClient: FirebaseClient
 
-	constructor() {
-		this.firebaseClient = new FirebaseClient()
+	constructor(
+    @inject(FirebaseClient)
+    private firebaseClient: FirebaseClient
+  ) {
 		this.userCollection = collection(this.firebaseClient.firestore, 'user')
 		this.residentCollection = collection(this.firebaseClient.firestore, 'resident')
 		this.systemAdminCollection = collection(this.firebaseClient.firestore, 'systemAdmin')
