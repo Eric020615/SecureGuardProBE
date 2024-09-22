@@ -2,12 +2,11 @@ import { inject } from 'inversify'
 import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
 import { listUrl, MegeyeManager } from '../config/megeye'
-import { CreatePersonDto } from '../dtos/megeye.dto'
+import { CreatePersonDto, EditPersonDto } from '../dtos/megeye.dto'
 import { provideSingleton } from '../helper/provideSingleton'
 
 @provideSingleton(MegeyeService)
 export class MegeyeService {
-
 	constructor(
 		@inject(MegeyeManager)
 		private megeyeManager: MegeyeManager
@@ -16,7 +15,6 @@ export class MegeyeService {
 
 	public async createPerson(createPersonDto: CreatePersonDto) {
 		try {
-			await this.megeyeManager.requestNewCookie()
 			const [success, response] = await this.megeyeManager.MegeyeGlobalHandler({
 				path: listUrl.personnelManagement.create.path,
 				type: listUrl.personnelManagement.create.type,
@@ -34,9 +32,28 @@ export class MegeyeService {
 		}
 	}
 
+	public async editPerson(editPersonDto: EditPersonDto) {
+		try {
+			const [success, response] = await this.megeyeManager.MegeyeGlobalHandler({
+				path: listUrl.personnelManagement.edit.path,
+				type: listUrl.personnelManagement.edit.type,
+				data: editPersonDto,
+				_token: ""
+			})
+			if (!success) {
+				throw new OperationError(
+					'Failed to create user face auth',
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
+			}
+			return response
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
 	public async queryPersonnel() {
 		try {
-			await this.megeyeManager.requestNewCookie()
 			const [success, response] = await this.megeyeManager.MegeyeGlobalHandler({
 				path: listUrl.personnelManagement.query.path,
 				type: listUrl.personnelManagement.query.type,

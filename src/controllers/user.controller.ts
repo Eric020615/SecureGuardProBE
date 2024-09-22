@@ -57,13 +57,13 @@ export class UserController extends Controller {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.userService.createUserService(createUserDto, request.userId, request.role)
-			await this.megeyeService.createPerson({
-				recognition_type: RoleRecognitionTypeEnum[request.role],
-				is_admin: false,
-				person_name: createUserDto.firstName + ' ' + createUserDto.lastName,
-				group_list: ['1'],
-				phone_num: createUserDto.contactNumber,
-			})
+			// await this.megeyeService.createPerson({
+			// 	recognition_type: RoleRecognitionTypeEnum[request.role],
+			// 	is_admin: false,
+			// 	person_name: createUserDto.firstName + ' ' + createUserDto.lastName,
+			// 	group_list: ['1'],
+			// 	phone_num: createUserDto.contactNumber,
+			// })
 			const response = {
 				message: 'User Created successfully',
 				status: '200',
