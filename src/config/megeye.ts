@@ -305,6 +305,10 @@ export const listUrl = {
 			path: '/api/persons/item',
 			type: IType.put,
 		},
+    queryPersonDetailsById: {
+			path: '/api/persons/item',
+			type: IType.get,
+		},
 		query: {
 			path: '/api/persons/query',
 			type: IType.post,

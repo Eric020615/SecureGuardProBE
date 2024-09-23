@@ -1992,9 +1992,9 @@
 				}
 			}
 		},
-		"/face-auth": {
-			"get": {
-				"operationId": "createPerson",
+		"/face-auth/user/upload": {
+			"post": {
+				"operationId": "uploadUserFaceAuth",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -2023,13 +2023,30 @@
 				"tags": [
 					"FaceAuth"
 				],
-				"security": [],
-				"parameters": []
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SA"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserFaceAuthDto"
+							}
+						}
+					}
+				}
 			}
 		},
-		"/face-auth/user/upload": {
-			"post": {
-				"operationId": "uploadUserFaceAuth",
+		"/face-auth/user/update": {
+			"put": {
+				"operationId": "updateUserFaceAuth",
 				"responses": {
 					"200": {
 						"description": "OK",

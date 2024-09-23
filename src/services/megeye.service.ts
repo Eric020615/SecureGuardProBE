@@ -52,17 +52,20 @@ export class MegeyeService {
 		}
 	}
 
-	public async queryPersonnel() {
+	public async queryPersonDetailsById(personId: string) {
 		try {
 			const [success, response] = await this.megeyeManager.MegeyeGlobalHandler({
-				path: listUrl.personnelManagement.query.path,
-				type: listUrl.personnelManagement.query.type,
-				data: {
-					limit: 10,
-					offset: 0,
-					sort: 'asc',
-				},
+				path: listUrl.personnelManagement.queryPersonDetailsById.path,
+				type: listUrl.personnelManagement.queryPersonDetailsById.type,
+				_token: personId
 			})
+			if (!success) {
+				throw new OperationError(
+					'User face auth does not exists',
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
+			}
+			return response
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
