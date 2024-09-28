@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore"
+import { BaseModel } from "./base.model"
 
-export class FacilityBooking { 
-    bookingId?: string
+export class FacilityBooking extends BaseModel { 
     facilityId: string
     startDate: Timestamp
     endDate: Timestamp
@@ -9,10 +9,6 @@ export class FacilityBooking {
     numOfGuest: number
     isCancelled: boolean
     cancelRemark: string
-    createdBy: string
-    updatedBy: string
-    createdDateTime: Timestamp
-    updatedDateTime: Timestamp
 
     constructor(
         facilityId: string,
@@ -27,6 +23,7 @@ export class FacilityBooking {
         createdDateTime: Timestamp,
         updatedDateTime: Timestamp,
     ){
+        super(createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.facilityId = facilityId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -34,9 +31,5 @@ export class FacilityBooking {
         this.numOfGuest = numOfGuest;
         this.isCancelled = isCancelled;
         this.cancelRemark = cancelRemark;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.createdDateTime = createdDateTime;
-        this.updatedDateTime = updatedDateTime;
     }
 }

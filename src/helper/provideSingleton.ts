@@ -8,3 +8,10 @@ export const provideSingleton = function <T>(
 ) {
   return fluentProvide(identifier).inSingletonScope().done();
 };
+
+// Class that allows multiple instances
+export const provideTransient = function <T>(
+  identifier: interfaces.ServiceIdentifier<T>
+) {
+  return fluentProvide(identifier).inTransientScope().done();
+};

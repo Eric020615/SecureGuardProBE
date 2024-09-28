@@ -4,9 +4,7 @@ import {
 	GetFacilityBookingHistoryDto,
 } from '../dtos/facility.dto'
 import { FacilityBooking } from '../models/facilityBooking.mode'
-import {
-	FacilityBookingRepository
-} from '../repositories/facility.repository'
+import { FacilityBookingRepository } from '../repositories/facility.repository'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 import {
@@ -21,14 +19,14 @@ import { inject } from 'inversify'
 export class FacilityService {
 	constructor(
 		@inject(FacilityBookingRepository)
-		private facilityRepository: FacilityBookingRepository
-	) {
-	}
+		private facilityRepository: FacilityBookingRepository,
+	) {}
 	createFacilityBookingService = async (
 		createFacilityBookingDto: CreateFacilityBookingDto,
 		userId: string,
 	) => {
 		try {
+			this
 			await this.facilityRepository.createFacilityBookingRepository(
 				new FacilityBooking(
 					createFacilityBookingDto.facilityId,
@@ -50,14 +48,24 @@ export class FacilityService {
 		}
 	}
 
-	getFacilityBookingService = async (userId: string, isPast: boolean) => {
+	getFacilityBookingService = async (
+		userId: string,
+		isPast: boolean,
+		startAt: string,
+		limit: number,
+	) => {
 		try {
-			const facilityBookings = await this.facilityRepository.getFacilityBookingRepository(userId, isPast)
+			let { rows, count } = await this.facilityRepository.getFacilityBookingRepository(
+				userId,
+				isPast,
+				startAt,
+				limit,
+			)
 			let data: GetFacilityBookingHistoryDto[] = []
-			data = facilityBookings
-				? facilityBookings.map((facilityBooking) => {
+			data = rows
+				? rows.map((facilityBooking) => {
 						return {
-							bookingId: facilityBooking.bookingId,
+							bookingId: facilityBooking.id,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
 							facilityId: facilityBooking.facilityId,
@@ -71,7 +79,7 @@ export class FacilityService {
 						} as GetFacilityBookingHistoryDto
 				  })
 				: []
-			return data
+			return { data, count }
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -84,7 +92,7 @@ export class FacilityService {
 			data = facilityBookings
 				? facilityBookings.map((facilityBooking) => {
 						return {
-							bookingId: facilityBooking.bookingId,
+							bookingId: facilityBooking.id,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
 							facilityId: facilityBooking.facilityId,
@@ -117,7 +125,10 @@ export class FacilityService {
 				updatedBy: userId,
 				updatedDateTime: getNowTimestamp(),
 			} as FacilityBooking
-			await this.facilityRepository.cancelFacilityBookingRepository(facilityBooking, cancelFacilityBookingDto.bookingId)
+			await this.facilityRepository.cancelFacilityBookingRepository(
+				facilityBooking,
+				cancelFacilityBookingDto.bookingId,
+			)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

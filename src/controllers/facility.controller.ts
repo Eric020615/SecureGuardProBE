@@ -78,19 +78,24 @@ export class FacilityController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/')
 	@Security('jwt', ['RES', 'SA'])
-	public async getFacilityBooking(
+	public async getFacilityBookingHistory(
 		@Request() request: IGetUserAuthInfoRequest,
 		@Query() isPast: boolean,
+		@Query() startAt: string,
+		@Query() limit: number
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await this.facilityService.getFacilityBookingService(request.userId, isPast)
+			const { data, count } = await this.facilityService.getFacilityBookingService(request.userId, isPast, startAt, limit)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
-				data: data,
+				data: {
+					result: data,
+					count: count
+				}
 			}
 			return response
 		} catch (err) {
@@ -98,7 +103,10 @@ export class FacilityController extends Controller {
 			const response = {
 				message: 'Failed to retrieve facility booking',
 				status: '500',
-				data: null,
+				data: {
+					result: null,
+					count: 0
+				}
 			}
 			return response
 		}

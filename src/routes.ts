@@ -1093,12 +1093,14 @@ export function RegisterRoutes(app: Router) {
         app.get('/facility',
             authenticateMiddleware([{"jwt":["RES","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
-            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getFacilityBooking)),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getFacilityBookingHistory)),
 
-            async function FacilityController_getFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
+            async function FacilityController_getFacilityBookingHistory(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     isPast: {"in":"query","name":"isPast","required":true,"dataType":"boolean"},
+                    startAt: {"in":"query","name":"startAt","required":true,"dataType":"string"},
+                    limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1115,7 +1117,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'getFacilityBooking',
+                methodName: 'getFacilityBookingHistory',
                 controller,
                 response,
                 next,

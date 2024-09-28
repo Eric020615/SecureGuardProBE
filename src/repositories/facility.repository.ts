@@ -1,15 +1,12 @@
 import {
 	addDoc,
-	and,
-	collection,
 	doc,
-	getDoc,
 	getDocs,
 	query,
 	where,
 	orderBy,
 	updateDoc,
-	deleteDoc,
+	collection,
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
@@ -17,15 +14,18 @@ import { convertDateStringToTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FacilityBooking } from '../models/facilityBooking.mode'
+import { RepositoryService } from './repository'
 
 @provideSingleton(FacilityBookingRepository)
 export class FacilityBookingRepository {
 	private facilityCollection
 
 	constructor(
-    @inject(FirebaseClient)
-    private firebaseClient: FirebaseClient
-  ) {
+		@inject(FirebaseClient)
+		private firebaseClient: FirebaseClient,
+		@inject(RepositoryService)
+		private repositoryService: RepositoryService,
+	) {
 		this.facilityCollection = collection(this.firebaseClient.firestore, 'facilityBooking')
 	}
 
@@ -33,26 +33,28 @@ export class FacilityBookingRepository {
 		await addDoc(this.facilityCollection, Object.assign({}, data))
 	}
 
-	async getFacilityBookingRepository(userId: string, isPast: boolean) {
-		const q = query(
-			this.facilityCollection,
-			and(
-				where('bookedBy', '==', userId),
-				where(
-					'startDate',
-					isPast ? '<=' : '>',
-					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
-				),
+	async getFacilityBookingRepository(
+		userId: string,
+		isPast: boolean,
+		startAt: string,
+		pageSize: number,
+	) {
+    const constraints = [
+      where('bookedBy', '==', userId),
+			where(
+				'startDate',
+				isPast ? '<=' : '>',
+				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
+      orderBy('startDate', 'asc')
+    ]
+		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
+			this.facilityCollection,
+			startAt,
+			pageSize,
+      constraints
 		)
-		const querySnapshot = await getDocs(q)
-		let result: FacilityBooking[] = []
-		querySnapshot.forEach((doc) => {
-			let data = doc.data() as FacilityBooking
-			data.bookingId = doc.id
-			result.push(data)
-		})
-		return result
+		return { rows, count }
 	}
 
 	async getAllFacilityBookingRepository() {
@@ -61,7 +63,7 @@ export class FacilityBookingRepository {
 		let result: FacilityBooking[] = []
 		querySnapshot.forEach((doc) => {
 			let data = doc.data() as FacilityBooking
-			data.bookingId = doc.id
+			data.id = doc.id
 			result.push(data)
 		})
 		return result
