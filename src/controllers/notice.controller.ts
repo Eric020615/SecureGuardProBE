@@ -123,9 +123,9 @@ export class NoticeController extends Controller {
 	@Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/detail')
-	public async getNoticeById(@Query() noticeId: string): Promise<IResponse<GetNoticeDto>> {
+	public async getNoticeById(@Query() noticeGuid: string): Promise<IResponse<GetNoticeDto>> {
 		try {
-			let data = await this.noticeService.getNoticeByIdService(noticeId)
+			let data = await this.noticeService.getNoticeByIdService(noticeGuid)
 			const response = {
 				message: 'Notice retrieved successfully',
 				status: '200',
@@ -182,7 +182,7 @@ export class NoticeController extends Controller {
 	@Delete('/delete')
 	public async deleteNoticeById(@Body() deleteNoticeDto: DeleteNoticeDto): Promise<IResponse<any>> {
 		try {
-			await this.noticeService.deleteNoticeByIdService(deleteNoticeDto.noticeId)
+			await this.noticeService.deleteNoticeByIdService(deleteNoticeDto.noticeGuid)
 			const response = {
 				message: 'Notice deleted successfully',
 				status: '200',

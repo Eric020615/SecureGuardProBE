@@ -1,17 +1,14 @@
 import { Timestamp } from "firebase/firestore";
+import { BaseModel } from "./base.model";
 
-export class Notice { 
-    noticeId?: string;
+export class Notice extends BaseModel{ 
     title: string;
     description: string;
     startDate: Timestamp;
     endDate: Timestamp;
-    createdBy: string;
-    updatedBy: string;
-    createdDateTime: Timestamp;
-    updatedDateTime: Timestamp;
 
     constructor(
+        id: number,
         title: string,
         description: string,
         startDate: Timestamp,
@@ -21,13 +18,10 @@ export class Notice {
         createdDateTime: Timestamp,
         updatedDateTime: Timestamp,
     ){
+        super(id, createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.createdDateTime = createdDateTime;
-        this.updatedDateTime = updatedDateTime;
     }
 }

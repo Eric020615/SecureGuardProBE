@@ -1,30 +1,32 @@
 export interface CreateNoticeDto {
-    title: string;
-    description: string;
-    startDate: string;
-    endDate: string;
+	title: string
+	description: string
+	startDate: string
+	endDate: string
 }
 
 export interface EditNoticeDto {
-    noticeId: string;
-    title: string;
-    description: string;
-    startDate: string;
-    endDate: string
+	noticeId: string
+	noticeGuid: string
+	title: string
+	description: string
+	startDate: string
+	endDate: string
 }
 
 export interface DeleteNoticeDto {
-    noticeId: string;
+	noticeGuid: string
 }
 
 export interface GetNoticeDto {
-    noticeId: string
-    title: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    createdBy: string;
-    createdDateTime: string;
-    updatedBy: string;
-    updatedDateTime: string;
+	noticeId: number
+	noticeGuid: string
+	title: string
+	description: string
+	startDate: string
+	endDate: string
+	createdBy: string
+	createdDateTime: string
+	updatedBy: string
+	updatedDateTime: string
 }

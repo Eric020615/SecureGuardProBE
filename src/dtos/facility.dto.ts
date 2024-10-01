@@ -7,7 +7,8 @@ export interface CreateFacilityBookingDto {
 }
 
 export interface GetFacilityBookingHistoryDto {
-	bookingId: string
+	bookingId: number
+	bookingGuid: string
 	startDate: string
 	facilityId: string
 	facilityName: string
@@ -23,6 +24,6 @@ export interface GetFacilityBookingHistoryDto {
 }
 
 export interface CancelFacilityBookingDto {
-	bookingId: string
+	bookingGuid: string
 	cancelRemark?: string
 }

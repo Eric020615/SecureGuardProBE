@@ -17,20 +17,36 @@ import { Notice } from '../models/notice.model'
 import { convertDateStringToTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { SequenceRepository } from './sequence.repository'
 
 @provideSingleton(NoticeRepository)
 export class NoticeRepository {
 	private noticeCollection
 
 	constructor(
-    @inject(FirebaseClient)
-    private firebaseClient: FirebaseClient
+		@inject(FirebaseClient)
+		private firebaseClient: FirebaseClient,
+		@inject(FirebaseAdmin)
+		private firebaseAdmin: FirebaseAdmin,
+		@inject(SequenceRepository)
+		private sequenceRepository: SequenceRepository,
 	) {
 		this.noticeCollection = collection(this.firebaseClient.firestore, 'notice')
 	}
 
 	async createNoticeRepository(notice: Notice) {
-		await addDoc(this.noticeCollection, Object.assign({}, notice))
+		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
+			const id = await this.sequenceRepository.getSequenceId({
+				transaction: transaction,
+				counterName: 'notice',
+			})
+			if (Number.isNaN(id)) {
+				throw new Error('Failed to generate id')
+			}
+			const docRef = await addDoc(this.noticeCollection, Object.assign({}, notice))
+			await updateDoc(docRef, { id: id })
+		})
 	}
 
 	async getAllNoticeRepository() {
@@ -39,7 +55,7 @@ export class NoticeRepository {
 		let result: Notice[] = []
 		querySnapshot?.forEach((doc) => {
 			let data = doc.data() as Notice
-			data.noticeId = doc.id
+			data.guid = doc.id
 			result.push(data)
 		})
 		return result
@@ -49,37 +65,44 @@ export class NoticeRepository {
 		const q = query(
 			this.noticeCollection,
 			and(
-				where('startDate', '<=', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())),
-				where('endDate', '>', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()))
+				where(
+					'startDate',
+					'<=',
+					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+				),
+				where(
+					'endDate',
+					'>',
+					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+				),
 			),
-			orderBy('startDate')
+			orderBy('startDate'),
 		)
 		const querySnapshot = await getDocs(q)
 		let result: Notice[] = []
 		querySnapshot?.forEach((doc) => {
 			let data = doc.data() as Notice
-			data.noticeId = doc.id
+			data.guid = doc.id
 			result.push(data)
 		})
 		return result
 	}
 
-	async getNoticeByIdRepository(id: string) {
-		const noticeDocRef = doc(this.noticeCollection, id)
+	async getNoticeByIdRepository(noticeGuid: string) {
+		const noticeDocRef = doc(this.noticeCollection, noticeGuid)
 		const noticeDoc = await getDoc(noticeDocRef)
 		let result: Notice = {} as Notice
 		result = noticeDoc.data() as Notice
-		result.noticeId = noticeDoc.id
 		return result
 	}
 
-	async editNoticeByIdRepository(id: string, notice: Notice) {
-		const docRef = doc(this.noticeCollection, id)
+	async editNoticeByIdRepository(noticeGuid: string, notice: Notice) {
+		const docRef = doc(this.noticeCollection, noticeGuid)
 		await updateDoc(docRef, { ...notice })
 	}
 
-	async deleteNoticeByIdRepository(id: string) {
-		const docRef = doc(this.noticeCollection, id)
+	async deleteNoticeByIdRepository(noticeGuid: string) {
+		const docRef = doc(this.noticeCollection, noticeGuid)
 		await deleteDoc(docRef)
 	}
 }

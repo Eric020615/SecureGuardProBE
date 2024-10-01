@@ -11,6 +11,7 @@ export class FacilityBooking extends BaseModel {
     cancelRemark: string
 
     constructor(
+        id: number,
         facilityId: string,
         startDate: Timestamp,
         endDate: Timestamp,
@@ -23,7 +24,7 @@ export class FacilityBooking extends BaseModel {
         createdDateTime: Timestamp,
         updatedDateTime: Timestamp,
     ){
-        super(createdBy, updatedBy, createdDateTime, updatedDateTime)
+        super(id, createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.facilityId = facilityId;
         this.startDate = startDate;
         this.endDate = endDate;

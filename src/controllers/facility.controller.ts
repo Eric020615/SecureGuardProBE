@@ -14,7 +14,6 @@ import {
 	Route,
 	SuccessResponse,
 	Tags,
-	Path,
 	Put,
 	Security,
 	Request,
@@ -81,21 +80,26 @@ export class FacilityController extends Controller {
 	public async getFacilityBookingHistory(
 		@Request() request: IGetUserAuthInfoRequest,
 		@Query() isPast: boolean,
-		@Query() startAt: string,
-		@Query() limit: number
+		@Query() page: number,
+		@Query() limit: number,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const { data, count } = await this.facilityService.getFacilityBookingService(request.userId, isPast, startAt, limit)
+			const { data, count } = await this.facilityService.getFacilityBookingService(
+				request.userId,
+				isPast,
+				page,
+				limit,
+			)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
 				data: {
 					result: data,
-					count: count
-				}
+					count: count,
+				},
 			}
 			return response
 		} catch (err) {
@@ -105,8 +109,8 @@ export class FacilityController extends Controller {
 				status: '500',
 				data: {
 					result: null,
-					count: 0
-				}
+					count: 0,
+				},
 			}
 			return response
 		}

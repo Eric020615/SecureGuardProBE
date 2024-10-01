@@ -8,6 +8,7 @@ import {
 	getDoc,
 	QueryConstraint,
 	getCountFromServer,
+	startAt,
 } from 'firebase/firestore'
 import { BaseModel } from '../models/base.model'
 import { provideTransient } from '../helper/provideSingleton'
@@ -18,28 +19,18 @@ export class RepositoryService {
 
 	public async getPaginatedData<T extends BaseModel>(
 		collection: Client,
-		lastId: string,
+		offset: number,
 		pageSize: number,
 		constraints: QueryConstraint[],
 	): Promise<{ rows: T[]; count: number }> {
 		try {
 			let q = null
-			if (lastId) {
-				const lastVisibleDocRef = doc(collection, lastId)
-				const lastVisibleDoc = await getDoc(lastVisibleDocRef)
-				if (lastVisibleDoc.exists()) {
-					q = query(collection, ...constraints, limit(pageSize), startAfter(lastVisibleDoc))
-				} else {
-					q = query(collection, ...constraints, limit(pageSize))
-				}
-			} else {
-				q = query(collection, ...constraints, limit(pageSize))
-			}
+			q = query(collection, ...constraints, limit(pageSize), startAt(offset))
 			const querySnapshot = await getDocs(q)
 			let rows: T[] = []
 			querySnapshot.forEach((doc) => {
 				let data = doc.data() as T
-				data.id = doc.id
+				data.guid = doc.id
 				rows.push(data)
 			})
 			const countQuery = query(collection, ...constraints)

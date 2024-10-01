@@ -15,6 +15,8 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FacilityBooking } from '../models/facilityBooking.mode'
 import { RepositoryService } from './repository'
+import { SequenceRepository } from './sequence.repository'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
 
 @provideSingleton(FacilityBookingRepository)
 export class FacilityBookingRepository {
@@ -23,36 +25,50 @@ export class FacilityBookingRepository {
 	constructor(
 		@inject(FirebaseClient)
 		private firebaseClient: FirebaseClient,
+		@inject(FirebaseAdmin)
+		private firebaseAdmin: FirebaseAdmin,
 		@inject(RepositoryService)
 		private repositoryService: RepositoryService,
+		@inject(SequenceRepository)
+		private sequenceRepository: SequenceRepository,
 	) {
 		this.facilityCollection = collection(this.firebaseClient.firestore, 'facilityBooking')
 	}
 
 	async createFacilityBookingRepository(data: FacilityBooking) {
-		await addDoc(this.facilityCollection, Object.assign({}, data))
+		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
+			const id = await this.sequenceRepository.getSequenceId({
+				transaction: transaction,
+				counterName: "facilityBooking"
+			});
+			if(Number.isNaN(id)) {
+				throw new Error("Failed to generate id")
+			}
+			const docRef = await addDoc(this.facilityCollection, { ...data })
+			await updateDoc(docRef, { id: id })
+		})
 	}
 
 	async getFacilityBookingRepository(
 		userId: string,
 		isPast: boolean,
-		startAt: string,
+		offset: number,
 		pageSize: number,
 	) {
-    const constraints = [
-      where('bookedBy', '==', userId),
+		const constraints = [
+			where('bookedBy', '==', userId),
 			where(
 				'startDate',
 				isPast ? '<=' : '>',
 				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
-      orderBy('startDate', 'asc')
-    ]
+			orderBy('id', 'asc'),
+		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
 			this.facilityCollection,
-			startAt,
+			offset,
 			pageSize,
-      constraints
+			constraints,
 		)
 		return { rows, count }
 	}
@@ -63,14 +79,14 @@ export class FacilityBookingRepository {
 		let result: FacilityBooking[] = []
 		querySnapshot.forEach((doc) => {
 			let data = doc.data() as FacilityBooking
-			data.id = doc.id
+			data.guid = doc.id
 			result.push(data)
 		})
 		return result
 	}
 
-	async cancelFacilityBookingRepository(data: FacilityBooking, bookingId: string) {
-		const docRef = doc(this.facilityCollection, bookingId)
+	async cancelFacilityBookingRepository(data: FacilityBooking, bookingGuid: string) {
+		const docRef = doc(this.facilityCollection, bookingGuid)
 		await updateDoc(docRef, { ...data })
 	}
 }

@@ -599,6 +599,10 @@
 			"GetNoticeDto": {
 				"properties": {
 					"noticeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"noticeGuid": {
 						"type": "string"
 					},
 					"title": {
@@ -628,6 +632,7 @@
 				},
 				"required": [
 					"noticeId",
+					"noticeGuid",
 					"title",
 					"description",
 					"startDate",
@@ -703,6 +708,9 @@
 					"noticeId": {
 						"type": "string"
 					},
+					"noticeGuid": {
+						"type": "string"
+					},
 					"title": {
 						"type": "string"
 					},
@@ -718,6 +726,7 @@
 				},
 				"required": [
 					"noticeId",
+					"noticeGuid",
 					"title",
 					"description",
 					"startDate",
@@ -728,12 +737,12 @@
 			},
 			"DeleteNoticeDto": {
 				"properties": {
-					"noticeId": {
+					"noticeGuid": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"noticeId"
+					"noticeGuid"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -769,6 +778,10 @@
 			"GetFacilityBookingHistoryDto": {
 				"properties": {
 					"bookingId": {
+						"type": "number",
+						"format": "double"
+					},
+					"bookingGuid": {
 						"type": "string"
 					},
 					"startDate": {
@@ -811,6 +824,7 @@
 				},
 				"required": [
 					"bookingId",
+					"bookingGuid",
 					"startDate",
 					"facilityId",
 					"facilityName",
@@ -861,7 +875,7 @@
 			},
 			"CancelFacilityBookingDto": {
 				"properties": {
-					"bookingId": {
+					"bookingGuid": {
 						"type": "string"
 					},
 					"cancelRemark": {
@@ -869,7 +883,7 @@
 					}
 				},
 				"required": [
-					"bookingId"
+					"bookingGuid"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1691,7 +1705,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "noticeId",
+						"name": "noticeGuid",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -1898,10 +1912,11 @@
 					},
 					{
 						"in": "query",
-						"name": "startAt",
+						"name": "page",
 						"required": true,
 						"schema": {
-							"type": "string"
+							"format": "double",
+							"type": "number"
 						}
 					},
 					{

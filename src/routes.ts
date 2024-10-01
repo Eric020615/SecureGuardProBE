@@ -254,7 +254,8 @@ const models: TsoaRoute.Models = {
     "GetNoticeDto": {
         "dataType": "refObject",
         "properties": {
-            "noticeId": {"dataType":"string","required":true},
+            "noticeId": {"dataType":"double","required":true},
+            "noticeGuid": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
@@ -291,6 +292,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "noticeId": {"dataType":"string","required":true},
+            "noticeGuid": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
@@ -302,7 +304,7 @@ const models: TsoaRoute.Models = {
     "DeleteNoticeDto": {
         "dataType": "refObject",
         "properties": {
-            "noticeId": {"dataType":"string","required":true},
+            "noticeGuid": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -322,7 +324,8 @@ const models: TsoaRoute.Models = {
     "GetFacilityBookingHistoryDto": {
         "dataType": "refObject",
         "properties": {
-            "bookingId": {"dataType":"string","required":true},
+            "bookingId": {"dataType":"double","required":true},
+            "bookingGuid": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "facilityId": {"dataType":"string","required":true},
             "facilityName": {"dataType":"string","required":true},
@@ -352,7 +355,7 @@ const models: TsoaRoute.Models = {
     "CancelFacilityBookingDto": {
         "dataType": "refObject",
         "properties": {
-            "bookingId": {"dataType":"string","required":true},
+            "bookingGuid": {"dataType":"string","required":true},
             "cancelRemark": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -952,7 +955,7 @@ export function RegisterRoutes(app: Router) {
 
             async function NoticeController_getNoticeById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    noticeId: {"in":"query","name":"noticeId","required":true,"dataType":"string"},
+                    noticeGuid: {"in":"query","name":"noticeGuid","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1099,7 +1102,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     isPast: {"in":"query","name":"isPast","required":true,"dataType":"boolean"},
-                    startAt: {"in":"query","name":"startAt","required":true,"dataType":"string"},
+                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 

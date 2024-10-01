@@ -29,6 +29,7 @@ export class FacilityService {
 			this
 			await this.facilityRepository.createFacilityBookingRepository(
 				new FacilityBooking(
+					0,
 					createFacilityBookingDto.facilityId,
 					convertDateStringToTimestamp(createFacilityBookingDto.startDate),
 					convertDateStringToTimestamp(createFacilityBookingDto.endDate),
@@ -51,14 +52,15 @@ export class FacilityService {
 	getFacilityBookingService = async (
 		userId: string,
 		isPast: boolean,
-		startAt: string,
+		page: number,
 		limit: number,
 	) => {
 		try {
+			let offset = (page - 1) * limit
 			let { rows, count } = await this.facilityRepository.getFacilityBookingRepository(
 				userId,
 				isPast,
-				startAt,
+				offset,
 				limit,
 			)
 			let data: GetFacilityBookingHistoryDto[] = []
@@ -66,6 +68,7 @@ export class FacilityService {
 				? rows.map((facilityBooking) => {
 						return {
 							bookingId: facilityBooking.id,
+							bookingGuid: facilityBooking.guid,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
 							facilityId: facilityBooking.facilityId,
@@ -93,6 +96,7 @@ export class FacilityService {
 				? facilityBookings.map((facilityBooking) => {
 						return {
 							bookingId: facilityBooking.id,
+							bookingGuid: facilityBooking.guid,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
 							facilityId: facilityBooking.facilityId,
@@ -108,6 +112,7 @@ export class FacilityService {
 				: []
 			return data
 		} catch (error: any) {
+			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
@@ -127,7 +132,7 @@ export class FacilityService {
 			} as FacilityBooking
 			await this.facilityRepository.cancelFacilityBookingRepository(
 				facilityBooking,
-				cancelFacilityBookingDto.bookingId,
+				cancelFacilityBookingDto.bookingGuid,
 			)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)

@@ -18,6 +18,7 @@ export class NoticeService {
 		try {
 			await this.noticeRepository.createNoticeRepository(
 				new Notice(
+					0,
 					createNoticeDto.title,
 					createNoticeDto.description,
 					convertDateStringToTimestamp(createNoticeDto.startDate),
@@ -40,7 +41,8 @@ export class NoticeService {
 			data = notices
 				? notices.map((notice) => {
 						return {
-							noticeId: notice.noticeId,
+							noticeId: notice.id,
+							noticeGuid: notice.guid,
 							title: notice.title,
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
@@ -66,7 +68,8 @@ export class NoticeService {
 			data = notices
 				? notices.map((notice) => {
 						return {
-							noticeId: notice.noticeId,
+							noticeId: notice.id,
+							noticeGuid: notice.guid,
 							title: notice.title,
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
@@ -84,13 +87,14 @@ export class NoticeService {
 		}
 	}
 
-	getNoticeByIdService = async (id: string) => {
+	getNoticeByIdService = async (noticeGuid: string) => {
 		try {
-			const notice = await this.noticeRepository.getNoticeByIdRepository(id)
+			const notice = await this.noticeRepository.getNoticeByIdRepository(noticeGuid)
 			let data: GetNoticeDto = {} as GetNoticeDto
 			if (notice != null) {
 				data = {
-					noticeId: notice.noticeId,
+					noticeId: notice.id,
+					noticeGuid: notice.guid,
 					title: notice.title,
 					description: notice.description,
 					startDate: convertTimestampToUserTimezone(notice.startDate),
@@ -117,15 +121,15 @@ export class NoticeService {
 				updatedBy: userId,
 				updatedDateTime: getNowTimestamp(),
 			} as Notice
-			await this.noticeRepository.editNoticeByIdRepository(editNoticeDto.noticeId, notice)
+			await this.noticeRepository.editNoticeByIdRepository(editNoticeDto.noticeGuid, notice)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
 
-	deleteNoticeByIdService = async (id: string) => {
+	deleteNoticeByIdService = async (noticeGuid: string) => {
 		try {
-			await this.noticeRepository.deleteNoticeByIdRepository(id)
+			await this.noticeRepository.deleteNoticeByIdRepository(noticeGuid)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
