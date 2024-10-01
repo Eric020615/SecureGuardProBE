@@ -56,6 +56,10 @@
 			"GetVisitorDto": {
 				"properties": {
 					"visitorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"visitorGuid": {
 						"type": "string"
 					},
 					"visitorName": {
@@ -85,6 +89,7 @@
 				},
 				"required": [
 					"visitorId",
+					"visitorGuid",
 					"visitorName",
 					"visitorCategory",
 					"visitorContactNumber",
@@ -157,9 +162,6 @@
 			},
 			"EditVisitorByIdDto": {
 				"properties": {
-					"visitorId": {
-						"type": "string"
-					},
 					"visitorName": {
 						"type": "string"
 					},
@@ -174,7 +176,6 @@
 					}
 				},
 				"required": [
-					"visitorId",
 					"visitorName",
 					"visitorCategory",
 					"visitorContactNumber",
@@ -1099,7 +1100,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "visitorId",
+						"name": "visitorGuid",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -1179,7 +1180,16 @@
 						"jwt": []
 					}
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "visitorGuid",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {

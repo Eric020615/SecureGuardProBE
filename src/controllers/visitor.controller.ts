@@ -102,13 +102,13 @@ export class VisitorController extends Controller {
 	@Security('jwt', ['RES'])
 	public async getVisitorDetailsByResident(
 		@Request() request: IGetUserAuthInfoRequest,
-		@Query() visitorId: string,
+		@Query() visitorGuid: string,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await this.visitorService.getVisitorDetailsByResidentService(visitorId)
+			const data = await this.visitorService.getVisitorDetailsByResidentService(visitorGuid)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
@@ -160,13 +160,14 @@ export class VisitorController extends Controller {
 	@Security('jwt', [])
 	public async editVisitorById(
 		@Body() editVisitorByIdDto: EditVisitorByIdDto,
+		@Query() visitorGuid: string,
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, request.userId)
+			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, visitorGuid, request.userId)
 			const response = {
 				message: 'Visitor updated successfully',
 				status: '200',

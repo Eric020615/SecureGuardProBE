@@ -50,7 +50,8 @@ const models: TsoaRoute.Models = {
     "GetVisitorDto": {
         "dataType": "refObject",
         "properties": {
-            "visitorId": {"dataType":"string","required":true},
+            "visitorId": {"dataType":"double","required":true},
+            "visitorGuid": {"dataType":"string","required":true},
             "visitorName": {"dataType":"string","required":true},
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
@@ -86,7 +87,6 @@ const models: TsoaRoute.Models = {
     "EditVisitorByIdDto": {
         "dataType": "refObject",
         "properties": {
-            "visitorId": {"dataType":"string","required":true},
             "visitorName": {"dataType":"string","required":true},
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
@@ -487,7 +487,7 @@ export function RegisterRoutes(app: Router) {
             async function VisitorController_getVisitorDetailsByResident(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    visitorId: {"in":"query","name":"visitorId","required":true,"dataType":"string"},
+                    visitorGuid: {"in":"query","name":"visitorGuid","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -558,6 +558,7 @@ export function RegisterRoutes(app: Router) {
             async function VisitorController_editVisitorById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     editVisitorByIdDto: {"in":"body","name":"editVisitorByIdDto","required":true,"ref":"EditVisitorByIdDto"},
+                    visitorGuid: {"in":"query","name":"visitorGuid","required":true,"dataType":"string"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 

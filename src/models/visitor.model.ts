@@ -1,33 +1,28 @@
 import { Timestamp } from "firebase/firestore";
+import { BaseModel } from "./base.model";
 
-export class Visitor { 
-    visitorId?: string;
+export class Visitor extends BaseModel{ 
     visitorName: string;
     visitorCategory: string;
     visitorContactNumber: string;
     visitDateTime: Timestamp;
-    createdBy: string;
-    updatedBy: string;
-    createdDateTime: Timestamp;
-    updatedDateTime: Timestamp;
 
     constructor(
+        id: number,
         visitorName: string,
         visitorCategory: string,
         visitorContactNumber: string,
         visitDateTime: Timestamp,
+        status: number,
         createdBy: string,
         updatedBy: string,
         createdDateTime: Timestamp,
         updatedDateTime: Timestamp,
     ){
+        super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.visitorName = visitorName;
         this.visitorCategory = visitorCategory,
         this.visitorContactNumber = visitorContactNumber,
-        this.visitDateTime = visitDateTime,
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.createdDateTime = createdDateTime;
-        this.updatedDateTime = updatedDateTime;
+        this.visitDateTime = visitDateTime
     }
 }

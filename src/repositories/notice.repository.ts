@@ -19,6 +19,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
+import { DocumentStatus } from '../common/constants'
 
 @provideSingleton(NoticeRepository)
 export class NoticeRepository {
@@ -103,6 +104,6 @@ export class NoticeRepository {
 
 	async deleteNoticeByIdRepository(noticeGuid: string) {
 		const docRef = doc(this.noticeCollection, noticeGuid)
-		await deleteDoc(docRef)
+		await updateDoc(docRef, { status: DocumentStatus.SoftDeleted })
 	}
 }

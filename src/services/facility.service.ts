@@ -14,6 +14,7 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { DocumentStatus } from '../common/constants'
 
 @provideSingleton(FacilityService)
 export class FacilityService {
@@ -37,6 +38,7 @@ export class FacilityService {
 					createFacilityBookingDto.numOfGuest,
 					false,
 					'',
+					DocumentStatus.Active,
 					userId,
 					userId,
 					getNowTimestamp(),

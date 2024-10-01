@@ -12,6 +12,7 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { DocumentStatus } from '../common/constants'
 
 @provideSingleton(VisitorService)
 export class VisitorService {
@@ -20,10 +21,12 @@ export class VisitorService {
 		try {
 			await this.visitorRepository.createVisitorRepository(
 				new Visitor(
+					0,
 					createVisitorDto.visitorName,
 					createVisitorDto.visitorCategory,
 					createVisitorDto.visitorContactNumber,
 					convertDateStringToTimestamp(createVisitorDto.visitDateTime),
+					DocumentStatus.Active,
 					userId,
 					userId,
 					getNowTimestamp(),
@@ -35,10 +38,9 @@ export class VisitorService {
 		}
 	}
 
-	editVisitorByIdService = async (editVisitorByIdDto: EditVisitorByIdDto, userId: string) => {
+	editVisitorByIdService = async (editVisitorByIdDto: EditVisitorByIdDto, visitorGuid: string, userId: string) => {
 		try {
 			let visitor: Visitor = {
-				visitorId: editVisitorByIdDto.visitorId,
 				visitorName: editVisitorByIdDto.visitorName,
 				visitorCategory: editVisitorByIdDto.visitorCategory,
 				visitorContactNumber: editVisitorByIdDto.visitorContactNumber,
@@ -46,7 +48,7 @@ export class VisitorService {
 				updatedBy: userId,
 				updatedDateTime: getNowTimestamp(),
 			} as Visitor
-			await this.visitorRepository.editVisitorByIdRepository(visitor)
+			await this.visitorRepository.editVisitorByIdRepository(visitorGuid, visitor)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -59,7 +61,8 @@ export class VisitorService {
 			data = visitors
 				? visitors.map((visitor) => {
 						return {
-							visitorId: visitor.visitorId,
+							visitorId: visitor.id,
+							visitorGuid: visitor.guid ? visitor.guid : '',
 							visitorName: visitor.visitorName,
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,
@@ -78,12 +81,13 @@ export class VisitorService {
 		}
 	}
 
-	getVisitorDetailsByResidentService = async (visitorId: string) => {
+	getVisitorDetailsByResidentService = async (visitorGuid: string) => {
 		try {
-			const visitors = await this.visitorRepository.getVisitorDetailsByResidentRepository(visitorId)
+			const visitors = await this.visitorRepository.getVisitorDetailsByResidentRepository(visitorGuid)
 			let data: GetVisitorDto = {} as GetVisitorDto
 			data = {
-				visitorId: visitors.visitorId ? visitors.visitorId : '',
+				visitorId: visitors.id,
+				visitorGuid: visitors.guid ? visitors.guid : '',
 				visitorName: visitors.visitorName,
 				visitorCategory: visitors.visitorCategory,
 				visitorContactNumber: visitors.visitorContactNumber,
@@ -107,7 +111,8 @@ export class VisitorService {
 			data = visitors
 				? visitors.map((visitor) => {
 						return {
-							visitorId: visitor.visitorId,
+							visitorId: visitor.id,
+							visitorGuid: visitor.guid ? visitor.guid : '',
 							visitorName: visitor.visitorName,
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,

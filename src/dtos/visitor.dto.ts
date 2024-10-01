@@ -6,7 +6,6 @@ export interface CreateVisitorDto {
 }
 
 export interface EditVisitorByIdDto {
-    visitorId: string;
     visitorName: string;
     visitorCategory: string;
     visitorContactNumber: string;
@@ -14,7 +13,8 @@ export interface EditVisitorByIdDto {
 }
 
 export interface GetVisitorDto {
-    visitorId: string;
+    visitorId: number;
+    visitorGuid: string;
     visitorName: string;
     visitorCategory: string;
     visitorContactNumber: string;

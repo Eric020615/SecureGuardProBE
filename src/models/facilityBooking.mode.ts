@@ -19,12 +19,13 @@ export class FacilityBooking extends BaseModel {
         numOfGuest: number,
         isCancelled: boolean,
         cancelRemark: string,
+        status: number,
         createdBy: string,
         updatedBy: string,
         createdDateTime: Timestamp,
         updatedDateTime: Timestamp,
     ){
-        super(id, createdBy, updatedBy, createdDateTime, updatedDateTime)
+        super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.facilityId = facilityId;
         this.startDate = startDate;
         this.endDate = endDate;

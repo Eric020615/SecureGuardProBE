@@ -15,6 +15,8 @@ import { Visitor } from '../models/visitor.model'
 import { convertDateStringToTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { SequenceRepository } from './sequence.repository'
 
 @provideSingleton(VisitorRepository)
 export class VisitorRepository {
@@ -23,16 +25,30 @@ export class VisitorRepository {
 	constructor(
 		@inject(FirebaseClient)
 		private firebaseClient: FirebaseClient,
+		@inject(FirebaseAdmin)
+		private firebaseAdmin: FirebaseAdmin,
+		@inject(SequenceRepository)
+		private sequenceRepository: SequenceRepository,
 	) {
 		this.visitorCollection = collection(this.firebaseClient.firestore, 'visitor')
 	}
 
 	async createVisitorRepository(visitor: Visitor) {
-		await addDoc(this.visitorCollection, Object.assign({}, visitor))
+		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
+			const id = await this.sequenceRepository.getSequenceId({
+				transaction: transaction,
+				counterName: 'visitor',
+			})
+			if (Number.isNaN(id)) {
+				throw new Error('Failed to generate id')
+			}
+			const docRef = await addDoc(this.visitorCollection, Object.assign({}, visitor))
+			await updateDoc(docRef, { id: id })
+		})
 	}
 
-	async editVisitorByIdRepository(visitor: Visitor) {
-		const docRef = doc(this.visitorCollection, visitor.visitorId)
+	async editVisitorByIdRepository(visitorGuid: string, visitor: Visitor) {
+		const docRef = doc(this.visitorCollection, visitorGuid)
 		await updateDoc(docRef, { ...visitor })
 	}
 
@@ -42,7 +58,7 @@ export class VisitorRepository {
 		let result: Visitor[] = []
 		querySnapshot.forEach((doc) => {
 			let data = doc.data() as Visitor
-			data.visitorId = doc.id
+			data.guid = doc.id
 			result.push(data)
 		})
 		return result
@@ -64,18 +80,18 @@ export class VisitorRepository {
 		let result: Visitor[] = []
 		querySnapshot.forEach((doc) => {
 			let data = doc.data() as Visitor
-			data.visitorId = doc.id
+			data.guid = doc.id
 			result.push(data)
 		})
 		return result
 	}
 
-	async getVisitorDetailsByResidentRepository(visitorId: string) {
-		const visitorDocRef = doc(this.visitorCollection, visitorId)
+	async getVisitorDetailsByResidentRepository(visitorGuid: string) {
+		const visitorDocRef = doc(this.visitorCollection, visitorGuid)
 		const visitorDoc = await getDoc(visitorDocRef)
 		let result: Visitor = {} as Visitor
 		result = visitorDoc.data() as Visitor
-		result.visitorId = visitorDoc.id
+		result.guid = visitorDoc.id
 		return result
 	}
 
@@ -85,7 +101,7 @@ export class VisitorRepository {
 		let result: Visitor[] = []
 		querySnapshot.forEach((doc) => {
 			let data = doc.data() as Visitor
-			data.visitorId = doc.id
+			data.guid = doc.id
 			result.push(data)
 		})
 		return result

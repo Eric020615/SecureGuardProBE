@@ -13,12 +13,13 @@ export class Notice extends BaseModel{
         description: string,
         startDate: Timestamp,
         endDate: Timestamp,
+        status: number,
         createdBy: string,
         updatedBy: string,
         createdDateTime: Timestamp,
         updatedDateTime: Timestamp,
     ){
-        super(id, createdBy, updatedBy, createdDateTime, updatedDateTime)
+        super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.title = title;
         this.description = description;
         this.startDate = startDate;

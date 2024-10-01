@@ -10,6 +10,7 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { DocumentStatus } from '../common/constants'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
@@ -23,6 +24,7 @@ export class NoticeService {
 					createNoticeDto.description,
 					convertDateStringToTimestamp(createNoticeDto.startDate),
 					convertDateStringToTimestamp(createNoticeDto.endDate),
+					DocumentStatus.Active,
 					userId,
 					userId,
 					getNowTimestamp(),
