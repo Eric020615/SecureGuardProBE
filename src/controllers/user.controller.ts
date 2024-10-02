@@ -17,9 +17,7 @@ import { IResponse } from '../dtos/index.dto'
 import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
 import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
-import {
-	UserService
-} from '../services/user.service'
+import { UserService } from '../services/user.service'
 import {
 	CreateResidentDto,
 	CreateSystemAdminDto,
@@ -31,6 +29,7 @@ import { MegeyeService } from '../services/megeye.service'
 import { RoleRecognitionTypeEnum } from '../common/megeye'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { list } from 'firebase/storage'
 
 @Route('user')
 @provideSingleton(UserController)
@@ -80,13 +79,20 @@ export class UserController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/user-list')
 	@Security('jwt', ['SA'])
-	public async getUserList(@Query() isActive: boolean): Promise<IResponse<any>> {
+	public async getUserList(
+		@Query() isActive: boolean,
+		@Query() page: number,
+		@Query() limit: number,
+	): Promise<IResponse<any>> {
 		try {
-			const data = await this.userService.GetUserListService(isActive)
+			const { data, count } = await this.userService.GetUserListService(isActive, page, limit)
 			const response = {
 				message: 'User list retrieve successfully',
 				status: '200',
-				data: data,
+				data: {
+					list: data,
+					count: count,
+				},
 			}
 			return response
 		} catch (err) {
@@ -95,7 +101,10 @@ export class UserController extends Controller {
 			const response = {
 				message: 'Failed to retrieve user list',
 				status: '500',
-				data: null,
+				data: {
+					list: null,
+					count: 0,
+				},
 			}
 			return response
 		}

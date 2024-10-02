@@ -20,6 +20,8 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
+import { RepositoryService } from './repository'
+import { DocumentStatus } from '../common/constants'
 
 @provideSingleton(UserRepository)
 export class UserRepository {
@@ -34,6 +36,8 @@ export class UserRepository {
 		private firebaseAdmin: FirebaseAdmin,
 		@inject(SequenceRepository)
 		private sequenceRepository: SequenceRepository,
+		@inject(RepositoryService)
+		private repositoryService: RepositoryService,
 	) {
 		this.userCollection = collection(this.firebaseClient.firestore, 'user')
 		this.residentCollection = collection(this.firebaseClient.firestore, 'resident')
@@ -83,22 +87,23 @@ export class UserRepository {
 		return result
 	}
 
-	GetUserListRepository = async (userList: UserRecord[]) => {
-		const userDocsPromise = userList.map(async (user) => {
-			const userDoc = await getDoc(doc(this.userCollection, user.uid))
-			if (userDoc.exists()) {
-				return userDoc
-			}
-			return null
-		})
-		let result: User[] = []
-		let userDocs = (await Promise.all(userDocsPromise)).filter((doc) => doc != null)
-		result = userDocs.map((doc) => {
-			let user = doc.data() as User
-			user.guid = doc.id
-			return user
-		})
-		return result
+	GetUserListRepository = async (userList: UserRecord[], offset: number, pageSize: number) => {
+		const userGuid = userList.map((user) => user.uid)
+		if(userGuid.length === 0) {
+			return { rows: [], count: 0 }
+		}
+		const constraints = [
+			where('__name__', 'in', userGuid),
+			where('status', '==', DocumentStatus.Active),
+			orderBy('id', 'asc'),
+		]
+		let { rows, count } = await this.repositoryService.getPaginatedData<User>(
+			this.userCollection,
+			offset,
+			pageSize,
+			constraints,
+		)
+		return { rows, count }
 	}
 
 	GetResidentDetailsRepository = async (userId: string) => {

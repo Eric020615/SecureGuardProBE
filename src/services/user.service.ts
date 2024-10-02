@@ -135,8 +135,9 @@ export class UserService {
 		}
 	}
 
-	GetUserListService = async (isActive: boolean) => {
+	GetUserListService = async (isActive: boolean, page: number, limit: number) => {
 		try {
+			let offset = page * limit
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
 			if (isActive) {
@@ -144,15 +145,15 @@ export class UserService {
 			} else {
 				userList = userResult.users.filter((user) => user.disabled)
 			}
-			const userInformationList = await this.userRepository.GetUserListRepository(userList)
+			let { rows, count } = await this.userRepository.GetUserListRepository(userList, offset, limit)
 			let data: GetUserDto[] = []
 			data =
-				userInformationList && userInformationList.length > 0
-					? userInformationList.map((userInformation) => {
+				rows && rows.length > 0
+					? rows.map((userInformation, index) => {
 							return {
 								userId: userInformation.id,
 								userGuid: userInformation.guid ? userInformation.guid : '',
-								userName: '',
+								userName: userList[index].displayName ? userList[index].displayName : '',
 								firstName: userInformation.firstName,
 								lastName: userInformation.lastName,
 								gender: userInformation.gender,
@@ -166,7 +167,7 @@ export class UserService {
 							} as GetUserDto
 					  })
 					: []
-			return data
+			return {data, count}
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -207,7 +208,9 @@ export class UserService {
 				return data
 			}
 			if (data.role === RoleEnum.SYSTEM_ADMIN) {
-				const systemAdminDetails = await this.userRepository.GetSystemAdminDetailsRepository(userGuid)
+				const systemAdminDetails = await this.userRepository.GetSystemAdminDetailsRepository(
+					userGuid,
+				)
 				if (!systemAdminDetails) {
 					return data
 				}
