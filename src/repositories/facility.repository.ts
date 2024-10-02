@@ -40,10 +40,10 @@ export class FacilityBookingRepository {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: "facilityBooking"
-			});
-			if(Number.isNaN(id)) {
-				throw new Error("Failed to generate id")
+				counterName: 'facilityBooking',
+			})
+			if (Number.isNaN(id)) {
+				throw new Error('Failed to generate id')
 			}
 			const docRef = await addDoc(this.facilityCollection, { ...data })
 			await updateDoc(docRef, { id: id })
@@ -75,16 +75,15 @@ export class FacilityBookingRepository {
 		return { rows, count }
 	}
 
-	async getAllFacilityBookingRepository() {
-		const q = query(this.facilityCollection)
-		const querySnapshot = await getDocs(q)
-		let result: FacilityBooking[] = []
-		querySnapshot.forEach((doc) => {
-			let data = doc.data() as FacilityBooking
-			data.guid = doc.id
-			result.push(data)
-		})
-		return result
+	async getAllFacilityBookingRepository(offset: number, pageSize: number) {
+		const constraints = [orderBy('id', 'asc')]
+		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
+			this.facilityCollection,
+			offset,
+			pageSize,
+			constraints,
+		)
+		return { rows, count }
 	}
 
 	async cancelFacilityBookingRepository(data: FacilityBooking, bookingGuid: string) {

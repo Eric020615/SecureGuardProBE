@@ -53,16 +53,17 @@ export class NoticeRepository {
 		})
 	}
 
-	async getAllNoticeRepository() {
-		const q = query(this.noticeCollection)
-		const querySnapshot = await getDocs(q)
-		let result: Notice[] = []
-		querySnapshot?.forEach((doc) => {
-			let data = doc.data() as Notice
-			data.guid = doc.id
-			result.push(data)
-		})
-		return result
+	async getAllNoticeRepository(offset: number, pageSize: number) {
+		const constraints = [
+			orderBy('id', 'asc')
+		]
+		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
+			this.noticeCollection,
+			offset,
+			pageSize,
+			constraints,
+		)
+		return { rows, count }
 	}
 
 	async getNoticeRepository(offset: number, pageSize: number) {

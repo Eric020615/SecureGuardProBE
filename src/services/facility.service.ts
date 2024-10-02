@@ -58,7 +58,7 @@ export class FacilityService {
 		limit: number,
 	) => {
 		try {
-			let offset = (page) * limit
+			let offset = (page * limit) + 1
 			let { rows, count } = await this.facilityRepository.getFacilityBookingRepository(
 				userId,
 				isPast,
@@ -90,12 +90,16 @@ export class FacilityService {
 		}
 	}
 
-	getAllFacilityBookingService = async () => {
+	getAllFacilityBookingService = async (page: number, limit: number) => {
 		try {
-			const facilityBookings = await this.facilityRepository.getAllFacilityBookingRepository()
+			let offset = (page * limit) + 1
+			let { rows, count } = await this.facilityRepository.getAllFacilityBookingRepository(
+				offset,
+				limit,
+			)
 			let data: GetFacilityBookingHistoryDto[] = []
-			data = facilityBookings
-				? facilityBookings.map((facilityBooking) => {
+			data = rows
+				? rows.map((facilityBooking) => {
 						return {
 							bookingId: facilityBooking.id,
 							bookingGuid: facilityBooking.guid,
@@ -112,7 +116,7 @@ export class FacilityService {
 						} as GetFacilityBookingHistoryDto
 				  })
 				: []
-			return data
+			return { data, count }
 		} catch (error: any) {
 			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)

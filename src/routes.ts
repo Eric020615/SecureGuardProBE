@@ -26,11 +26,20 @@ const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "IPaginatedResponse_any_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"any"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IResponse_any_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"any"},{"dataType":"array","array":{"dataType":"any"}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"any"},{"dataType":"array","array":{"dataType":"any"}},{"ref":"IPaginatedResponse_any_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -43,17 +52,6 @@ const models: TsoaRoute.Models = {
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IPaginatedResponse_any_": {
-        "dataType": "refObject",
-        "properties": {
-            "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"any"},{"dataType":"array","array":{"dataType":"any"}},{"dataType":"enum","enums":[null]}]},
-            "status": {"dataType":"string"},
-            "count": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
@@ -75,11 +73,48 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetVisitorDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_IPaginatedResponse_GetVisitorDto__": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"IPaginatedResponse_GetVisitorDto_"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_IPaginatedResponse_GetVisitorDto__": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"IPaginatedResponse_GetVisitorDto_"},{"dataType":"array","array":{"dataType":"refObject","ref":"IPaginatedResponse_GetVisitorDto_"}},{"ref":"IPaginatedResponse_IPaginatedResponse_GetVisitorDto__"},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetVisitorDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IResponse_GetVisitorDto-Array_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}}},{"ref":"IPaginatedResponse_GetVisitorDto-Array_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -89,7 +124,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"ref":"GetVisitorDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetVisitorDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"ref":"IPaginatedResponse_GetVisitorDto_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -175,11 +210,20 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetUserDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IResponse_GetUserDto-Array_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}}},{"ref":"IPaginatedResponse_GetUserDto-Array_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -226,11 +270,20 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetUserDetailsByIdDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDetailsByIdDto"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IResponse_GetUserDetailsByIdDto_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"ref":"GetUserDetailsByIdDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDetailsByIdDto"}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetUserDetailsByIdDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDetailsByIdDto"}},{"ref":"IPaginatedResponse_GetUserDetailsByIdDto_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -279,11 +332,29 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IResponse_GetNoticeDto-Array_": {
+    "IPaginatedResponse_GetNoticeDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_IPaginatedResponse_GetNoticeDto__": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"IPaginatedResponse_GetNoticeDto_"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_IPaginatedResponse_GetNoticeDto__": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"ref":"IPaginatedResponse_GetNoticeDto_"},{"dataType":"array","array":{"dataType":"refObject","ref":"IPaginatedResponse_GetNoticeDto_"}},{"ref":"IPaginatedResponse_IPaginatedResponse_GetNoticeDto__"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -292,10 +363,18 @@ const models: TsoaRoute.Models = {
     "IPaginatedResponse_GetNoticeDto-Array_": {
         "dataType": "refObject",
         "properties": {
-            "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}}},{"dataType":"enum","enums":[null]}]},
-            "status": {"dataType":"string"},
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}}},{"dataType":"enum","enums":[null]}]},
             "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetNoticeDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}}},{"ref":"IPaginatedResponse_GetNoticeDto-Array_"},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -304,7 +383,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"ref":"GetNoticeDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetNoticeDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"ref":"IPaginatedResponse_GetNoticeDto_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -364,11 +443,48 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetFacilityBookingHistoryDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_IPaginatedResponse_GetFacilityBookingHistoryDto__": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"IPaginatedResponse_GetFacilityBookingHistoryDto_"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_IPaginatedResponse_GetFacilityBookingHistoryDto__": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"IPaginatedResponse_GetFacilityBookingHistoryDto_"},{"dataType":"array","array":{"dataType":"refObject","ref":"IPaginatedResponse_GetFacilityBookingHistoryDto_"}},{"ref":"IPaginatedResponse_IPaginatedResponse_GetFacilityBookingHistoryDto__"},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetFacilityBookingHistoryDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IResponse_GetFacilityBookingHistoryDto-Array_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}}},{"ref":"IPaginatedResponse_GetFacilityBookingHistoryDto-Array_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -912,6 +1028,8 @@ export function RegisterRoutes(app: Router) {
 
             async function NoticeController_getAllNotice(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1166,6 +1284,8 @@ export function RegisterRoutes(app: Router) {
 
             async function FacilityController_getAllFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

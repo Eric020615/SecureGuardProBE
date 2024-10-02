@@ -25,6 +25,7 @@ import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FacilityService } from '../services/facility.service'
+import { list } from 'firebase/storage'
 
 @Route('facility')
 @provideSingleton(FacilityController)
@@ -82,7 +83,7 @@ export class FacilityController extends Controller {
 		@Query() isPast: boolean,
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IPaginatedResponse<any>> {
+	): Promise<IResponse<IPaginatedResponse<GetFacilityBookingHistoryDto>>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -96,8 +97,10 @@ export class FacilityController extends Controller {
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
-				data: data,
-				count: count,
+				data: {
+					list: data,
+					count: count
+				}
 			}
 			return response
 		} catch (err) {
@@ -105,8 +108,10 @@ export class FacilityController extends Controller {
 			const response = {
 				message: 'Failed to retrieve facility booking',
 				status: '500',
-				data: null,
-				count: 0,
+				data: {
+					list: null,
+					count: 0
+				}
 			}
 			return response
 		}
@@ -118,13 +123,19 @@ export class FacilityController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/admin')
 	@Security('jwt', ['SA'])
-	public async getAllFacilityBooking(): Promise<IResponse<any>> {
+	public async getAllFacilityBooking(
+		@Query() page: number,
+		@Query() limit: number
+	): Promise<IResponse<IPaginatedResponse<GetFacilityBookingHistoryDto>>> {
 		try {
-			const data = await this.facilityService.getAllFacilityBookingService()
+			const {data, count} = await this.facilityService.getAllFacilityBookingService(page, limit)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
-				data: data,
+				data: {
+					list: data,
+					count: count
+				},
 			}
 			return response
 		} catch (err) {
@@ -132,7 +143,10 @@ export class FacilityController extends Controller {
 			const response = {
 				message: 'Failed to retrieve facility booking',
 				status: '500',
-				data: null,
+				data: {
+					list: null,
+					count: 0
+				},
 			}
 			return response
 		}

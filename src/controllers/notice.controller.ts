@@ -69,13 +69,19 @@ export class NoticeController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/admin')
 	@Security('jwt', ['SA'])
-	public async getAllNotice(): Promise<IResponse<GetNoticeDto[]>> {
+	public async getAllNotice(
+		@Query() page: number,
+		@Query() limit: number
+	): Promise<IResponse<IPaginatedResponse<GetNoticeDto>>> {
 		try {
-			let data = await this.noticeService.getAllNoticeService()
+			let { data, count } = await this.noticeService.getAllNoticeService(page, limit)
 			const response = {
 				message: 'Notices retrieved successfully',
 				status: '200',
-				data: data,
+				data: {
+					list: data,
+					count: count,
+				}
 			}
 			return response
 		} catch (err) {
@@ -83,7 +89,10 @@ export class NoticeController extends Controller {
 			const response = {
 				message: 'Failed to retrieve notices',
 				status: '500',
-				data: null,
+				data: {
+					list: null,
+					count: 0,
+				}
 			}
 			return response
 		}
@@ -97,23 +106,27 @@ export class NoticeController extends Controller {
 	public async getNotice(
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IPaginatedResponse<GetNoticeDto[]>> {
+	): Promise<IResponse<IPaginatedResponse<GetNoticeDto>>> {
 		try {
 			let { data, count } = await this.noticeService.getNoticeService(page, limit)
 			const response = {
 				message: 'Notices retrieved successfully',
 				status: '200',
-				data: data,
-				count: count
+				data: {
+					list: data,
+					count: count,
+				}
 			}
 			return response
 		} catch (err) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
 			const response = {
-				message: 'Failed to retrieve notices',
-				status: '500',
-				data: null,
-				count: 0
+				message: 'Notices retrieved successfully',
+				status: '200',
+				data: {
+					list: null,
+					count: 0,
+				}
 			}
 			return response
 		}

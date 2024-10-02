@@ -74,7 +74,7 @@ export class VisitorController extends Controller {
 		@Query() isPast: boolean,
 		@Query() page: number,
 		@Query() limit: number
-	): Promise<IPaginatedResponse<any>> {
+	): Promise<IResponse<IPaginatedResponse<GetVisitorDto>>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -83,8 +83,10 @@ export class VisitorController extends Controller {
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
-				data: data,
-				count: count
+				data: {
+					list: data,
+					count: count
+				}
 			}
 			return response
 		} catch (err) {
@@ -92,8 +94,10 @@ export class VisitorController extends Controller {
 			const response = {
 				message: 'Failed to retrieve visitors',
 				status: '500',
-				data: null,
-				count: 0
+				data: {
+					list: null,
+					count: 0
+				}
 			}
 			return response
 		}
@@ -137,7 +141,9 @@ export class VisitorController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/admin')
 	// @Security("jwt", ["SA"])
-	public async getAllVisitors(): Promise<IResponse<any>> {
+	public async getAllVisitors(
+		
+	): Promise<IResponse<any>> {
 		try {
 			const data = await this.visitorService.getAllVisitorService()
 			const response = {

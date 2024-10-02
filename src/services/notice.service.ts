@@ -36,12 +36,13 @@ export class NoticeService {
 		}
 	}
 
-	getAllNoticeService = async () => {
+	getAllNoticeService = async (page: number, limit: number) => {
 		try {
-			const notices = await this.noticeRepository.getAllNoticeRepository()
+			let offset = (page * limit) + 1
+			const { rows, count } = await this.noticeRepository.getAllNoticeRepository(offset, limit)
 			let data: GetNoticeDto[] = []
-			data = notices
-				? notices.map((notice) => {
+			data = rows
+				? rows.map((notice) => {
 						return {
 							noticeId: notice.id,
 							noticeGuid: notice.guid,
@@ -56,7 +57,7 @@ export class NoticeService {
 						} as GetNoticeDto
 				  })
 				: []
-			return data
+			return { data, count }
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -64,7 +65,7 @@ export class NoticeService {
 
 	getNoticeService = async (page: number, limit: number) => {
 		try {
-			let offset = page * limit
+			let offset = (page * limit) + 1
 			let { rows, count } = await this.noticeRepository.getNoticeRepository(offset, limit)
 			let data: GetNoticeDto[] = []
 			data = rows
