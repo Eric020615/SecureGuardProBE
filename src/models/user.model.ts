@@ -1,41 +1,36 @@
 import { RoleEnum } from "../common/role";
 import { Timestamp } from "firebase/firestore";
+import { BaseModel } from "./base.model";
 
-export class User {
-  id?: string; // Optional
+export class User extends BaseModel{
   firstName: string;
   lastName: string;
   contactNumber: string;
   gender: string;
   dateOfBirth: Timestamp | null;
   role: RoleEnum;
-  createdBy: string;
-  updatedBy: string;
-  createdDateTime: Timestamp;
-  updatedDateTime: Timestamp;
 
   constructor(
+    id: number,
     firstName: string,
     lastName: string,
     contactNumber: string,
     gender: string,
     dateOfBirth: Timestamp | null,
     role: RoleEnum,
+    status: number,
     createdBy: string,
     updatedBy: string,
     createdDateTime: Timestamp,
     updatedDateTime: Timestamp
   ) {
+    super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime);
     this.firstName = firstName;
     this.lastName = lastName;
     this.contactNumber = contactNumber;
     this.gender = gender;
     this.dateOfBirth = dateOfBirth;
     this.role = role;
-    this.createdBy = createdBy;
-    this.updatedBy = updatedBy;
-    this.createdDateTime = createdDateTime;
-    this.updatedDateTime = updatedDateTime;
   }
 }
 

@@ -41,10 +41,10 @@ export class NoticeController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.noticeService.createNoticeService(createNoticeDto, request.userId)
+			await this.noticeService.createNoticeService(createNoticeDto, request.userGuid)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
 				message: 'Notices created successfully',
@@ -168,10 +168,10 @@ export class NoticeController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.noticeService.editNoticeByIdService(editNoticeDto, request.userId)
+			await this.noticeService.editNoticeByIdService(editNoticeDto, request.userGuid)
 			const response = {
 				message: 'Notice updated successfully',
 				status: '200',

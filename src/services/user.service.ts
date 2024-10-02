@@ -27,71 +27,78 @@ import { FileService } from '../helper/file'
 export class UserService {
 	private authAdmin
 	constructor(
-		@inject(UserRepository) private userRepository : UserRepository,
+		@inject(UserRepository) private userRepository: UserRepository,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
-		@inject(FileService) private fileService: FileService
+		@inject(FileService) private fileService: FileService,
 	) {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
 
 	createUserService = async (
 		createUserDto: CreateResidentDto | CreateSystemAdminDto,
-		userId: string,
+		userGuid: string,
 		role: RoleEnum,
 	) => {
 		try {
-			const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userId)
+			const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
 			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
 				await this.userRepository.createResidentRepository(
 					new User(
+						0,
 						createUserDto.firstName,
 						createUserDto.lastName,
 						createUserDto.contactNumber,
 						createUserDto.gender,
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
-						userId,
-						userId,
+						1,
+						userGuid,
+						userGuid,
 						getNowTimestamp(),
 						getNowTimestamp(),
 					),
 					new Resident(
 						createUserDto.floorNumber,
 						createUserDto.unitNumber,
-						userId,
-						userId,
+						userGuid,
+						userGuid,
 						getNowTimestamp(),
 						getNowTimestamp(),
 						fileUrl ? fileUrl : [],
 					),
-					userId,
+					userGuid,
 				)
-			} else if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateSystemAdminDto(createUserDto)) {
+			} else if (
+				role === RoleEnum.SYSTEM_ADMIN &&
+				this.instanceOfCreateSystemAdminDto(createUserDto)
+			) {
 				await this.userRepository.createSystemAdminRepository(
 					new User(
+						0,
 						createUserDto.firstName,
 						createUserDto.lastName,
 						createUserDto.contactNumber,
 						createUserDto.gender,
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
-						userId,
-						userId,
+						1,
+						userGuid,
+						userGuid,
 						getNowTimestamp(),
 						getNowTimestamp(),
 					),
 					new SystemAdmin(
 						createUserDto.staffId,
-						userId,
-						userId,
+						userGuid,
+						userGuid,
 						getNowTimestamp(),
 						getNowTimestamp(),
 						fileUrl ? fileUrl : [],
 					),
-					userId,
+					userGuid,
 				)
 			}
-			await this.authAdmin.updateUser(userId, { displayName: createUserDto.userName })
+			await this.authAdmin.updateUser(userGuid, { displayName: createUserDto.userName })
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
 				throw new OperationError(
@@ -103,12 +110,13 @@ export class UserService {
 		}
 	}
 
-	GetUserByIdService = async (userId: string) => {
+	GetUserByIdService = async (userGuid: string) => {
 		try {
-			const userInformation = await this.userRepository.GetUserByIdRepository(userId)
+			const userInformation = await this.userRepository.GetUserByIdRepository(userGuid)
 			let data: GetUserDto = {} as GetUserDto
 			data = {
-				userId: userInformation.id ? userInformation.id : '',
+				userId: userInformation.id,
+				userGuid: userInformation.guid ? userInformation.guid : '',
 				userName: '',
 				firstName: userInformation.firstName,
 				lastName: userInformation.lastName,
@@ -142,7 +150,8 @@ export class UserService {
 				userInformationList && userInformationList.length > 0
 					? userInformationList.map((userInformation) => {
 							return {
-								userId: userInformation.id ? userInformation.id : '',
+								userId: userInformation.id,
+								userGuid: userInformation.guid ? userInformation.guid : '',
 								userName: '',
 								firstName: userInformation.firstName,
 								lastName: userInformation.lastName,
@@ -163,13 +172,14 @@ export class UserService {
 		}
 	}
 
-	GetUserDetailsByIdService = async (userId: string) => {
+	GetUserDetailsByIdService = async (userGuid: string) => {
 		try {
-			const userDetails = await this.userRepository.GetUserByIdRepository(userId)
+			const userDetails = await this.userRepository.GetUserByIdRepository(userGuid)
 			let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto
-			const userRecord = await this.authAdmin.getUser(userId)
+			const userRecord = await this.authAdmin.getUser(userGuid)
 			data = {
-				userId: userDetails.id ? userDetails.id : '',
+				userId: userDetails.id,
+				userGuid: userDetails.guid ? userDetails.guid : '',
 				userName: userRecord.displayName ? userRecord.displayName : '',
 				firstName: userDetails.firstName,
 				lastName: userDetails.lastName,
@@ -185,7 +195,7 @@ export class UserService {
 				updatedDateTime: convertTimestampToUserTimezone(userDetails.updatedDateTime),
 			}
 			if (userDetails.role === RoleEnum.RESIDENT) {
-				const residentDetails = await this.userRepository.GetResidentDetailsRepository(userId)
+				const residentDetails = await this.userRepository.GetResidentDetailsRepository(userGuid)
 				if (!residentDetails) {
 					return data
 				}
@@ -197,7 +207,7 @@ export class UserService {
 				return data
 			}
 			if (data.role === RoleEnum.SYSTEM_ADMIN) {
-				const systemAdminDetails = await this.userRepository.GetSystemAdminDetailsRepository(userId)
+				const systemAdminDetails = await this.userRepository.GetSystemAdminDetailsRepository(userGuid)
 				if (!systemAdminDetails) {
 					return data
 				}

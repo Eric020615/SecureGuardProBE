@@ -18,6 +18,8 @@ import { Resident, SystemAdmin, User } from '../models/user.model'
 import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { SequenceRepository } from './sequence.repository'
 
 @provideSingleton(UserRepository)
 export class UserRepository {
@@ -26,34 +28,58 @@ export class UserRepository {
 	private systemAdminCollection
 
 	constructor(
-    @inject(FirebaseClient)
-    private firebaseClient: FirebaseClient
-  ) {
+		@inject(FirebaseClient)
+		private firebaseClient: FirebaseClient,
+		@inject(FirebaseAdmin)
+		private firebaseAdmin: FirebaseAdmin,
+		@inject(SequenceRepository)
+		private sequenceRepository: SequenceRepository,
+	) {
 		this.userCollection = collection(this.firebaseClient.firestore, 'user')
 		this.residentCollection = collection(this.firebaseClient.firestore, 'resident')
 		this.systemAdminCollection = collection(this.firebaseClient.firestore, 'systemAdmin')
 	}
 
 	createResidentRepository = async (user: User, resident: Resident, userId: string) => {
-		const userDocRef = doc(this.userCollection, userId)
-		const residentDocRef = doc(this.residentCollection, userId)
-		await setDoc(userDocRef, { ...user })
-		await setDoc(residentDocRef, { ...resident })
+		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
+			const id = await this.sequenceRepository.getSequenceId({
+				transaction: transaction,
+				counterName: 'user',
+			})
+			if (Number.isNaN(id)) {
+				throw new Error('Failed to generate id')
+			}
+			const userDocRef = doc(this.userCollection, userId)
+			const residentDocRef = doc(this.residentCollection, userId)
+			await setDoc(userDocRef, { ...user })
+			await setDoc(residentDocRef, { ...resident })
+			await updateDoc(userDocRef, { id: id })
+		})
 	}
 
 	createSystemAdminRepository = async (user: User, systemAdmin: SystemAdmin, userId: string) => {
-		const userDocRef = doc(this.userCollection, userId)
-		const systemAdminDocRef = doc(this.systemAdminCollection, userId)
-		await setDoc(userDocRef, { ...user })
-		await setDoc(systemAdminDocRef, { ...systemAdmin })
+		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
+			const id = await this.sequenceRepository.getSequenceId({
+				transaction: transaction,
+				counterName: 'user',
+			})
+			if (Number.isNaN(id)) {
+				throw new Error('Failed to generate id')
+			}
+			const userDocRef = doc(this.userCollection, userId)
+			const systemAdminDocRef = doc(this.systemAdminCollection, userId)
+			await setDoc(userDocRef, { ...user })
+			await setDoc(systemAdminDocRef, { ...systemAdmin })
+			await updateDoc(userDocRef, { id: id })
+		})
 	}
 
-	GetUserByIdRepository = async (userId: string) => {
-		const docRef = doc(this.userCollection, userId)
+	GetUserByIdRepository = async (userGuid: string) => {
+		const docRef = doc(this.userCollection, userGuid)
 		const userDoc = await getDoc(docRef)
 		let result: User = {} as User
 		result = userDoc.data() as User
-		result.id = userDoc.id
+		result.guid = userDoc.id
 		return result
 	}
 
@@ -69,7 +95,7 @@ export class UserRepository {
 		let userDocs = (await Promise.all(userDocsPromise)).filter((doc) => doc != null)
 		result = userDocs.map((doc) => {
 			let user = doc.data() as User
-			user.id = doc.id
+			user.guid = doc.id
 			return user
 		})
 		return result

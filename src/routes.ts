@@ -194,7 +194,8 @@ const models: TsoaRoute.Models = {
     "GetUserDto": {
         "dataType": "refObject",
         "properties": {
-            "userId": {"dataType":"string","required":true},
+            "userId": {"dataType":"double","required":true},
+            "userGuid": {"dataType":"string","required":true},
             "firstName": {"dataType":"string","required":true},
             "lastName": {"dataType":"string","required":true},
             "userName": {"dataType":"string","required":true},
@@ -251,7 +252,8 @@ const models: TsoaRoute.Models = {
     "GetUserDetailsByIdDto": {
         "dataType": "refObject",
         "properties": {
-            "userId": {"dataType":"string","required":true},
+            "userId": {"dataType":"double","required":true},
+            "userGuid": {"dataType":"string","required":true},
             "firstName": {"dataType":"string","required":true},
             "lastName": {"dataType":"string","required":true},
             "userName": {"dataType":"string","required":true},
@@ -292,7 +294,6 @@ const models: TsoaRoute.Models = {
     "EditUserDetailsByIdDto": {
         "dataType": "refObject",
         "properties": {
-            "userId": {"dataType":"string","required":true},
             "firstName": {"dataType":"string","required":true},
             "lastName": {"dataType":"string","required":true},
             "userName": {"dataType":"string","required":true},
@@ -881,7 +882,7 @@ export function RegisterRoutes(app: Router) {
 
             async function UserController_getUserDetailsById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    userId: {"in":"query","name":"userId","required":true,"dataType":"string"},
+                    userGuid: {"in":"query","name":"userGuid","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -918,7 +919,7 @@ export function RegisterRoutes(app: Router) {
             async function UserController_activateUserById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    userId: {"in":"query","name":"userId","required":true,"dataType":"string"},
+                    userGuid: {"in":"query","name":"userGuid","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -955,7 +956,7 @@ export function RegisterRoutes(app: Router) {
             async function UserController_deactivateUserById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    userId: {"in":"query","name":"userId","required":true,"dataType":"string"},
+                    userGuid: {"in":"query","name":"userGuid","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

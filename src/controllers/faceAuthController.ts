@@ -47,16 +47,16 @@ export class FaceAuthController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId || !request.role) {
+			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userData = await this.userService.GetUserDetailsByIdService(request.userId)
+			const userData = await this.userService.GetUserDetailsByIdService(request.userGuid)
 			if (userData == null) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const data = await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[userData.role],
-				id: userData.userId,
+				id: `${request.role} ${userData.userId.toString()}`,
 				is_admin: userData.role === RoleEnum.SYSTEM_ADMIN ? true : false,
 				person_name: userData.firstName + ' ' + userData.lastName,
 				group_list: ['1'],
@@ -66,11 +66,11 @@ export class FaceAuthController extends Controller {
 						data: createUserFaceAuthDto.faceData,
 					},
 				],
-				person_code: userData.userId,
+				person_code: userData.userGuid,
 				phone_num: userData.contactNumber,
 			})
-			if(data){
-				this.faceAuthService.createFaceAuth(request.userId);
+			if (data) {
+				this.faceAuthService.createFaceAuth(request.userGuid)
 			}
 			const response = {
 				message: 'Successfully create user face auth',
@@ -100,16 +100,16 @@ export class FaceAuthController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId || !request.role) {
+			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userData = await this.userService.GetUserDetailsByIdService(request.userId)
+			const userData = await this.userService.GetUserDetailsByIdService(request.userGuid)
 			if (userData == null) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const data = await this.megeyeService.editPerson({
 				recognition_type: RoleRecognitionTypeEnum[userData.role],
-				id: userData.userId,
+				id: `${request.role} ${userData.userId.toString()}`,
 				is_admin: userData.role === RoleEnum.SYSTEM_ADMIN ? true : false,
 				person_name: userData.firstName + ' ' + userData.lastName,
 				group_list: ['1'],
@@ -119,7 +119,7 @@ export class FaceAuthController extends Controller {
 						data: updateUserFaceAuthDto.faceData,
 					},
 				],
-				person_code: userData.userId,
+				person_code: userData.userGuid,
 				phone_num: userData.contactNumber,
 			})
 			const response = {

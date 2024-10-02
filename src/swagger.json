@@ -426,6 +426,10 @@
 			"GetUserDto": {
 				"properties": {
 					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"userGuid": {
 						"type": "string"
 					},
 					"firstName": {
@@ -464,6 +468,7 @@
 				},
 				"required": [
 					"userId",
+					"userGuid",
 					"firstName",
 					"lastName",
 					"userName",
@@ -582,6 +587,10 @@
 			"GetUserDetailsByIdDto": {
 				"properties": {
 					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"userGuid": {
 						"type": "string"
 					},
 					"firstName": {
@@ -636,6 +645,7 @@
 				},
 				"required": [
 					"userId",
+					"userGuid",
 					"firstName",
 					"lastName",
 					"userName",
@@ -703,9 +713,6 @@
 			},
 			"EditUserDetailsByIdDto": {
 				"properties": {
-					"userId": {
-						"type": "string"
-					},
 					"firstName": {
 						"type": "string"
 					},
@@ -729,7 +736,6 @@
 					}
 				},
 				"required": [
-					"userId",
 					"firstName",
 					"lastName",
 					"userName",
@@ -1823,7 +1829,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "userId",
+						"name": "userGuid",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -1873,7 +1879,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "userId",
+						"name": "userGuid",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -1923,7 +1929,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "userId",
+						"name": "userGuid",
 						"required": true,
 						"schema": {
 							"type": "string"

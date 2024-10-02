@@ -53,17 +53,10 @@ export class UserController extends Controller {
 		@Body() createUserDto: CreateResidentDto | CreateSystemAdminDto,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId || !request.role) {
+			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.createUserService(createUserDto, request.userId, request.role)
-			// await this.megeyeService.createPerson({
-			// 	recognition_type: RoleRecognitionTypeEnum[request.role],
-			// 	is_admin: false,
-			// 	person_name: createUserDto.firstName + ' ' + createUserDto.lastName,
-			// 	group_list: ['1'],
-			// 	phone_num: createUserDto.contactNumber,
-			// })
+			await this.userService.createUserService(createUserDto, request.userGuid, request.role)
 			const response = {
 				message: 'User Created successfully',
 				status: '200',
@@ -118,10 +111,10 @@ export class UserController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId || !request.role) {
+			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await this.userService.GetUserDetailsByIdService(request.userId)
+			const data = await this.userService.GetUserDetailsByIdService(request.userGuid)
 			const response = {
 				message: 'User details retrieve successfully',
 				status: '200',
@@ -150,10 +143,10 @@ export class UserController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.editUserDetailsByIdService(editUserDetailsByIdDto, request.userId)
+			await this.userService.editUserDetailsByIdService(editUserDetailsByIdDto, request.userGuid)
 			const response = {
 				message: 'User profile updated successfully',
 				status: '200',
@@ -177,9 +170,9 @@ export class UserController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/details')
 	@Security('jwt', ['SA'])
-	public async getUserDetailsById(@Query() userId: string): Promise<IResponse<any>> {
+	public async getUserDetailsById(@Query() userGuid: string): Promise<IResponse<any>> {
 		try {
-			const data = await this.userService.GetUserDetailsByIdService(userId)
+			const data = await this.userService.GetUserDetailsByIdService(userGuid)
 			const response = {
 				message: 'User details retrieve successfully',
 				status: '200',
@@ -205,13 +198,13 @@ export class UserController extends Controller {
 	@Security('jwt', ['SA'])
 	public async activateUserById(
 		@Request() request: IGetUserAuthInfoRequest,
-		@Query() userId: string,
+		@Query() userGuid: string,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.activateUserByIdService(userId, request.userId)
+			await this.userService.activateUserByIdService(userGuid, request.userGuid)
 			const response = {
 				message: 'User activated successfully',
 				status: '200',
@@ -237,13 +230,13 @@ export class UserController extends Controller {
 	@Security('jwt', ['SA'])
 	public async deactivateUserById(
 		@Request() request: IGetUserAuthInfoRequest,
-		@Query() userId: string,
+		@Query() userGuid: string,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.deactivateUserByIdService(userId, request.userId)
+			await this.userService.deactivateUserByIdService(userGuid, request.userGuid)
 			const response = {
 				message: 'User was deactivated successfully',
 				status: '200',

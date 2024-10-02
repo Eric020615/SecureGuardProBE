@@ -41,10 +41,10 @@ export class VisitorController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.visitorService.createVisitorService(createVisitorDto, request.userId)
+			await this.visitorService.createVisitorService(createVisitorDto, request.userGuid)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
 				message: 'Visitor created successfully',
@@ -76,10 +76,10 @@ export class VisitorController extends Controller {
 		@Query() limit: number
 	): Promise<IResponse<IPaginatedResponse<GetVisitorDto>>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const { data, count } = await this.visitorService.getVisitorByResidentService(request.userId, isPast, page, limit)
+			const { data, count } = await this.visitorService.getVisitorByResidentService(request.userGuid, isPast, page, limit)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
@@ -114,7 +114,7 @@ export class VisitorController extends Controller {
 		@Query() visitorGuid: string,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const data = await this.visitorService.getVisitorDetailsByResidentService(visitorGuid)
@@ -175,10 +175,10 @@ export class VisitorController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, visitorGuid, request.userId)
+			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, visitorGuid, request.userGuid)
 			const response = {
 				message: 'Visitor updated successfully',
 				status: '200',

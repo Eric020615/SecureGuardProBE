@@ -6,7 +6,7 @@ import { RoleEnum } from "../common/role";
 import { iocContainer } from "../ioc";
 
 export interface IGetUserAuthInfoRequest extends Request {
-  userId: string;
+  userGuid: string;
   role: RoleEnum;
 }
 
@@ -25,13 +25,13 @@ export const expressAuthentication = async (
     if (securityName === "jwt") {  
       const userData: JwtPayloadDto = verifyToken(token, scopes);
       await authService.checkUserStatus(userData.userGUID);
-      request.userId = userData.userGUID;
+      request.userGuid = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});
     }
     if (securityName === "newUser") {
       const userData: JwtPayloadDto = verifyToken(token, scopes);
-      request.userId = userData.userGUID;
+      request.userGuid = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});
     }

@@ -48,12 +48,12 @@ export class FacilityController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.facilityService.createFacilityBookingService(
 				createFacilityBookingDto,
-				request.userId,
+				request.userGuid,
 			)
 			const response = {
 				message: 'Facility booking created successfully',
@@ -85,11 +85,11 @@ export class FacilityController extends Controller {
 		@Query() limit: number,
 	): Promise<IResponse<IPaginatedResponse<GetFacilityBookingHistoryDto>>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const { data, count } = await this.facilityService.getFacilityBookingService(
-				request.userId,
+				request.userGuid,
 				isPast,
 				page,
 				limit,
@@ -163,11 +163,11 @@ export class FacilityController extends Controller {
 		@Body() cancelFacilityBookingDto: CancelFacilityBookingDto,
 	): Promise<IResponse<any>> {
 		try {
-			if (!request.userId) {
+			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.facilityService.cancelFacilityBookingService(
-				request.userId,
+				request.userGuid,
 				cancelFacilityBookingDto,
 			)
 			const response = {
