@@ -62,13 +62,13 @@ export class NoticeService {
 		}
 	}
 
-	getNoticeService = async () => {
+	getNoticeService = async (page: number, limit: number) => {
 		try {
-			// rmb add repository method for this
-			const notices = await this.noticeRepository.getNoticeRepository()
+			let offset = page * limit
+			let { rows, count } = await this.noticeRepository.getNoticeRepository(offset, limit)
 			let data: GetNoticeDto[] = []
-			data = notices
-				? notices.map((notice) => {
+			data = rows
+				? rows.map((notice) => {
 						return {
 							noticeId: notice.id,
 							noticeGuid: notice.guid,
@@ -83,7 +83,7 @@ export class NoticeService {
 						} as GetNoticeDto
 				  })
 				: []
-			return data
+			return { data, count }
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

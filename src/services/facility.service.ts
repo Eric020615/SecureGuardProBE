@@ -58,7 +58,7 @@ export class FacilityService {
 		limit: number,
 	) => {
 		try {
-			let offset = (page - 1) * limit
+			let offset = (page) * limit
 			let { rows, count } = await this.facilityRepository.getFacilityBookingRepository(
 				userId,
 				isPast,

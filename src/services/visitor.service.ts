@@ -1,9 +1,7 @@
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto } from '../dtos/visitor.dto'
-import {
-	VisitorRepository
-} from '../repositories/visitor.repository'
+import { VisitorRepository } from '../repositories/visitor.repository'
 import { Visitor } from '../models/visitor.model'
 import {
 	convertDateStringToTimestamp,
@@ -16,7 +14,7 @@ import { DocumentStatus } from '../common/constants'
 
 @provideSingleton(VisitorService)
 export class VisitorService {
-	constructor(@inject(VisitorRepository) private visitorRepository: VisitorRepository ){}
+	constructor(@inject(VisitorRepository) private visitorRepository: VisitorRepository) {}
 	createVisitorService = async (createVisitorDto: CreateVisitorDto, userId: string) => {
 		try {
 			await this.visitorRepository.createVisitorRepository(
@@ -38,7 +36,11 @@ export class VisitorService {
 		}
 	}
 
-	editVisitorByIdService = async (editVisitorByIdDto: EditVisitorByIdDto, visitorGuid: string, userId: string) => {
+	editVisitorByIdService = async (
+		editVisitorByIdDto: EditVisitorByIdDto,
+		visitorGuid: string,
+		userId: string,
+	) => {
 		try {
 			let visitor: Visitor = {
 				visitorName: editVisitorByIdDto.visitorName,
@@ -54,12 +56,23 @@ export class VisitorService {
 		}
 	}
 
-	getVisitorByResidentService = async (userId: string, isPast: boolean) => {
+	getVisitorByResidentService = async (
+		userId: string,
+		isPast: boolean,
+		page: number,
+		limit: number,
+	) => {
 		try {
-			const visitors = await this.visitorRepository.getVisitorByResidentRepository(userId, isPast)
+			let offset = (page) * limit
+			let { rows, count } = await this.visitorRepository.getVisitorByResidentRepository(
+				userId,
+				isPast,
+				offset,
+				limit,
+			)
 			let data: GetVisitorDto[] = []
-			data = visitors
-				? visitors.map((visitor) => {
+			data = rows
+				? rows.map((visitor) => {
 						return {
 							visitorId: visitor.id,
 							visitorGuid: visitor.guid ? visitor.guid : '',
@@ -74,7 +87,7 @@ export class VisitorService {
 						} as GetVisitorDto
 				  })
 				: []
-			return data
+			return { data, count }
 		} catch (error: any) {
 			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -83,7 +96,9 @@ export class VisitorService {
 
 	getVisitorDetailsByResidentService = async (visitorGuid: string) => {
 		try {
-			const visitors = await this.visitorRepository.getVisitorDetailsByResidentRepository(visitorGuid)
+			const visitors = await this.visitorRepository.getVisitorDetailsByResidentRepository(
+				visitorGuid,
+			)
 			let data: GetVisitorDto = {} as GetVisitorDto
 			data = {
 				visitorId: visitors.id,

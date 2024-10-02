@@ -1,4 +1,4 @@
-import { IResponse } from '../dtos/index.dto'
+import { IPaginatedResponse, IResponse } from '../dtos/index.dto'
 import {
 	Body,
 	Controller,
@@ -21,6 +21,7 @@ import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto } from '../dtos/vis
 import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { count, limit } from 'firebase/firestore'
 
 @Route('visitor')
 @provideSingleton(VisitorController)
@@ -71,16 +72,19 @@ export class VisitorController extends Controller {
 	public async getVisitorByResident(
 		@Request() request: IGetUserAuthInfoRequest,
 		@Query() isPast: boolean,
-	): Promise<IResponse<any>> {
+		@Query() page: number,
+		@Query() limit: number
+	): Promise<IPaginatedResponse<any>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await this.visitorService.getVisitorByResidentService(request.userId, isPast)
+			const { data, count } = await this.visitorService.getVisitorByResidentService(request.userId, isPast, page, limit)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
 				data: data,
+				count: count
 			}
 			return response
 		} catch (err) {
@@ -89,6 +93,7 @@ export class VisitorController extends Controller {
 				message: 'Failed to retrieve visitors',
 				status: '500',
 				data: null,
+				count: 0
 			}
 			return response
 		}

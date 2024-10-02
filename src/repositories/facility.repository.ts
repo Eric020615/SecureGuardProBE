@@ -17,6 +17,7 @@ import { FacilityBooking } from '../models/facilityBooking.mode'
 import { RepositoryService } from './repository'
 import { SequenceRepository } from './sequence.repository'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { DocumentStatus } from '../common/constants'
 
 @provideSingleton(FacilityBookingRepository)
 export class FacilityBookingRepository {
@@ -62,6 +63,7 @@ export class FacilityBookingRepository {
 				isPast ? '<=' : '>',
 				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
+			where('status', '==', DocumentStatus.Active),
 			orderBy('id', 'asc'),
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(

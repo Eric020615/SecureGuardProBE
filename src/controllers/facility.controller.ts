@@ -3,7 +3,7 @@ import {
 	CreateFacilityBookingDto,
 	GetFacilityBookingHistoryDto,
 } from '../dtos/facility.dto'
-import { IResponse } from '../dtos/index.dto'
+import { IPaginatedResponse, IResponse } from '../dtos/index.dto'
 import {
 	Body,
 	Controller,
@@ -82,7 +82,7 @@ export class FacilityController extends Controller {
 		@Query() isPast: boolean,
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IResponse<any>> {
+	): Promise<IPaginatedResponse<any>> {
 		try {
 			if (!request.userId) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -96,10 +96,8 @@ export class FacilityController extends Controller {
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
-				data: {
-					result: data,
-					count: count,
-				},
+				data: data,
+				count: count,
 			}
 			return response
 		} catch (err) {
@@ -107,10 +105,8 @@ export class FacilityController extends Controller {
 			const response = {
 				message: 'Failed to retrieve facility booking',
 				status: '500',
-				data: {
-					result: null,
-					count: 0,
-				},
+				data: null,
+				count: 0,
 			}
 			return response
 		}

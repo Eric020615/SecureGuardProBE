@@ -8,6 +8,7 @@ import {
 	query,
 	where,
 	updateDoc,
+	orderBy,
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
@@ -17,6 +18,8 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
+import { DocumentStatus } from '../common/constants'
+import { RepositoryService } from './repository'
 
 @provideSingleton(VisitorRepository)
 export class VisitorRepository {
@@ -29,6 +32,8 @@ export class VisitorRepository {
 		private firebaseAdmin: FirebaseAdmin,
 		@inject(SequenceRepository)
 		private sequenceRepository: SequenceRepository,
+		@inject(RepositoryService)
+		private repositoryService: RepositoryService,
 	) {
 		this.visitorCollection = collection(this.firebaseClient.firestore, 'visitor')
 	}
@@ -64,26 +69,29 @@ export class VisitorRepository {
 		return result
 	}
 
-	async getVisitorByResidentRepository(userId: string, isPast: boolean) {
-		const q = query(
-			this.visitorCollection,
-			and(
-				where('createdBy', '==', userId),
-				where(
-					'visitDateTime',
-					isPast ? '<=' : '>',
-					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
-				),
+	async getVisitorByResidentRepository(
+		userId: string,
+		isPast: boolean,
+		offset: number,
+		pageSize: number,
+	) {
+		const constraints = [
+			where('createdBy', '==', userId),
+			where(
+				'visitDateTime',
+				isPast ? '<=' : '>',
+				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
+			where('status', '==', DocumentStatus.Active),
+			orderBy('id', 'asc'),
+		]
+		let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
+			this.visitorCollection,
+			offset,
+			pageSize,
+			constraints,
 		)
-		const querySnapshot = await getDocs(q)
-		let result: Visitor[] = []
-		querySnapshot.forEach((doc) => {
-			let data = doc.data() as Visitor
-			data.guid = doc.id
-			result.push(data)
-		})
-		return result
+		return { rows, count }
 	}
 
 	async getVisitorDetailsByResidentRepository(visitorGuid: string) {

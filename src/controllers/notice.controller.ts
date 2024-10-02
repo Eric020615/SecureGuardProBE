@@ -1,7 +1,5 @@
-import { IResponse } from '../dtos/index.dto'
-import {
-	NoticeService
-} from '../services/notice.service'
+import { IPaginatedResponse, IResponse } from '../dtos/index.dto'
+import { NoticeService } from '../services/notice.service'
 import {
 	Body,
 	Controller,
@@ -28,9 +26,7 @@ import { inject } from 'inversify'
 @Route('notice')
 @provideSingleton(NoticeController)
 export class NoticeController extends Controller {
-	constructor(
-		@inject(NoticeService) private noticeService: NoticeService
-	) {
+	constructor(@inject(NoticeService) private noticeService: NoticeService) {
 		super()
 	}
 
@@ -98,13 +94,17 @@ export class NoticeController extends Controller {
 	@Response<IResponse<GetNoticeDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/')
-	public async getNotice(): Promise<IResponse<GetNoticeDto[]>> {
+	public async getNotice(
+		@Query() page: number,
+		@Query() limit: number,
+	): Promise<IPaginatedResponse<GetNoticeDto[]>> {
 		try {
-			let data = await this.noticeService.getNoticeService()
+			let { data, count } = await this.noticeService.getNoticeService(page, limit)
 			const response = {
 				message: 'Notices retrieved successfully',
 				status: '200',
 				data: data,
+				count: count
 			}
 			return response
 		} catch (err) {
@@ -113,6 +113,7 @@ export class NoticeController extends Controller {
 				message: 'Failed to retrieve notices',
 				status: '500',
 				data: null,
+				count: 0
 			}
 			return response
 		}

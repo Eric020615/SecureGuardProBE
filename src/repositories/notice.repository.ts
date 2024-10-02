@@ -20,6 +20,7 @@ import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
 import { DocumentStatus } from '../common/constants'
+import { RepositoryService } from './repository'
 
 @provideSingleton(NoticeRepository)
 export class NoticeRepository {
@@ -32,6 +33,8 @@ export class NoticeRepository {
 		private firebaseAdmin: FirebaseAdmin,
 		@inject(SequenceRepository)
 		private sequenceRepository: SequenceRepository,
+		@inject(RepositoryService)
+		private repositoryService: RepositoryService,
 	) {
 		this.noticeCollection = collection(this.firebaseClient.firestore, 'notice')
 	}
@@ -62,31 +65,28 @@ export class NoticeRepository {
 		return result
 	}
 
-	async getNoticeRepository() {
-		const q = query(
-			this.noticeCollection,
-			and(
-				where(
-					'startDate',
-					'<=',
-					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
-				),
-				where(
-					'endDate',
-					'>',
-					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
-				),
+	async getNoticeRepository(offset: number, pageSize: number) {
+		const constraints = [
+			where(
+				'startDate',
+				'<=',
+				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
-			orderBy('startDate'),
+			where(
+				'endDate',
+				'>',
+				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+			),
+			where('status', '==', DocumentStatus.Active),
+			orderBy('id', 'asc'),
+		]
+		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
+			this.noticeCollection,
+			offset,
+			pageSize,
+			constraints,
 		)
-		const querySnapshot = await getDocs(q)
-		let result: Notice[] = []
-		querySnapshot?.forEach((doc) => {
-			let data = doc.data() as Notice
-			data.guid = doc.id
-			result.push(data)
-		})
-		return result
+		return { rows, count }
 	}
 
 	async getNoticeByIdRepository(noticeGuid: string) {

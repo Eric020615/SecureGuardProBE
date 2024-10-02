@@ -218,7 +218,6 @@ export class MegeyeManager {
 							success = true
 						} catch (error: any) {
 							response = error.response
-							let a: AxiosError = new AxiosError()
 							console.log(error.response.data)
 							error.response.data.forEach((element: any) => {
 								console.log(element)

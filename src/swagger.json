@@ -53,6 +53,35 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IPaginatedResponse_any_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{},
+							{
+								"items": {},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GetVisitorDto": {
 				"properties": {
 					"visitorId": {
@@ -678,6 +707,45 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IPaginatedResponse_GetNoticeDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetNoticeDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetNoticeDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IResponse_GetNoticeDto_": {
 				"properties": {
 					"message": {
@@ -1017,7 +1085,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IPaginatedResponse_any_"
 								}
 							}
 						}
@@ -1054,6 +1122,24 @@
 						"required": true,
 						"schema": {
 							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
@@ -1654,7 +1740,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetNoticeDto-Array_"
+									"$ref": "#/components/schemas/IPaginatedResponse_GetNoticeDto-Array_"
 								}
 							}
 						}
@@ -1677,7 +1763,26 @@
 					"Notice"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/notice/detail": {
@@ -1881,7 +1986,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IPaginatedResponse_any_"
 								}
 							}
 						}
