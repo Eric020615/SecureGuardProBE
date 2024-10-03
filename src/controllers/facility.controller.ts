@@ -1,7 +1,9 @@
 import {
 	CancelFacilityBookingDto,
+	CheckFacilitySlotDto,
 	CreateFacilityBookingDto,
 	GetFacilityBookingHistoryDto,
+	SpaceAvailabilityDto,
 } from '../dtos/facility.dto'
 import { IPaginatedResponse, IResponse } from '../dtos/index.dto'
 import {
@@ -99,8 +101,8 @@ export class FacilityController extends Controller {
 				status: '200',
 				data: {
 					list: data,
-					count: count
-				}
+					count: count,
+				},
 			}
 			return response
 		} catch (err) {
@@ -110,8 +112,8 @@ export class FacilityController extends Controller {
 				status: '500',
 				data: {
 					list: null,
-					count: 0
-				}
+					count: 0,
+				},
 			}
 			return response
 		}
@@ -125,16 +127,16 @@ export class FacilityController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getAllFacilityBooking(
 		@Query() page: number,
-		@Query() limit: number
+		@Query() limit: number,
 	): Promise<IResponse<IPaginatedResponse<GetFacilityBookingHistoryDto>>> {
 		try {
-			const {data, count} = await this.facilityService.getAllFacilityBookingService(page, limit)
+			const { data, count } = await this.facilityService.getAllFacilityBookingService(page, limit)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
 				data: {
 					list: data,
-					count: count
+					count: count,
 				},
 			}
 			return response
@@ -145,7 +147,7 @@ export class FacilityController extends Controller {
 				status: '500',
 				data: {
 					list: null,
-					count: 0
+					count: 0,
 				},
 			}
 			return response
@@ -183,6 +185,45 @@ export class FacilityController extends Controller {
 				status: '500',
 				data: null,
 			}
+			return response
+		}
+	}
+
+	@Tags('Facility')
+	@OperationId('cancelFacilityBooking')
+	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Get('/available-slot/check')
+	@Security('jwt', ['SA', 'RES'])
+	public async checkFacilitySlot(
+		@Request() request: IGetUserAuthInfoRequest,
+		@Query() facilityId: string,
+		@Query() startDate: string,
+		@Query() duration: number,
+	): Promise<IResponse<SpaceAvailabilityDto>> {
+		try {
+			if (!request.userGuid) {
+				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			let data = await this.facilityService.checkFacilitySlotRepositoryService({
+				facilityId,
+				startDate,
+				duration,
+			})
+			const response = {
+				message: 'Facility checked successfully',
+				status: '200',
+				data: data,
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to checked facility booking',
+				status: '500',
+				data: null,
+			}
+			console.log(err)
 			return response
 		}
 	}

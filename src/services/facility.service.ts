@@ -1,9 +1,10 @@
 import {
 	CancelFacilityBookingDto,
+	CheckFacilitySlotDto,
 	CreateFacilityBookingDto,
 	GetFacilityBookingHistoryDto,
 } from '../dtos/facility.dto'
-import { FacilityBooking } from '../models/facilityBooking.mode'
+import { FacilityBooking } from '../models/facilityBooking.model'
 import { FacilityBookingRepository } from '../repositories/facility.repository'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -140,6 +141,21 @@ export class FacilityService {
 				facilityBooking,
 				cancelFacilityBookingDto.bookingGuid,
 			)
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	checkFacilitySlotRepositoryService = async (
+		checkFacilitySlotDto: CheckFacilitySlotDto
+	) => {
+		try {
+			const spaceAvailability = await this.facilityRepository.checkFacilitySlotRepository(
+				checkFacilitySlotDto.facilityId,
+				checkFacilitySlotDto.startDate,
+				checkFacilitySlotDto.duration
+			)
+			return spaceAvailability
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

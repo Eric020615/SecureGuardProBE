@@ -16,7 +16,7 @@ export interface GetFacilityBookingHistoryDto {
 	bookedBy: string
 	numOfGuest: number
 	isCancelled: boolean
-    cancelRemark: string
+	cancelRemark: string
 	createdBy: string
 	createdDateTime: string
 	updatedBy: string
@@ -26,4 +26,17 @@ export interface GetFacilityBookingHistoryDto {
 export interface CancelFacilityBookingDto {
 	bookingGuid: string
 	cancelRemark?: string
+}
+
+export interface CheckFacilitySlotDto {
+	facilityId: string
+	startDate: string
+	duration: number
+}
+
+export interface SpaceAvailabilityDto {
+	spaceId: string
+	spaceName: string
+	isBooked: boolean // Change to isBooked or any other name if required
+	capacity: number
 }

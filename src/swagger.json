@@ -1256,6 +1256,80 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SpaceAvailabilityDto": {
+				"properties": {
+					"spaceId": {
+						"type": "string"
+					},
+					"spaceName": {
+						"type": "string"
+					},
+					"isBooked": {
+						"type": "boolean"
+					},
+					"capacity": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"spaceId",
+					"spaceName",
+					"isBooked",
+					"capacity"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPaginatedResponse_SpaceAvailabilityDto_": {
+				"properties": {
+					"list": {
+						"items": {
+							"$ref": "#/components/schemas/SpaceAvailabilityDto"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_SpaceAvailabilityDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/SpaceAvailabilityDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/SpaceAvailabilityDto"
+								},
+								"type": "array"
+							},
+							{
+								"$ref": "#/components/schemas/IPaginatedResponse_SpaceAvailabilityDto_"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateUserFaceAuthDto": {
 				"properties": {
 					"faceData": {
@@ -2492,6 +2566,74 @@
 						}
 					}
 				}
+			}
+		},
+		"/facility/available-slot/check": {
+			"get": {
+				"operationId": "cancelFacilityBooking",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_SpaceAvailabilityDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Facility"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"RES"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "facilityId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "startDate",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "duration",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/face-auth/user/upload": {
