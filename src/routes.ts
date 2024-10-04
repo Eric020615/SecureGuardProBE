@@ -1395,7 +1395,7 @@ export function RegisterRoutes(app: Router) {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     facilityId: {"in":"query","name":"facilityId","required":true,"dataType":"string"},
                     startDate: {"in":"query","name":"startDate","required":true,"dataType":"string"},
-                    duration: {"in":"query","name":"duration","required":true,"dataType":"double"},
+                    endDate: {"in":"query","name":"endDate","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

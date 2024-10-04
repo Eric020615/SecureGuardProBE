@@ -207,7 +207,7 @@ export class FacilityController extends Controller {
 		@Request() request: IGetUserAuthInfoRequest,
 		@Query() facilityId: string,
 		@Query() startDate: string,
-		@Query() duration: number,
+		@Query() endDate: string,
 	): Promise<IResponse<SpaceAvailabilityDto>> {
 		try {
 			if (!request.userGuid) {
@@ -216,7 +216,7 @@ export class FacilityController extends Controller {
 			let data = await this.facilityService.checkFacilitySlotRepositoryService({
 				facilityId,
 				startDate,
-				duration,
+				endDate,
 			})
 			const response = {
 				message: 'Facility checked successfully',

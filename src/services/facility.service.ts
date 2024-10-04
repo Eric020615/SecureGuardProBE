@@ -3,6 +3,7 @@ import {
 	CheckFacilitySlotDto,
 	CreateFacilityBookingDto,
 	GetFacilityBookingHistoryDto,
+	SpaceAvailabilityDto,
 } from '../dtos/facility.dto'
 import { FacilityBooking } from '../models/facilityBooking.model'
 import { FacilityBookingRepository } from '../repositories/facility.repository'
@@ -28,7 +29,26 @@ export class FacilityService {
 		userId: string,
 	) => {
 		try {
-			this
+			let facilitySlot: SpaceAvailabilityDto
+			facilitySlot = (await this.facilityRepository.checkFacilitySlotRepository(
+				createFacilityBookingDto.facilityId,
+				createFacilityBookingDto.startDate,
+				createFacilityBookingDto.endDate,
+				createFacilityBookingDto.spaceId,
+			)) as SpaceAvailabilityDto
+			if (facilitySlot.capacity < createFacilityBookingDto.numOfGuest) {
+				throw new OperationError('Exceed capacity', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			if (facilitySlot.isBooked) {
+				throw new OperationError('Facility is already booked', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const isBookedBefore = await this.facilityRepository.checkUpcomingBookingRepository(userId)
+			if (isBookedBefore) {
+				throw new OperationError(
+					'You already have an upcoming booking.',
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
+			}
 			await this.facilityRepository.createFacilityBookingRepository(
 				new FacilityBooking(
 					0,
@@ -46,7 +66,6 @@ export class FacilityService {
 					getNowTimestamp(),
 					getNowTimestamp(),
 				),
-				userId,
 			)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -152,7 +171,7 @@ export class FacilityService {
 			const spaceAvailability = await this.facilityRepository.checkFacilitySlotRepository(
 				checkFacilitySlotDto.facilityId,
 				checkFacilitySlotDto.startDate,
-				checkFacilitySlotDto.duration,
+				checkFacilitySlotDto.endDate,
 			)
 			return spaceAvailability
 		} catch (error: any) {

@@ -2630,11 +2630,10 @@
 					},
 					{
 						"in": "query",
-						"name": "duration",
+						"name": "endDate",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]

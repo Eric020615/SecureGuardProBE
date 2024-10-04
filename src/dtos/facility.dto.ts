@@ -32,7 +32,7 @@ export interface CancelFacilityBookingDto {
 export interface CheckFacilitySlotDto {
 	facilityId: string
 	startDate: string
-	duration: number
+	endDate: string
 }
 
 export interface SpaceAvailabilityDto {

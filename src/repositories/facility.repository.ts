@@ -47,28 +47,8 @@ export class FacilityBookingRepository {
 		)
 	}
 
-	async createFacilityBookingRepository(data: FacilityBooking, userId: string) {
+	async createFacilityBookingRepository(data: FacilityBooking) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
-			const upcomingBookingsQuery = query(
-				this.facilityBookingCollection,
-				and(
-					where('bookedBy', '==', userId),
-					where(
-						'startDate',
-						'>=',
-						convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
-					),
-					where('isCancelled', '==', false),
-				),
-			)
-
-			const upcomingBookingsSnapshot = await getDocs(upcomingBookingsQuery)
-
-			// Step 2: Check if any upcoming bookings exist
-			if (!upcomingBookingsSnapshot.empty) {
-				throw new OperationError('You already have an upcoming booking.', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
-
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
 				counterName: 'facilityBooking',
@@ -122,16 +102,62 @@ export class FacilityBookingRepository {
 		await updateDoc(docRef, { ...data })
 	}
 
+	async checkUpcomingBookingRepository(userId: string) {
+		const upcomingBookingsQuery = query(
+			this.facilityBookingCollection,
+			and(
+				where('bookedBy', '==', userId),
+				where(
+					'startDate',
+					'>=',
+					convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+				),
+				where('isCancelled', '==', false),
+			),
+		)
+
+		const upcomingBookingsSnapshot = await getDocs(upcomingBookingsQuery)
+		return !upcomingBookingsSnapshot.empty
+	}
+
 	async checkFacilitySlotRepository(
 		facilityId: string,
 		startDate: string,
-		duration: number,
-	): Promise<SpaceAvailabilityDto[]> {
-		const endDate = moment(startDate).add(duration, 'hours').format('YYYY-MM-DD HH:mm')
+		endDate: string,
+		spaceId?: string,
+	): Promise<SpaceAvailabilityDto[] | SpaceAvailabilityDto> {
 		const facilityDocRef = doc(this.refDataCollection, facilityId)
 		const facilityDoc = await getDoc(facilityDocRef)
-		let result: Facility = {} as Facility
-		result = facilityDoc.data() as Facility
+		let result: Facility = facilityDoc.data() as Facility
+
+		// Case 1: If spaceId is provided, return the availability for that specific space
+		if (spaceId) {
+			const space = result.spaces.find((space) => space.id === spaceId)
+			if (!space) {
+				throw new Error(`Space with ID ${spaceId} not found`)
+			}
+
+			const q = query(
+				this.facilityBookingCollection,
+				and(
+					where('facilityId', '==', facilityId),
+					where('spaceId', '==', spaceId),
+					where('isCancelled', '==', false), // Exclude cancelled bookings
+					where('startDate', '<', convertDateStringToTimestamp(endDate)),
+					where('endDate', '>', convertDateStringToTimestamp(startDate)),
+				),
+			)
+			const bookingsSnapshot = await getDocs(q)
+
+			return {
+				spaceId: space.id,
+				spaceName: space.name,
+				capacity: space.capacity,
+				isBooked: !bookingsSnapshot.empty, // Check if the space has bookings
+			} as SpaceAvailabilityDto
+		}
+
+		// Case 2: If spaceId is not provided, return the availability for all spaces
 		const bookedSpaces = await Promise.all(
 			result.spaces.map(async (space) => {
 				const q = query(
@@ -140,27 +166,21 @@ export class FacilityBookingRepository {
 						where('facilityId', '==', facilityId),
 						where('spaceId', '==', space.id),
 						where('isCancelled', '==', false), // Exclude cancelled bookings
-						where(
-							'startDate',
-							'<',
-							convertDateStringToTimestamp(moment(endDate).tz('Asia/Kuala_Lumpur').toISOString()),
-						),
-						where(
-							'endDate',
-							'>',
-							convertDateStringToTimestamp(moment(startDate).tz('Asia/Kuala_Lumpur').toISOString()),
-						),
+						where('startDate', '<', convertDateStringToTimestamp(endDate)),
+						where('endDate', '>', convertDateStringToTimestamp(startDate)),
 					),
 				)
 				const bookingsSnapshot = await getDocs(q)
+
 				return {
 					spaceId: space.id,
 					spaceName: space.name,
 					capacity: space.capacity,
 					isBooked: !bookingsSnapshot.empty, // Check if the space has bookings
-				}
+				} as SpaceAvailabilityDto
 			}),
 		)
-		return bookedSpaces // Return the booking status for each space
+
+		return bookedSpaces // Return the booking status for all spaces
 	}
 }
