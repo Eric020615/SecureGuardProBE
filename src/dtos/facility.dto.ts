@@ -4,6 +4,7 @@ export interface CreateFacilityBookingDto {
 	startDate: string
 	endDate: string
 	numOfGuest: number
+	spaceId: string
 }
 
 export interface GetFacilityBookingHistoryDto {

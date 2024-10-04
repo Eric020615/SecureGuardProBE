@@ -33,6 +33,7 @@ export class FacilityService {
 				new FacilityBooking(
 					0,
 					createFacilityBookingDto.facilityId,
+					createFacilityBookingDto.spaceId,
 					convertDateStringToTimestamp(createFacilityBookingDto.startDate),
 					convertDateStringToTimestamp(createFacilityBookingDto.endDate),
 					createFacilityBookingDto.bookedBy ? createFacilityBookingDto.bookedBy : userId,
@@ -45,9 +46,9 @@ export class FacilityService {
 					getNowTimestamp(),
 					getNowTimestamp(),
 				),
+				userId,
 			)
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
@@ -59,7 +60,7 @@ export class FacilityService {
 		limit: number,
 	) => {
 		try {
-			let offset = (page * limit) + 1
+			let offset = page * limit + 1
 			let { rows, count } = await this.facilityRepository.getFacilityBookingRepository(
 				userId,
 				isPast,
@@ -93,7 +94,7 @@ export class FacilityService {
 
 	getAllFacilityBookingService = async (page: number, limit: number) => {
 		try {
-			let offset = (page * limit) + 1
+			let offset = page * limit + 1
 			let { rows, count } = await this.facilityRepository.getAllFacilityBookingRepository(
 				offset,
 				limit,
@@ -146,14 +147,12 @@ export class FacilityService {
 		}
 	}
 
-	checkFacilitySlotRepositoryService = async (
-		checkFacilitySlotDto: CheckFacilitySlotDto
-	) => {
+	checkFacilitySlotRepositoryService = async (checkFacilitySlotDto: CheckFacilitySlotDto) => {
 		try {
 			const spaceAvailability = await this.facilityRepository.checkFacilitySlotRepository(
 				checkFacilitySlotDto.facilityId,
 				checkFacilitySlotDto.startDate,
-				checkFacilitySlotDto.duration
+				checkFacilitySlotDto.duration,
 			)
 			return spaceAvailability
 		} catch (error: any) {

@@ -3,6 +3,7 @@ import { BaseModel } from "./base.model"
 
 export class FacilityBooking extends BaseModel { 
     facilityId: string
+    spaceId: string
     startDate: Timestamp
     endDate: Timestamp
     bookedBy: string
@@ -13,6 +14,7 @@ export class FacilityBooking extends BaseModel {
     constructor(
         id: number,
         facilityId: string,
+        spaceId: string,
         startDate: Timestamp,
         endDate: Timestamp,
         bookedBy: string,
@@ -27,6 +29,7 @@ export class FacilityBooking extends BaseModel {
     ){
         super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.facilityId = facilityId;
+        this.spaceId = spaceId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.bookedBy = bookedBy;

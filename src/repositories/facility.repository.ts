@@ -22,6 +22,8 @@ import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { DocumentStatus } from '../common/constants'
 import { Facility } from '../models/facility.model'
 import { SpaceAvailabilityDto } from '../dtos/facility.dto'
+import { OperationError } from '../common/operation-error'
+import { HttpStatusCode } from '../common/http-status-code'
 
 @provideSingleton(FacilityBookingRepository)
 export class FacilityBookingRepository {
@@ -45,8 +47,28 @@ export class FacilityBookingRepository {
 		)
 	}
 
-	async createFacilityBookingRepository(data: FacilityBooking) {
+	async createFacilityBookingRepository(data: FacilityBooking, userId: string) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
+			const upcomingBookingsQuery = query(
+				this.facilityBookingCollection,
+				and(
+					where('bookedBy', '==', userId),
+					where(
+						'startDate',
+						'>=',
+						convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+					),
+					where('isCancelled', '==', false),
+				),
+			)
+
+			const upcomingBookingsSnapshot = await getDocs(upcomingBookingsQuery)
+
+			// Step 2: Check if any upcoming bookings exist
+			if (!upcomingBookingsSnapshot.empty) {
+				throw new OperationError('You already have an upcoming booking.', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
 				counterName: 'facilityBooking',
@@ -110,7 +132,6 @@ export class FacilityBookingRepository {
 		const facilityDoc = await getDoc(facilityDocRef)
 		let result: Facility = {} as Facility
 		result = facilityDoc.data() as Facility
-		// Check bookings for each space
 		const bookedSpaces = await Promise.all(
 			result.spaces.map(async (space) => {
 				const q = query(
@@ -119,8 +140,16 @@ export class FacilityBookingRepository {
 						where('facilityId', '==', facilityId),
 						where('spaceId', '==', space.id),
 						where('isCancelled', '==', false), // Exclude cancelled bookings
-						where('startDate', '<', convertDateStringToTimestamp(moment(endDate).tz('Asia/Kuala_Lumpur').toISOString())),
-						where('endDate', '>', convertDateStringToTimestamp(moment(startDate).tz('Asia/Kuala_Lumpur').toISOString())),
+						where(
+							'startDate',
+							'<',
+							convertDateStringToTimestamp(moment(endDate).tz('Asia/Kuala_Lumpur').toISOString()),
+						),
+						where(
+							'endDate',
+							'>',
+							convertDateStringToTimestamp(moment(startDate).tz('Asia/Kuala_Lumpur').toISOString()),
+						),
 					),
 				)
 				const bookingsSnapshot = await getDocs(q)

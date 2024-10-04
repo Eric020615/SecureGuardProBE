@@ -37,7 +37,6 @@ export class RepositoryService {
 			const count = totalSnapshot.data().count
 			return { rows, count }
 		} catch (error) {
-			console.log(error)
 			return { rows: [], count: 0 } // Ensure correct structure here
 		}
 	}

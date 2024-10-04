@@ -65,10 +65,18 @@ export class FacilityController extends Controller {
 			return response
 		} catch (err) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			if (err instanceof OperationError) {
+				const response = {
+					message: err.message ? err.message : '',
+					status: '500',
+					data: null,
+				}
+				return response
+			}
 			const response = {
-				message: 'Failed to create facility booking',
+				message: '',
 				status: '500',
-				data: '',
+				data: null,
 			}
 			return response
 		}
@@ -223,7 +231,6 @@ export class FacilityController extends Controller {
 				status: '500',
 				data: null,
 			}
-			console.log(err)
 			return response
 		}
 	}

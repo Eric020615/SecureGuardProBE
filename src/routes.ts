@@ -419,6 +419,7 @@ const models: TsoaRoute.Models = {
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
             "numOfGuest": {"dataType":"double","required":true},
+            "spaceId": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },

@@ -1037,13 +1037,17 @@
 					"numOfGuest": {
 						"type": "number",
 						"format": "double"
+					},
+					"spaceId": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"facilityId",
 					"startDate",
 					"endDate",
-					"numOfGuest"
+					"numOfGuest",
+					"spaceId"
 				],
 				"type": "object",
 				"additionalProperties": false
