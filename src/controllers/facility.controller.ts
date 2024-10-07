@@ -208,7 +208,7 @@ export class FacilityController extends Controller {
 		@Query() facilityId: string,
 		@Query() startDate: string,
 		@Query() endDate: string,
-	): Promise<IResponse<SpaceAvailabilityDto>> {
+	): Promise<IResponse<SpaceAvailabilityDto[]>> {
 		try {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)

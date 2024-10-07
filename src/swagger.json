@@ -1285,11 +1285,14 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IPaginatedResponse_SpaceAvailabilityDto_": {
+			"IPaginatedResponse_SpaceAvailabilityDto-Array_": {
 				"properties": {
 					"list": {
 						"items": {
-							"$ref": "#/components/schemas/SpaceAvailabilityDto"
+							"items": {
+								"$ref": "#/components/schemas/SpaceAvailabilityDto"
+							},
+							"type": "array"
 						},
 						"type": "array",
 						"nullable": true
@@ -1305,7 +1308,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IResponse_SpaceAvailabilityDto_": {
+			"IResponse_SpaceAvailabilityDto-Array_": {
 				"properties": {
 					"message": {
 						"type": "string"
@@ -1313,16 +1316,22 @@
 					"data": {
 						"anyOf": [
 							{
-								"$ref": "#/components/schemas/SpaceAvailabilityDto"
-							},
-							{
 								"items": {
 									"$ref": "#/components/schemas/SpaceAvailabilityDto"
 								},
 								"type": "array"
 							},
 							{
-								"$ref": "#/components/schemas/IPaginatedResponse_SpaceAvailabilityDto_"
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/SpaceAvailabilityDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							},
+							{
+								"$ref": "#/components/schemas/IPaginatedResponse_SpaceAvailabilityDto-Array_"
 							}
 						],
 						"nullable": true
@@ -2581,7 +2590,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_SpaceAvailabilityDto_"
+									"$ref": "#/components/schemas/IResponse_SpaceAvailabilityDto-Array_"
 								}
 							}
 						}

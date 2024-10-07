@@ -512,20 +512,20 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IPaginatedResponse_SpaceAvailabilityDto_": {
+    "IPaginatedResponse_SpaceAvailabilityDto-Array_": {
         "dataType": "refObject",
         "properties": {
-            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"SpaceAvailabilityDto"}},{"dataType":"enum","enums":[null]}]},
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"SpaceAvailabilityDto"}}},{"dataType":"enum","enums":[null]}]},
             "count": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IResponse_SpaceAvailabilityDto_": {
+    "IResponse_SpaceAvailabilityDto-Array_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"ref":"SpaceAvailabilityDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"SpaceAvailabilityDto"}},{"ref":"IPaginatedResponse_SpaceAvailabilityDto_"},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"SpaceAvailabilityDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"SpaceAvailabilityDto"}}},{"ref":"IPaginatedResponse_SpaceAvailabilityDto-Array_"},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,

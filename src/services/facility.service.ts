@@ -172,7 +172,7 @@ export class FacilityService {
 				checkFacilitySlotDto.facilityId,
 				checkFacilitySlotDto.startDate,
 				checkFacilitySlotDto.endDate,
-			)
+			) as SpaceAvailabilityDto[]
 			return spaceAvailability
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
