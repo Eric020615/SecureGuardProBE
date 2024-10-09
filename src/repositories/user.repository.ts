@@ -14,7 +14,7 @@ import {
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import 'moment-timezone'
-import { Resident, SystemAdmin, User } from '../models/user.model'
+import { Resident, SubUserRequest, SystemAdmin, User } from '../models/user.model'
 import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -26,7 +26,7 @@ import { DocumentStatus } from '../common/constants'
 @provideSingleton(UserRepository)
 export class UserRepository {
 	private userCollection
-	private subUserCollection
+	private subUserRequestCollection
 	private residentCollection
 	private systemAdminCollection
 
@@ -41,7 +41,7 @@ export class UserRepository {
 		private repositoryService: RepositoryService,
 	) {
 		this.userCollection = collection(this.firebaseClient.firestore, 'user')
-		this.subUserCollection = collection(this.firebaseClient.firestore, 'subUser')
+		this.subUserRequestCollection = collection(this.firebaseClient.firestore, 'subUserRequest')
 		this.residentCollection = collection(this.firebaseClient.firestore, 'resident')
 		this.systemAdminCollection = collection(this.firebaseClient.firestore, 'systemAdmin')
 	}
@@ -132,5 +132,19 @@ export class UserRepository {
 	editUserDetailsByIdRepository = async (id: string, user: User) => {
 		const docRef = doc(this.userCollection, id)
 		await updateDoc(docRef, { ...user })
+	}
+
+	createSubUserRequestRepository = async (data: SubUserRequest) => {
+		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
+			const id = await this.sequenceRepository.getSequenceId({
+				transaction: transaction,
+				counterName: 'subUserRequest',
+			})
+			if (Number.isNaN(id)) {
+				throw new Error('Failed to generate id')
+			}
+			const subUserRequestDocRef = await addDoc(this.subUserRequestCollection, { ...data })
+			await updateDoc(subUserRequestDocRef, { id: id })
+		})
 	}
 }

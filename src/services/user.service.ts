@@ -27,6 +27,7 @@ import { EmailService } from '../helper/email'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
 import { createToken } from '../config/jwt'
 import * as dotenv from 'dotenv'
+import { DocumentStatus } from '../common/constants'
 
 dotenv.config()
 
@@ -311,6 +312,16 @@ export class UserService {
 			if (!success) {
 				throw new OperationError(message, HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
+			await this.userRepository.createSubUserRequestRepository({
+				id: 0,
+				email: createSubUserDto.email,
+				parentUserId: userId,
+				status: DocumentStatus.Pending,
+				createdBy: userId,
+				createdDateTime: getNowTimestamp(),
+				updatedBy: userId,
+				updatedDateTime: getNowTimestamp(),
+			})
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

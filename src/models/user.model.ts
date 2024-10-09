@@ -66,6 +66,26 @@ export class SubUser extends BaseModel {
 	}
 }
 
+export class SubUserRequest extends BaseModel {
+	email: string
+	parentUserId: string
+
+	constructor(
+		id: number,
+		email: string,
+		parentUserId: string,
+		status: number,
+		createdBy: string,
+		updatedBy: string,
+		createdDateTime: Timestamp,
+		updatedDateTime: Timestamp,
+	) {
+		super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
+		this.email = email
+		this.parentUserId = parentUserId
+	}
+}
+
 export class Resident {
 	id?: string
 	unitNumber: string
