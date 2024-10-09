@@ -20,7 +20,7 @@ import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
 import { UserService } from '../services/user.service'
 import {
 	CreateResidentDto,
-	inviteSubUserDto,
+	CreateSubUserDto,
 	CreateSystemAdminDto,
 	EditUserDetailsByIdDto,
 	GetUserDetailsByIdDto,
@@ -32,9 +32,7 @@ import { inject } from 'inversify'
 @Route('user')
 @provideSingleton(UserController)
 export class UserController extends Controller {
-	constructor(
-		@inject(UserService) private userService: UserService,
-	) {
+	constructor(@inject(UserService) private userService: UserService) {
 		super()
 	}
 
@@ -261,20 +259,20 @@ export class UserController extends Controller {
 	}
 
 	@Tags('User')
-	@OperationId('inviteSubUser')
+	@OperationId('createSubUser')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
-	@Post('/sub-user/invite')
+	@Post('/sub-user/create')
 	@Security('jwt', ['RES'])
-	public async inviteSubUser(
+	public async createSubUser(
 		@Request() request: IGetUserAuthInfoRequest,
-		@Body() inviteSubUserDto: inviteSubUserDto,
+		@Body() createSubUserDto: CreateSubUserDto,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.inviteSubUserService(inviteSubUserDto, request.userGuid);
+			await this.userService.createSubUserService(createSubUserDto, request.userGuid)
 			const response = {
 				message: 'Sub user invitation link had been sent successfully',
 				status: '200',

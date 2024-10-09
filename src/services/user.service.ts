@@ -4,7 +4,7 @@ import { FirebaseError } from 'firebase/app'
 import { convertFirebaseAuthEnumMessage } from '../common/firebase-error-code'
 import {
 	CreateResidentDto,
-	inviteSubUserDto,
+	CreateSubUserDto,
 	CreateSystemAdminDto,
 	EditUserDetailsByIdDto,
 	GetUserDetailsByIdDto,
@@ -290,18 +290,18 @@ export class UserService {
 		}
 	}
 
-	inviteSubUserService = async (inviteSubUserDto: inviteSubUserDto, userId: string) => {
+	createSubUserService = async (createSubUserDto: CreateSubUserDto, userId: string) => {
 		try {
 			const userRecord = await this.authAdmin.getUser(userId)
 			const token = createToken({
 				userGuid: userId,
-				subUser: inviteSubUserDto.email,
+				subUser: createSubUserDto.email,
 			})
 			if(!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const [success, message] = await this.emailService.sendEmail(
-				inviteSubUserDto.email,
+				createSubUserDto.email,
 				SendGridTemplateIds.SubUserRegistration,
 				{
 					inviterName: userRecord.displayName ? userRecord.displayName : '',

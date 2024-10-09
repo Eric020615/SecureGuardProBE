@@ -305,7 +305,7 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "inviteSubUserDto": {
+    "CreateSubUserDto": {
         "dataType": "refObject",
         "properties": {
             "email": {"dataType":"string","required":true},
@@ -1026,15 +1026,15 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/user/sub-user/invite',
+        app.post('/user/sub-user/create',
             authenticateMiddleware([{"jwt":["RES"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.inviteSubUser)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createSubUser)),
 
-            async function UserController_inviteSubUser(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_createSubUser(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    inviteSubUserDto: {"in":"body","name":"inviteSubUserDto","required":true,"ref":"inviteSubUserDto"},
+                    createSubUserDto: {"in":"body","name":"createSubUserDto","required":true,"ref":"CreateSubUserDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1051,7 +1051,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'inviteSubUser',
+                methodName: 'createSubUser',
                 controller,
                 response,
                 next,

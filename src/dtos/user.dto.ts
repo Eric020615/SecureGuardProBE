@@ -77,6 +77,6 @@ export interface EditUserDetailsByIdDto {
 	dateOfBirth: string
 }
 
-export interface inviteSubUserDto {
+export interface CreateSubUserDto {
 	email: string
 }
