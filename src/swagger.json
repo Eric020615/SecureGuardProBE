@@ -747,7 +747,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CreateSubUserDto": {
+			"inviteSubUserDto": {
 				"properties": {
 					"email": {
 						"type": "string"
@@ -2055,9 +2055,9 @@
 				]
 			}
 		},
-		"/user/sub-user/create": {
+		"/user/sub-user/invite": {
 			"post": {
-				"operationId": "createSubUser",
+				"operationId": "inviteSubUser",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -2099,7 +2099,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateSubUserDto"
+								"$ref": "#/components/schemas/inviteSubUserDto"
 							}
 						}
 					}
