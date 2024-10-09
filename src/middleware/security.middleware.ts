@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { verifyToken } from "../config/jwt";
-import { JwtPayloadDto } from "../dtos/auth.dto";
+import { verifyAuthToken } from "../config/jwt";
+import { AuthTokenPayloadDto } from "../dtos/auth.dto";
 import { AuthService } from "../services/auth.service";
 import { RoleEnum } from "../common/role";
 import { iocContainer } from "../ioc";
@@ -23,14 +23,14 @@ export const expressAuthentication = async (
     request.headers["authorization"];
   try {
     if (securityName === "jwt") {  
-      const userData: JwtPayloadDto = verifyToken(token, scopes);
+      const userData: AuthTokenPayloadDto = verifyAuthToken(token, scopes);
       await authService.checkUserStatus(userData.userGUID);
       request.userGuid = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});
     }
     if (securityName === "newUser") {
-      const userData: JwtPayloadDto = verifyToken(token, scopes);
+      const userData: AuthTokenPayloadDto = verifyAuthToken(token, scopes);
       request.userGuid = userData.userGUID;
       request.role = userData.role;
       return Promise.resolve({});

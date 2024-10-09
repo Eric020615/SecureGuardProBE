@@ -305,6 +305,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateSubUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "email": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateNoticeDto": {
         "dataType": "refObject",
         "properties": {
@@ -1007,6 +1015,43 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'deactivateUserById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/user/sub-user/create',
+            authenticateMiddleware([{"jwt":["RES"]}]),
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createSubUser)),
+
+            async function UserController_createSubUser(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    createSubUserDto: {"in":"body","name":"createSubUserDto","required":true,"ref":"CreateSubUserDto"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<UserController>(UserController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'createSubUser',
                 controller,
                 response,
                 next,

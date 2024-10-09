@@ -4,6 +4,7 @@ import { FirebaseError } from 'firebase/app'
 import { convertFirebaseAuthEnumMessage } from '../common/firebase-error-code'
 import {
 	CreateResidentDto,
+	inviteSubUserDto,
 	CreateSystemAdminDto,
 	EditUserDetailsByIdDto,
 	GetUserDetailsByIdDto,
@@ -22,6 +23,12 @@ import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FileService } from '../helper/file'
+import { EmailService } from '../helper/email'
+import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
+import { createToken } from '../config/jwt'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 @provideSingleton(UserService)
 export class UserService {
@@ -30,6 +37,7 @@ export class UserService {
 		@inject(UserRepository) private userRepository: UserRepository,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
 		@inject(FileService) private fileService: FileService,
+		@inject(EmailService) private emailService: EmailService,
 	) {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
@@ -167,7 +175,7 @@ export class UserService {
 							} as GetUserDto
 					  })
 					: []
-			return {data, count}
+			return { data, count }
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -282,8 +290,34 @@ export class UserService {
 		}
 	}
 
+	inviteSubUserService = async (inviteSubUserDto: inviteSubUserDto, userId: string) => {
+		try {
+			const userRecord = await this.authAdmin.getUser(userId)
+			const token = createToken({
+				userGuid: userId,
+				subUser: inviteSubUserDto.email,
+			})
+			if(!token) {
+				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const [success, message] = await this.emailService.sendEmail(
+				inviteSubUserDto.email,
+				SendGridTemplateIds.SubUserRegistration,
+				{
+					inviterName: userRecord.displayName ? userRecord.displayName : '',
+					registrationUrl: `${process.env.SECUREGUARDPRO_ADMIN}/sub-user/verify=${token}`,
+				} as SubUserRegistrationTemplateData,
+			)
+			if (!success) {
+				throw new OperationError(message, HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
 	instanceOfCreateResidentDto = (object: any): object is CreateResidentDto => {
-		return 'floor' && 'unitNumber' in object
+		return 'floorNumber' in object && 'unitNumber' in object
 	}
 
 	instanceOfCreateSystemAdminDto = (object: any): object is CreateSystemAdminDto => {

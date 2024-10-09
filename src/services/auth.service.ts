@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { JwtPayloadDto, LoginDto, RegisterUserDto } from '../dtos/auth.dto'
+import { AuthTokenPayloadDto, LoginDto, RegisterUserDto } from '../dtos/auth.dto'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { FirebaseClient } from '../config/initFirebase'
 import { createToken } from '../config/jwt'
@@ -47,7 +47,7 @@ export class AuthService {
 			const token = createToken({
 				userGUID: user.uid,
 				role: userRole,
-			} as JwtPayloadDto)
+			} as AuthTokenPayloadDto)
 			return token
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
@@ -78,7 +78,7 @@ export class AuthService {
 			const token = createToken({
 				userGUID: response.user.uid,
 				role: userInformation.role,
-			} as JwtPayloadDto)
+			} as AuthTokenPayloadDto)
 			return token
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {

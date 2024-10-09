@@ -20,23 +20,20 @@ import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
 import { UserService } from '../services/user.service'
 import {
 	CreateResidentDto,
+	inviteSubUserDto,
 	CreateSystemAdminDto,
 	EditUserDetailsByIdDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
 } from '../dtos/user.dto'
-import { MegeyeService } from '../services/megeye.service'
-import { RoleRecognitionTypeEnum } from '../common/megeye'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { list } from 'firebase/storage'
 
 @Route('user')
 @provideSingleton(UserController)
 export class UserController extends Controller {
 	constructor(
 		@inject(UserService) private userService: UserService,
-		@inject(MegeyeService) private megeyeService: MegeyeService,
 	) {
 		super()
 	}
@@ -256,6 +253,38 @@ export class UserController extends Controller {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
 			const response = {
 				message: 'Failed to deactivate user',
+				status: '500',
+				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('User')
+	@OperationId('inviteSubUser')
+	@Response<IResponse<any>>('400', 'Bad Request')
+	@SuccessResponse('200', 'OK')
+	@Post('/sub-user/invite')
+	@Security('jwt', ['RES'])
+	public async inviteSubUser(
+		@Request() request: IGetUserAuthInfoRequest,
+		@Body() inviteSubUserDto: inviteSubUserDto,
+	): Promise<IResponse<any>> {
+		try {
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			await this.userService.inviteSubUserService(inviteSubUserDto, request.userGuid);
+			const response = {
+				message: 'Sub user invitation link had been sent successfully',
+				status: '200',
+				data: null,
+			}
+			return response
+		} catch (err: any) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}

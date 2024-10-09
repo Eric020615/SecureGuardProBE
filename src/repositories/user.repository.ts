@@ -26,6 +26,7 @@ import { DocumentStatus } from '../common/constants'
 @provideSingleton(UserRepository)
 export class UserRepository {
 	private userCollection
+	private subUserCollection
 	private residentCollection
 	private systemAdminCollection
 
@@ -40,6 +41,7 @@ export class UserRepository {
 		private repositoryService: RepositoryService,
 	) {
 		this.userCollection = collection(this.firebaseClient.firestore, 'user')
+		this.subUserCollection = collection(this.firebaseClient.firestore, 'subUser')
 		this.residentCollection = collection(this.firebaseClient.firestore, 'resident')
 		this.systemAdminCollection = collection(this.firebaseClient.firestore, 'systemAdmin')
 	}

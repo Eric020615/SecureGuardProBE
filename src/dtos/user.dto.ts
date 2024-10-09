@@ -76,3 +76,7 @@ export interface EditUserDetailsByIdDto {
 	gender: string
 	dateOfBirth: string
 }
+
+export interface inviteSubUserDto {
+	email: string
+}

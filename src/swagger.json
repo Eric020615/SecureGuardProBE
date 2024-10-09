@@ -747,6 +747,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CreateSubUserDto": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -2041,6 +2053,57 @@
 						}
 					}
 				]
+			}
+		},
+		"/user/sub-user/create": {
+			"post": {
+				"operationId": "createSubUser",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateSubUserDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/notice/create": {
