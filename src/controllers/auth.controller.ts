@@ -1,4 +1,4 @@
-import { LoginDto, RegisterUserDto } from '../dtos/auth.dto'
+import { LoginDto, RegisterUserDto, SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import {
 	Controller,
 	Route,
@@ -11,6 +11,7 @@ import {
 	Security,
 	Get,
 	Query,
+	Request,
 } from 'tsoa'
 import { IResponse } from '../dtos/index.dto'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -19,13 +20,12 @@ import { RoleEnum } from '../common/role'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { AuthService } from '../services/auth.service'
+import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 
 @Route('auth')
 @provideSingleton(AuthController)
 export class AuthController extends Controller {
-	constructor(
-		@inject(AuthService) private authService: AuthService,
-	) {
+	constructor(@inject(AuthService) private authService: AuthService) {
 		super()
 	}
 	@Tags('Auth')
@@ -117,6 +117,36 @@ export class AuthController extends Controller {
 				message: err.message ? err.message : '',
 				status: '500',
 				data: err,
+			}
+			return response
+		}
+	}
+
+	@Tags('Auth')
+	@OperationId('checkSubUserAuth')
+	@Response<IResponse<any>>('400', 'Bad Request')
+	@SuccessResponse('200', 'OK')
+	@Get('/check-auth/sub-user')
+	@Security('subUserAuth', [])
+	public async checkSubUserAuth(
+		@Request() request: ISecurityMiddlewareRequest,
+	): Promise<IResponse<SubUserAuthTokenPayloadDto>> {
+		try {
+			const response = {
+				message: 'Token valid',
+				status: '200',
+				data: {
+					subUserEmail: request.subUserEmail,
+					parentUserGuid: request.parentUserGuid,
+				},
+			}
+			return response
+		} catch (err: any) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: err.message ? err.message : '',
+				status: '500',
+				data: null,
 			}
 			return response
 		}

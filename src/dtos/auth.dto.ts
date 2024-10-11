@@ -5,6 +5,11 @@ export interface AuthTokenPayloadDto {
 	role: RoleEnum
 }
 
+export interface SubUserAuthTokenPayloadDto {
+	subUserEmail: string
+	parentUserGuid: string
+}
+
 export interface LoginDto {
 	email: string
 	password: string

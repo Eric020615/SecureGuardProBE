@@ -6,7 +6,6 @@ export interface CreateNoticeDto {
 }
 
 export interface EditNoticeDto {
-	noticeId: string
 	noticeGuid: string
 	title: string
 	description: string

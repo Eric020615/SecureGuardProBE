@@ -990,9 +990,6 @@
 			},
 			"EditNoticeDto": {
 				"properties": {
-					"noticeId": {
-						"type": "string"
-					},
 					"noticeGuid": {
 						"type": "string"
 					},
@@ -1010,7 +1007,6 @@
 					}
 				},
 				"required": [
-					"noticeId",
 					"noticeGuid",
 					"title",
 					"description",
@@ -1400,6 +1396,71 @@
 					"email",
 					"password"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SubUserAuthTokenPayloadDto": {
+				"properties": {
+					"subUserEmail": {
+						"type": "string"
+					},
+					"parentUserGuid": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"subUserEmail",
+					"parentUserGuid"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPaginatedResponse_SubUserAuthTokenPayloadDto_": {
+				"properties": {
+					"list": {
+						"items": {
+							"$ref": "#/components/schemas/SubUserAuthTokenPayloadDto"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_SubUserAuthTokenPayloadDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/SubUserAuthTokenPayloadDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/SubUserAuthTokenPayloadDto"
+								},
+								"type": "array"
+							},
+							{
+								"$ref": "#/components/schemas/IPaginatedResponse_SubUserAuthTokenPayloadDto_"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			}
@@ -2960,6 +3021,45 @@
 							"RES",
 							"SA"
 						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/check-auth/sub-user": {
+			"get": {
+				"operationId": "checkSubUserAuth",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_SubUserAuthTokenPayloadDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"subUserAuth": []
 					}
 				],
 				"parameters": []

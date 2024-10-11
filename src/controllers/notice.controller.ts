@@ -18,7 +18,7 @@ import {
 } from 'tsoa'
 import { CreateNoticeDto, DeleteNoticeDto, EditNoticeDto, GetNoticeDto } from '../dtos/notice.dto'
 import { HttpStatusCode } from '../common/http-status-code'
-import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
+import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -38,7 +38,7 @@ export class NoticeController extends Controller {
 	@Security('jwt', ['SA'])
 	public async createNotice(
 		@Body() createNoticeDto: CreateNoticeDto,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid) {
@@ -165,7 +165,7 @@ export class NoticeController extends Controller {
 	@Security('jwt', ['SA'])
 	public async editNoticeById(
 		@Body() editNoticeDto: EditNoticeDto,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid) {

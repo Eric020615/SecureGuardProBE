@@ -16,7 +16,7 @@ import {
 import { IResponse } from '../dtos/index.dto'
 import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
-import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
+import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { UserService } from '../services/user.service'
 import {
 	CreateResidentDto,
@@ -43,7 +43,7 @@ export class UserController extends Controller {
 	@Post('/create')
 	@Security('newUser', ['RES', 'SA'])
 	public async createUser(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Body() createUserDto: CreateResidentDto | CreateSystemAdminDto,
 	): Promise<IResponse<any>> {
 		try {
@@ -112,7 +112,7 @@ export class UserController extends Controller {
 	@Get('/profile')
 	@Security('jwt', ['SA', 'RES'])
 	public async getUserProfileById(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid || !request.role) {
@@ -144,7 +144,7 @@ export class UserController extends Controller {
 	@Security('jwt', ['SA', 'RES'])
 	public async editUserProfileById(
 		@Body() editUserDetailsByIdDto: EditUserDetailsByIdDto,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid) {
@@ -201,7 +201,7 @@ export class UserController extends Controller {
 	@Put('/activate')
 	@Security('jwt', ['SA'])
 	public async activateUserById(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Query() userGuid: string,
 	): Promise<IResponse<any>> {
 		try {
@@ -233,7 +233,7 @@ export class UserController extends Controller {
 	@Put('/deactivate')
 	@Security('jwt', ['SA'])
 	public async deactivateUserById(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Query() userGuid: string,
 	): Promise<IResponse<any>> {
 		try {
@@ -265,7 +265,7 @@ export class UserController extends Controller {
 	@Post('/sub-user/create')
 	@Security('jwt', ['RES'])
 	public async createSubUser(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Body() createSubUserDto: CreateSubUserDto,
 	): Promise<IResponse<any>> {
 		try {

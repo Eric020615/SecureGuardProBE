@@ -42,7 +42,9 @@ export class FacilityService {
 			if (facilitySlot.isBooked) {
 				throw new OperationError('Facility is already booked', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const isBookedBefore = await this.facilityRepository.checkUpcomingBookingRepository(userId)
+			const isBookedBefore = await this.facilityRepository.checkUpcomingBookingRepository(
+				createFacilityBookingDto.bookedBy ? createFacilityBookingDto.bookedBy : userId,
+			)
 			if (isBookedBefore) {
 				throw new OperationError(
 					'You already have an upcoming booking.',
@@ -168,11 +170,11 @@ export class FacilityService {
 
 	checkFacilitySlotRepositoryService = async (checkFacilitySlotDto: CheckFacilitySlotDto) => {
 		try {
-			const spaceAvailability = await this.facilityRepository.checkFacilitySlotRepository(
+			const spaceAvailability = (await this.facilityRepository.checkFacilitySlotRepository(
 				checkFacilitySlotDto.facilityId,
 				checkFacilitySlotDto.startDate,
 				checkFacilitySlotDto.endDate,
-			) as SpaceAvailabilityDto[]
+			)) as SpaceAvailabilityDto[]
 			return spaceAvailability
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)

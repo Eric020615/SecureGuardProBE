@@ -22,7 +22,7 @@ import {
 	Query,
 } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
-import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
+import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -47,7 +47,7 @@ export class FacilityController extends Controller {
 	@Security('jwt', ['RES', 'SA'])
 	public async createFacilityBooking(
 		@Body() createFacilityBookingDto: CreateFacilityBookingDto,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid) {
@@ -89,7 +89,7 @@ export class FacilityController extends Controller {
 	@Get('/')
 	@Security('jwt', ['RES', 'SA'])
 	public async getFacilityBookingHistory(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Query() isPast: boolean,
 		@Query() page: number,
 		@Query() limit: number,
@@ -169,7 +169,7 @@ export class FacilityController extends Controller {
 	@Put('/cancel')
 	@Security('jwt', ['SA', 'RES'])
 	public async cancelFacilityBooking(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Body() cancelFacilityBookingDto: CancelFacilityBookingDto,
 	): Promise<IResponse<any>> {
 		try {
@@ -204,7 +204,7 @@ export class FacilityController extends Controller {
 	@Get('/available-slot/check')
 	@Security('jwt', ['SA', 'RES'])
 	public async checkFacilitySlot(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Query() facilityId: string,
 		@Query() startDate: string,
 		@Query() endDate: string,

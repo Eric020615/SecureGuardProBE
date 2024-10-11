@@ -28,6 +28,7 @@ import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/
 import { createToken } from '../config/jwt'
 import * as dotenv from 'dotenv'
 import { DocumentStatus } from '../common/constants'
+import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 
 dotenv.config()
 
@@ -293,12 +294,16 @@ export class UserService {
 
 	createSubUserService = async (createSubUserDto: CreateSubUserDto, userId: string) => {
 		try {
+			const subUserRequest = await this.userRepository.getSubUserRequestByEmailRepository(createSubUserDto.email)
+			if(subUserRequest.length > 0) {
+				throw new OperationError('Sub user request already exists', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
 			const userRecord = await this.authAdmin.getUser(userId)
 			const token = createToken({
-				userGuid: userId,
-				subUser: createSubUserDto.email,
-			})
-			if(!token) {
+				subUserEmail: createSubUserDto.email,
+				parentUserGuid: userId,
+			} as SubUserAuthTokenPayloadDto)
+			if (!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const [success, message] = await this.emailService.sendEmail(
@@ -306,7 +311,7 @@ export class UserService {
 				SendGridTemplateIds.SubUserRegistration,
 				{
 					inviterName: userRecord.displayName ? userRecord.displayName : '',
-					registrationUrl: `${process.env.SECUREGUARDPRO_ADMIN}/sub-user/verify=${token}`,
+					registrationUrl: `${process.env.SECUREGUARDPRO_ADMIN}/sub-user/register?token=${token}`,
 				} as SubUserRegistrationTemplateData,
 			)
 			if (!success) {

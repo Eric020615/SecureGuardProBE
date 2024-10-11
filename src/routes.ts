@@ -401,7 +401,6 @@ const models: TsoaRoute.Models = {
     "EditNoticeDto": {
         "dataType": "refObject",
         "properties": {
-            "noticeId": {"dataType":"string","required":true},
             "noticeGuid": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
@@ -562,6 +561,34 @@ const models: TsoaRoute.Models = {
         "properties": {
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SubUserAuthTokenPayloadDto": {
+        "dataType": "refObject",
+        "properties": {
+            "subUserEmail": {"dataType":"string","required":true},
+            "parentUserGuid": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_SubUserAuthTokenPayloadDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"SubUserAuthTokenPayloadDto"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_SubUserAuthTokenPayloadDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"SubUserAuthTokenPayloadDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"SubUserAuthTokenPayloadDto"}},{"ref":"IPaginatedResponse_SubUserAuthTokenPayloadDto_"},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -1639,6 +1666,42 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'checkAuth',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/auth/check-auth/sub-user',
+            authenticateMiddleware([{"subUserAuth":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.checkSubUserAuth)),
+
+            async function AuthController_checkSubUserAuth(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<AuthController>(AuthController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'checkSubUserAuth',
                 controller,
                 response,
                 next,

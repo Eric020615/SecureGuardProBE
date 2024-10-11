@@ -9,6 +9,7 @@
     "start": "node ./dist/index.js",
     "start:dev": "npx tsoa spec-and-routes --config ./tsoa.json && dotenvx run -f .env.development -- nodemon ./src/index.ts"
   },
+  "packageManager": "yarn@1.22.22",
   "keywords": [],
   "author": "",
   "license": "ISC",

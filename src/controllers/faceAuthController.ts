@@ -15,7 +15,7 @@ import {
 } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
 import { MegeyeService } from '../services/megeye.service'
-import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
+import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { CreateUserFaceAuthDto } from '../dtos/faceAuth.dto'
 import { OperationError } from '../common/operation-error'
 import { RoleRecognitionTypeEnum } from '../common/megeye'
@@ -44,7 +44,7 @@ export class FaceAuthController extends Controller {
 	@Security('jwt', ['RES', 'SA'])
 	public async uploadUserFaceAuth(
 		@Body() createUserFaceAuthDto: CreateUserFaceAuthDto,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid || !request.role) {
@@ -97,7 +97,7 @@ export class FaceAuthController extends Controller {
 	@Security('jwt', ['RES', 'SA'])
 	public async updateUserFaceAuth(
 		@Body() updateUserFaceAuthDto: CreateUserFaceAuthDto,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid || !request.role) {

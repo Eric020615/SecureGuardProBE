@@ -147,4 +147,21 @@ export class UserRepository {
 			await updateDoc(subUserRequestDocRef, { id: id })
 		})
 	}
+
+	getSubUserRequestByEmailRepository = async (email: string) => {
+		const constraints = [
+			where('email', '==', email),
+			where('status', '!=', DocumentStatus.SoftDeleted),
+			orderBy('id', 'asc'),
+		]
+		const q = query(this.subUserRequestCollection, ...constraints)
+		const querySnapshot = await getDocs(q)
+		let result: SubUserRequest[] = []
+		querySnapshot.forEach((doc) => {
+			let data = doc.data() as SubUserRequest
+			data.guid = doc.id
+			result.push(data)
+		})
+		return result
+	}
 }

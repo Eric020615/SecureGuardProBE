@@ -15,7 +15,7 @@ import {
 	Query,
 } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
-import { IGetUserAuthInfoRequest } from '../middleware/security.middleware'
+import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto } from '../dtos/visitor.dto'
 import { VisitorService } from '../services/visitor.service'
@@ -38,7 +38,7 @@ export class VisitorController extends Controller {
 	@Security('jwt', ['RES', 'SA'])
 	public async createVisitor(
 		@Body() createVisitorDto: CreateVisitorDto,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid) {
@@ -70,7 +70,7 @@ export class VisitorController extends Controller {
 	@Get('/')
 	@Security('jwt', ['RES', 'SA'])
 	public async getVisitorByResident(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Query() isPast: boolean,
 		@Query() page: number,
 		@Query() limit: number
@@ -110,7 +110,7 @@ export class VisitorController extends Controller {
 	@Get('/details')
 	@Security('jwt', ['RES'])
 	public async getVisitorDetailsByResident(
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 		@Query() visitorGuid: string,
 	): Promise<IResponse<any>> {
 		try {
@@ -172,7 +172,7 @@ export class VisitorController extends Controller {
 	public async editVisitorById(
 		@Body() editVisitorByIdDto: EditVisitorByIdDto,
 		@Query() visitorGuid: string,
-		@Request() request: IGetUserAuthInfoRequest,
+		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid) {
