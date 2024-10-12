@@ -34,35 +34,26 @@ export class User extends BaseModel {
 	}
 }
 
-export class SubUser extends BaseModel {
-	firstName: string
-	lastName: string
-	contactNumber: string
-	gender: string
-	dateOfBirth: Timestamp | null
+export class SubUser {
+	id?: string
 	parentUserId: string
+	createdBy: string
+	updatedBy: string
+	createdDateTime: Timestamp
+	updatedDateTime: Timestamp
 
 	constructor(
-		id: number,
-		firstName: string,
-		lastName: string,
-		contactNumber: string,
-		gender: string,
-		dateOfBirth: Timestamp | null,
 		parentUserId: string,
-		status: number,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
 	) {
-		super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
-		this.firstName = firstName
-		this.lastName = lastName
-		this.contactNumber = contactNumber
-		this.gender = gender
-		this.dateOfBirth = dateOfBirth
 		this.parentUserId = parentUserId
+		this.createdBy = createdBy
+		this.updatedBy = updatedBy
+		this.createdDateTime = createdDateTime
+		this.updatedDateTime = updatedDateTime
 	}
 }
 

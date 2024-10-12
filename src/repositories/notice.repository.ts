@@ -1,15 +1,11 @@
 import {
 	addDoc,
-	and,
 	collection,
 	doc,
 	getDoc,
-	getDocs,
-	query,
 	where,
 	orderBy,
 	updateDoc,
-	deleteDoc,
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'

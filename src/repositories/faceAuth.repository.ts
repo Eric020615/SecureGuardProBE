@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore'
+import { collection, doc, setDoc } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'

@@ -5,12 +5,13 @@ import { convertFirebaseAuthEnumMessage } from '../common/firebase-error-code'
 import {
 	CreateResidentDto,
 	CreateSubUserDto,
+	CreateSubUserRequestDto,
 	CreateSystemAdminDto,
 	EditUserDetailsByIdDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
 } from '../dtos/user.dto'
-import { Resident, SystemAdmin, User } from '../models/user.model'
+import { Resident, SubUser, SubUserRequest, SystemAdmin, User } from '../models/user.model'
 import { UserRepository } from '../repositories/user.repository'
 import {
 	convertDateStringToTimestamp,
@@ -45,13 +46,21 @@ export class UserService {
 	}
 
 	createUserService = async (
-		createUserDto: CreateResidentDto | CreateSystemAdminDto,
+		createUserDto: CreateResidentDto | CreateSubUserDto | CreateSystemAdminDto,
 		userGuid: string,
 		role: RoleEnum,
 	) => {
 		try {
-			const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
+			if (
+				!this.instanceOfCreateResidentDto(createUserDto) &&
+				!this.instanceOfCreateSubUserDto(createUserDto) &&
+				!this.instanceOfCreateSystemAdminDto(createUserDto)
+			) {
+				throw new OperationError('Invalid request', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+
 			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
+				const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
 				await this.userRepository.createResidentRepository(
 					new User(
 						0,
@@ -78,10 +87,10 @@ export class UserService {
 					),
 					userGuid,
 				)
-			} else if (
-				role === RoleEnum.SYSTEM_ADMIN &&
-				this.instanceOfCreateSystemAdminDto(createUserDto)
-			) {
+			}
+
+			if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateSystemAdminDto(createUserDto)) {
+				const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
 				await this.userRepository.createSystemAdminRepository(
 					new User(
 						0,
@@ -108,8 +117,36 @@ export class UserService {
 					userGuid,
 				)
 			}
+
+			if (role === RoleEnum.RESIDENT_SUBUSER && this.instanceOfCreateSubUserDto(createUserDto)) {
+				await this.userRepository.createSubUserRepository(
+					new User(
+						0,
+						createUserDto.firstName,
+						createUserDto.lastName,
+						createUserDto.contactNumber,
+						createUserDto.gender,
+						convertDateStringToTimestamp(createUserDto.dateOfBirth),
+						role,
+						1,
+						userGuid,
+						userGuid,
+						getNowTimestamp(),
+						getNowTimestamp(),
+					),
+					new SubUser(
+						createUserDto.parentUserGuid,
+						userGuid,
+						userGuid,
+						getNowTimestamp(),
+						getNowTimestamp(),
+					),
+					userGuid,
+				)
+			}
 			await this.authAdmin.updateUser(userGuid, { displayName: createUserDto.userName })
 		} catch (error: any) {
+			console.log(error)
 			if (error instanceof FirebaseError) {
 				throw new OperationError(
 					convertFirebaseAuthEnumMessage(error.code),
@@ -292,22 +329,45 @@ export class UserService {
 		}
 	}
 
-	createSubUserService = async (createSubUserDto: CreateSubUserDto, userId: string) => {
+	createSubUserRequestService = async (
+		createSubUserRequestDto: CreateSubUserRequestDto,
+		userId: string,
+	) => {
 		try {
-			const subUserRequest = await this.userRepository.getSubUserRequestByEmailRepository(createSubUserDto.email)
-			if(subUserRequest.length > 0) {
-				throw new OperationError('Sub user request already exists', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const subUserRequest = await this.userRepository.getSubUserRequestByEmailRepository(
+				createSubUserRequestDto.email,
+			)
+			if (subUserRequest.length > 0) {
+				throw new OperationError(
+					'Sub user request already exists',
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
+			}
+			const isEmailExist = await this.isEmailRegistered(createSubUserRequestDto.email)
+			if (isEmailExist) {
+				throw new OperationError('Email already exists', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const userRecord = await this.authAdmin.getUser(userId)
+			const subUserRequestGuid = await this.userRepository.createSubUserRequestRepository({
+				id: 0,
+				email: createSubUserRequestDto.email,
+				parentUserId: userId,
+				status: DocumentStatus.Pending,
+				createdBy: userId,
+				createdDateTime: getNowTimestamp(),
+				updatedBy: userId,
+				updatedDateTime: getNowTimestamp(),
+			})
 			const token = createToken({
-				subUserEmail: createSubUserDto.email,
+				subUserEmail: createSubUserRequestDto.email,
 				parentUserGuid: userId,
+				subUserRequestGuid: subUserRequestGuid,
 			} as SubUserAuthTokenPayloadDto)
 			if (!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const [success, message] = await this.emailService.sendEmail(
-				createSubUserDto.email,
+				createSubUserRequestDto.email,
 				SendGridTemplateIds.SubUserRegistration,
 				{
 					inviterName: userRecord.displayName ? userRecord.displayName : '',
@@ -317,16 +377,6 @@ export class UserService {
 			if (!success) {
 				throw new OperationError(message, HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userRepository.createSubUserRequestRepository({
-				id: 0,
-				email: createSubUserDto.email,
-				parentUserId: userId,
-				status: DocumentStatus.Pending,
-				createdBy: userId,
-				createdDateTime: getNowTimestamp(),
-				updatedBy: userId,
-				updatedDateTime: getNowTimestamp(),
-			})
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -338,5 +388,23 @@ export class UserService {
 
 	instanceOfCreateSystemAdminDto = (object: any): object is CreateSystemAdminDto => {
 		return 'staffId' in object
+	}
+
+	instanceOfCreateSubUserDto = (object: any): object is CreateSubUserDto => {
+		return 'parentUserGuid' in object
+	}
+
+	isEmailRegistered = async (email: string): Promise<boolean> => {
+		try {
+			// Check if the user exists by their email
+			await this.authAdmin.getUserByEmail(email)
+			return true // Email exists
+		} catch (error: any) {
+			if (error.code === 'auth/user-not-found') {
+				return false // Email does not exist, proceed
+			}
+			// Handle other errors that might occur
+			throw error // Rethrow unexpected errors
+		}
 	}
 }

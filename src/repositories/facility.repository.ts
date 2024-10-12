@@ -22,8 +22,6 @@ import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { DocumentStatus } from '../common/constants'
 import { Facility } from '../models/facility.model'
 import { SpaceAvailabilityDto } from '../dtos/facility.dto'
-import { OperationError } from '../common/operation-error'
-import { HttpStatusCode } from '../common/http-status-code'
 
 @provideSingleton(FacilityBookingRepository)
 export class FacilityBookingRepository {

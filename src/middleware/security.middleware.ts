@@ -12,6 +12,7 @@ export interface ISecurityMiddlewareRequest extends Request {
 	role: RoleEnum
 	subUserEmail: string
 	parentUserGuid: string
+	subUserRequestGuid: string
 }
 
 export const checkUserPermission = (token: string, scopes?: string[]) => {
@@ -36,17 +37,20 @@ export const expressAuthentication = async (
 ): Promise<any> => {
 	let authService: AuthService = iocContainer.get(AuthService)
 	const token = request.body.token || request.query.token || request.headers['authorization']
+	const check = request.query.check === 'true'
 	try {
 		if (securityName === 'jwt') {
 			const userData = checkUserPermission(token, scopes)
-			await authService.checkUserStatus(userData.userGUID)
-			request.userGuid = userData.userGUID
+			if (check) {
+				await authService.checkUserStatus(userData.userGuid)
+			}
+			request.userGuid = userData.userGuid
 			request.role = userData.role
 			return Promise.resolve({})
 		}
 		if (securityName === 'newUser') {
 			const userData = checkUserPermission(token, scopes)
-			request.userGuid = userData.userGUID
+			request.userGuid = userData.userGuid
 			request.role = userData.role
 			return Promise.resolve({})
 		}

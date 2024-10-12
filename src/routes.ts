@@ -141,54 +141,9 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "GeneralFileDto": {
-        "dataType": "refObject",
-        "properties": {
-            "fileName": {"dataType":"string","required":true},
-            "data": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "GenderEnum": {
-        "dataType": "refEnum",
-        "enums": ["M","F"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateResidentDto": {
-        "dataType": "refObject",
-        "properties": {
-            "firstName": {"dataType":"string","required":true},
-            "lastName": {"dataType":"string","required":true},
-            "userName": {"dataType":"string","required":true},
-            "contactNumber": {"dataType":"string","required":true},
-            "gender": {"ref":"GenderEnum","required":true},
-            "dateOfBirth": {"dataType":"string","required":true},
-            "unitNumber": {"dataType":"string","required":true},
-            "floorNumber": {"dataType":"string","required":true},
-            "supportedFiles": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateSystemAdminDto": {
-        "dataType": "refObject",
-        "properties": {
-            "firstName": {"dataType":"string","required":true},
-            "lastName": {"dataType":"string","required":true},
-            "userName": {"dataType":"string","required":true},
-            "contactNumber": {"dataType":"string","required":true},
-            "gender": {"ref":"GenderEnum","required":true},
-            "dateOfBirth": {"dataType":"string","required":true},
-            "staffId": {"dataType":"string","required":true},
-            "supportedFiles": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoleEnum": {
         "dataType": "refEnum",
-        "enums": ["SA","RES"],
+        "enums": ["SA","RES","SUB"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetUserDto": {
@@ -305,7 +260,7 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateSubUserDto": {
+    "CreateSubUserRequestDto": {
         "dataType": "refObject",
         "properties": {
             "email": {"dataType":"string","required":true},
@@ -565,9 +520,38 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AuthTokenPayloadDto": {
+        "dataType": "refObject",
+        "properties": {
+            "userGuid": {"dataType":"string","required":true},
+            "role": {"ref":"RoleEnum","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_AuthTokenPayloadDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "list": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"AuthTokenPayloadDto"}},{"dataType":"enum","enums":[null]}]},
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_AuthTokenPayloadDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"AuthTokenPayloadDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"AuthTokenPayloadDto"}},{"ref":"IPaginatedResponse_AuthTokenPayloadDto_"},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SubUserAuthTokenPayloadDto": {
         "dataType": "refObject",
         "properties": {
+            "subUserRequestGuid": {"dataType":"string","required":true},
             "subUserEmail": {"dataType":"string","required":true},
             "parentUserGuid": {"dataType":"string","required":true},
         },
@@ -796,14 +780,14 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/user/create',
-            authenticateMiddleware([{"newUser":["RES","SA"]}]),
+            authenticateMiddleware([{"newUser":["RES","SA","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createUser)),
 
             async function UserController_createUser(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    createUserDto: {"in":"body","name":"createUserDto","required":true,"dataType":"union","subSchemas":[{"ref":"CreateResidentDto"},{"ref":"CreateSystemAdminDto"}]},
+                    createUserDto: {"in":"body","name":"createUserDto","required":true,"dataType":"any"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1056,12 +1040,12 @@ export function RegisterRoutes(app: Router) {
         app.post('/user/sub-user/create',
             authenticateMiddleware([{"jwt":["RES"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createSubUser)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createSubUserRequest)),
 
-            async function UserController_createSubUser(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_createSubUserRequest(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    createSubUserDto: {"in":"body","name":"createSubUserDto","required":true,"ref":"CreateSubUserDto"},
+                    createSubUserRequestDto: {"in":"body","name":"createSubUserRequestDto","required":true,"ref":"CreateSubUserRequestDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1078,7 +1062,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'createSubUser',
+                methodName: 'createSubUserRequest',
                 controller,
                 response,
                 next,
@@ -1643,12 +1627,14 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/auth/check-auth',
-            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.checkAuth)),
 
             async function AuthController_checkAuth(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    check: {"in":"query","name":"check","dataType":"boolean"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

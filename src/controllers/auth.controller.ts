@@ -1,4 +1,9 @@
-import { LoginDto, RegisterUserDto, SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
+import {
+	AuthTokenPayloadDto,
+	LoginDto,
+	RegisterUserDto,
+	SubUserAuthTokenPayloadDto,
+} from '../dtos/auth.dto'
 import {
 	Controller,
 	Route,
@@ -99,16 +104,22 @@ export class AuthController extends Controller {
 
 	@Tags('Auth')
 	@OperationId('checkAuth')
-	@Response<IResponse<any>>('400', 'Bad Request')
+	@Response<IResponse<AuthTokenPayloadDto>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Get('/check-auth')
-	@Security('jwt', ['RES', 'SA'])
-	public async checkAuth(): Promise<IResponse<any>> {
+	@Security('jwt', ['RES', 'SA', 'SUB'])
+	public async checkAuth(
+		@Request() request: ISecurityMiddlewareRequest,
+		@Query() check?: boolean,
+	): Promise<IResponse<AuthTokenPayloadDto>> {
 		try {
 			const response = {
 				message: 'Token valid',
 				status: '200',
-				data: null,
+				data: {
+					userGuid: request.userGuid,
+					role: request.role,
+				} as AuthTokenPayloadDto,
 			}
 			return response
 		} catch (err: any) {
@@ -116,7 +127,7 @@ export class AuthController extends Controller {
 			const response = {
 				message: err.message ? err.message : '',
 				status: '500',
-				data: err,
+				data: null,
 			}
 			return response
 		}
@@ -136,9 +147,10 @@ export class AuthController extends Controller {
 				message: 'Token valid',
 				status: '200',
 				data: {
+					subUserRequestGuid: request.subUserRequestGuid,
 					subUserEmail: request.subUserEmail,
 					parentUserGuid: request.parentUserGuid,
-				},
+				} as SubUserAuthTokenPayloadDto,
 			}
 			return response
 		} catch (err: any) {

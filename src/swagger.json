@@ -303,123 +303,11 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"GeneralFileDto": {
-				"properties": {
-					"fileName": {
-						"type": "string"
-					},
-					"data": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"fileName",
-					"data"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"GenderEnum": {
-				"enum": [
-					"M",
-					"F"
-				],
-				"type": "string"
-			},
-			"CreateResidentDto": {
-				"properties": {
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"userName": {
-						"type": "string"
-					},
-					"contactNumber": {
-						"type": "string"
-					},
-					"gender": {
-						"$ref": "#/components/schemas/GenderEnum"
-					},
-					"dateOfBirth": {
-						"type": "string"
-					},
-					"unitNumber": {
-						"type": "string"
-					},
-					"floorNumber": {
-						"type": "string"
-					},
-					"supportedFiles": {
-						"items": {
-							"$ref": "#/components/schemas/GeneralFileDto"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"firstName",
-					"lastName",
-					"userName",
-					"contactNumber",
-					"gender",
-					"dateOfBirth",
-					"unitNumber",
-					"floorNumber",
-					"supportedFiles"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateSystemAdminDto": {
-				"properties": {
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"userName": {
-						"type": "string"
-					},
-					"contactNumber": {
-						"type": "string"
-					},
-					"gender": {
-						"$ref": "#/components/schemas/GenderEnum"
-					},
-					"dateOfBirth": {
-						"type": "string"
-					},
-					"staffId": {
-						"type": "string"
-					},
-					"supportedFiles": {
-						"items": {
-							"$ref": "#/components/schemas/GeneralFileDto"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"firstName",
-					"lastName",
-					"userName",
-					"contactNumber",
-					"gender",
-					"dateOfBirth",
-					"staffId",
-					"supportedFiles"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"RoleEnum": {
 				"enum": [
 					"SA",
-					"RES"
+					"RES",
+					"SUB"
 				],
 				"type": "string"
 			},
@@ -747,7 +635,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CreateSubUserDto": {
+			"CreateSubUserRequestDto": {
 				"properties": {
 					"email": {
 						"type": "string"
@@ -1399,8 +1287,76 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"AuthTokenPayloadDto": {
+				"properties": {
+					"userGuid": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/RoleEnum"
+					}
+				},
+				"required": [
+					"userGuid",
+					"role"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPaginatedResponse_AuthTokenPayloadDto_": {
+				"properties": {
+					"list": {
+						"items": {
+							"$ref": "#/components/schemas/AuthTokenPayloadDto"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_AuthTokenPayloadDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/AuthTokenPayloadDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/AuthTokenPayloadDto"
+								},
+								"type": "array"
+							},
+							{
+								"$ref": "#/components/schemas/IPaginatedResponse_AuthTokenPayloadDto_"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"SubUserAuthTokenPayloadDto": {
 				"properties": {
+					"subUserRequestGuid": {
+						"type": "string"
+					},
 					"subUserEmail": {
 						"type": "string"
 					},
@@ -1409,6 +1365,7 @@
 					}
 				},
 				"required": [
+					"subUserRequestGuid",
 					"subUserEmail",
 					"parentUserGuid"
 				],
@@ -1782,7 +1739,8 @@
 					{
 						"newUser": [
 							"RES",
-							"SA"
+							"SA",
+							"SUB"
 						]
 					}
 				],
@@ -1791,16 +1749,7 @@
 					"required": true,
 					"content": {
 						"application/json": {
-							"schema": {
-								"anyOf": [
-									{
-										"$ref": "#/components/schemas/CreateResidentDto"
-									},
-									{
-										"$ref": "#/components/schemas/CreateSystemAdminDto"
-									}
-								]
-							}
+							"schema": {}
 						}
 					}
 				}
@@ -2118,7 +2067,7 @@
 		},
 		"/user/sub-user/create": {
 			"post": {
-				"operationId": "createSubUser",
+				"operationId": "createSubUserRequest",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -2160,7 +2109,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateSubUserDto"
+								"$ref": "#/components/schemas/CreateSubUserRequestDto"
 							}
 						}
 					}
@@ -2993,7 +2942,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IResponse_AuthTokenPayloadDto_"
 								}
 							}
 						}
@@ -3003,7 +2952,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IResponse_AuthTokenPayloadDto_"
 								},
 								"examples": {
 									"Example 1": {}
@@ -3019,11 +2968,21 @@
 					{
 						"jwt": [
 							"RES",
-							"SA"
+							"SA",
+							"SUB"
 						]
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "check",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
 			}
 		},
 		"/auth/check-auth/sub-user": {

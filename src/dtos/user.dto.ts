@@ -26,6 +26,11 @@ export interface GetUserDto {
 	updatedDateTime: string
 }
 
+export interface CreateSubUserDto extends CreateUserDto {
+	parentUserGuid: string
+	subUserRequestGuid: string
+}
+
 export interface CreateResidentDto extends CreateUserDto {
 	unitNumber: string
 	floorNumber: string
@@ -77,6 +82,6 @@ export interface EditUserDetailsByIdDto {
 	dateOfBirth: string
 }
 
-export interface CreateSubUserDto {
+export interface CreateSubUserRequestDto {
 	email: string
 }

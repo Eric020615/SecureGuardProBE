@@ -3,7 +3,6 @@ import { inject } from 'inversify'
 import { CollectionReference, Transaction } from 'firebase-admin/firestore'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { Sequence } from '../models/sequence.model'
-import { getNowTimestamp } from '../helper/time'
 
 export interface incrementParams {
 	transaction: Transaction

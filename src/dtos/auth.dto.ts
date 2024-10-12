@@ -1,13 +1,14 @@
 import { RoleEnum } from '../common/role'
 
 export interface AuthTokenPayloadDto {
-	userGUID: string
+	userGuid: string
 	role: RoleEnum
 }
 
 export interface SubUserAuthTokenPayloadDto {
-	subUserEmail: string
-	parentUserGuid: string
+	subUserRequestGuid: string
+    subUserEmail: string
+    parentUserGuid: string
 }
 
 export interface LoginDto {

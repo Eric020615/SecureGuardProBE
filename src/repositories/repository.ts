@@ -6,8 +6,6 @@ import {
 	QueryConstraint,
 	getCountFromServer,
 	startAt,
-	getDoc,
-	doc,
 } from 'firebase/firestore'
 import { BaseModel } from '../models/base.model'
 import { provideTransient } from '../helper/provideSingleton'

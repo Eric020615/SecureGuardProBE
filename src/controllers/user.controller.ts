@@ -21,6 +21,7 @@ import { UserService } from '../services/user.service'
 import {
 	CreateResidentDto,
 	CreateSubUserDto,
+	CreateSubUserRequestDto,
 	CreateSystemAdminDto,
 	EditUserDetailsByIdDto,
 	GetUserDetailsByIdDto,
@@ -41,15 +42,15 @@ export class UserController extends Controller {
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Post('/create')
-	@Security('newUser', ['RES', 'SA'])
+	@Security('newUser', ['RES', 'SA', 'SUB'])
 	public async createUser(
 		@Request() request: ISecurityMiddlewareRequest,
-		@Body() createUserDto: CreateResidentDto | CreateSystemAdminDto,
+		@Body() createUserDto: any,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
+			} 
 			await this.userService.createUserService(createUserDto, request.userGuid, request.role)
 			const response = {
 				message: 'User Created successfully',
@@ -259,20 +260,20 @@ export class UserController extends Controller {
 	}
 
 	@Tags('User')
-	@OperationId('createSubUser')
+	@OperationId('createSubUserRequest')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Post('/sub-user/create')
 	@Security('jwt', ['RES'])
-	public async createSubUser(
+	public async createSubUserRequest (
 		@Request() request: ISecurityMiddlewareRequest,
-		@Body() createSubUserDto: CreateSubUserDto,
+		@Body() createSubUserRequestDto: CreateSubUserRequestDto,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.createSubUserService(createSubUserDto, request.userGuid)
+			await this.userService.createSubUserRequestService(createSubUserRequestDto, request.userGuid)
 			const response = {
 				message: 'Sub user invitation link had been sent successfully',
 				status: '200',

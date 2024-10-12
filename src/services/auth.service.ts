@@ -11,19 +11,24 @@ import { RoleEnum } from '../common/role'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
+import { UserRepository } from '../repositories/user.repository'
+import { DocumentStatus } from '../common/constants'
+import { SubUserRequest } from '../models/user.model'
 
 @provideSingleton(AuthService)
 export class AuthService {
 	private auth: any
 	private authAdmin: any
-  
+
 	constructor(
 		@inject(UserService)
 		private userService: UserService,
 		@inject(FirebaseAdmin)
 		private firebaseAdmin: FirebaseAdmin,
 		@inject(FirebaseClient)
-		private firebaseClient: FirebaseClient
+		private firebaseClient: FirebaseClient,
+		@inject(UserRepository)
+		private userRepository: UserRepository,
 	) {
 		this.auth = this.firebaseClient.auth
 		this.authAdmin = this.firebaseAdmin.auth
@@ -43,9 +48,18 @@ export class AuthService {
 				registerUserDto.password,
 			)
 			const user = userCredentials.user
-			await this.authAdmin.updateUser(user.uid, { disabled: true })
+			if (userRole != RoleEnum.RESIDENT_SUBUSER) {
+				await this.authAdmin.updateUser(user.uid, { disabled: true })
+			}
+			if (userRole === RoleEnum.RESIDENT_SUBUSER) {
+				const request = await this.userRepository.getSubUserRequestByEmailRepository(registerUserDto.email)
+				await this.userRepository.editSubUserRequestRepository(request[0].guid as string, {
+					status: DocumentStatus.Active,
+				} as SubUserRequest)
+			}
+			await this.authAdmin.setCustomUserClaims(user.uid, { role: userRole })
 			const token = createToken({
-				userGUID: user.uid,
+				userGuid: user.uid,
 				role: userRole,
 			} as AuthTokenPayloadDto)
 			return token
@@ -76,7 +90,7 @@ export class AuthService {
 				throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const token = createToken({
-				userGUID: response.user.uid,
+				userGuid: response.user.uid,
 				role: userInformation.role,
 			} as AuthTokenPayloadDto)
 			return token
