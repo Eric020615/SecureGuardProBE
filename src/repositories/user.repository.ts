@@ -89,10 +89,10 @@ export class UserRepository {
 			if (Number.isNaN(userId)) {
 				throw new Error('Failed to generate id')
 			}
-			const userDocRef = doc(this.userCollection, userGuid);
-			const subUserDocRef = doc(this.subUserCollection, userGuid);
-			await setDoc(userDocRef, { ...user }); 
-			await setDoc(subUserDocRef, { ...subUser });
+			const userDocRef = doc(this.userCollection, userGuid)
+			const subUserDocRef = doc(this.subUserCollection, userGuid)
+			await setDoc(userDocRef, { ...user })
+			await setDoc(subUserDocRef, { ...subUser })
 			await updateDoc(userDocRef, { id: userId })
 		})
 	}
@@ -164,7 +164,40 @@ export class UserRepository {
 			await updateDoc(subUserRequestDocRef, { id: id })
 			return subUserRequestDocRef.id
 		})
-		return id;
+		return id
+	}
+
+	getSubUserListByResidentRepository = async (
+		userGuid: string,
+		offset: number,
+		pageSize: number,
+	) => {
+		if (!userGuid) {
+			return { rows: [], count: 0 }
+		}
+		const subUserConstraints = [
+			where('parentUserGuid', '==', userGuid),
+		]
+		const querySnapshot = await getDocs(query(this.subUserCollection, ...subUserConstraints))
+		let subUser: string[] = []
+		querySnapshot.forEach((doc) => {
+			subUser.push(doc.id)
+		})
+		if (subUser.length === 0) {
+			return { rows: [], count: 0 }
+		}
+		const constraints = [
+			where('__name__', 'in', subUser),
+			where('status', '==', DocumentStatus.Active),
+			orderBy('id', 'asc'),
+		]
+		let { rows, count } = await this.repositoryService.getPaginatedData<User>(
+			this.userCollection,
+			offset,
+			pageSize,
+			constraints,
+		)
+		return { rows, count }
 	}
 
 	getSubUserRequestByEmailRepository = async (email: string) => {

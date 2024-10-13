@@ -53,7 +53,7 @@ export class UserController extends Controller {
 			} 
 			await this.userService.createUserService(createUserDto, request.userGuid, request.role)
 			const response = {
-				message: 'User Created successfully',
+				message: 'User created successfully',
 				status: '200',
 				data: null,
 			}
@@ -127,6 +127,7 @@ export class UserController extends Controller {
 			}
 			return response
 		} catch (err) {
+			console.log(err)
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
 			const response = {
 				message: 'Failed to retrieve user details',
@@ -286,6 +287,46 @@ export class UserController extends Controller {
 				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('User')
+	@OperationId('getSubUserListByResident')
+	@Response<IResponse<GetUserDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Get('/sub-user/list')
+	@Security('jwt', ['RES'])
+	public async getSubUserList(
+		@Query() page: number,
+		@Query() limit: number,
+		@Request() request: ISecurityMiddlewareRequest,
+	): Promise<IResponse<any>> {
+		try {
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const { data, count } = await this.userService.GetSubUserListByResidentService(request.userGuid, page, limit)
+			const response = {
+				message: 'Sub user list retrieve successfully',
+				status: '200',
+				data: {
+					list: data,
+					count: count,
+				},
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			console.log(err)
+			const response = {
+				message: 'Failed to retrieve sub user list',
+				status: '500',
+				data: {
+					list: null,
+					count: 0,
+				},
 			}
 			return response
 		}

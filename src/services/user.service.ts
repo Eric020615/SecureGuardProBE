@@ -351,7 +351,7 @@ export class UserService {
 			const subUserRequestGuid = await this.userRepository.createSubUserRequestRepository({
 				id: 0,
 				email: createSubUserRequestDto.email,
-				parentUserId: userId,
+				parentUserGuid: userId,
 				status: DocumentStatus.Pending,
 				createdBy: userId,
 				createdDateTime: getNowTimestamp(),
@@ -378,6 +378,42 @@ export class UserService {
 				throw new OperationError(message, HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	GetSubUserListByResidentService = async (userGuid: string, page: number, limit: number) => {
+		try {
+			let offset = page * limit
+			let { rows, count } = await this.userRepository.getSubUserListByResidentRepository(
+				userGuid,
+				offset,
+				limit,
+			)
+			let data: GetUserDto[] = []
+			data = rows && rows.length > 0
+					? await Promise.all(rows.map(async (userInformation) => {
+							return {
+								userId: userInformation.id,
+								userGuid: userInformation.guid ? userInformation.guid : '',
+								userName: userInformation.guid ? await this.authAdmin.getUser(userInformation.guid).then((user) => user.displayName) : "",
+								firstName: userInformation.firstName,
+								lastName: userInformation.lastName,
+								gender: userInformation.gender,
+								role: userInformation.role,
+								dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
+								contactNumber: userInformation.contactNumber,
+								createdBy: userInformation.createdBy,
+								createdDateTime: convertTimestampToUserTimezone(userInformation.createdDateTime),
+								updatedBy: userInformation.updatedBy,
+								updatedDateTime: convertTimestampToUserTimezone(userInformation.updatedDateTime),
+							} as GetUserDto
+					  })
+					)
+					: []
+			return { data, count }
+		} catch (error: any) {
+			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

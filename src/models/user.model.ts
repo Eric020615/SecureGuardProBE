@@ -36,20 +36,20 @@ export class User extends BaseModel {
 
 export class SubUser {
 	id?: string
-	parentUserId: string
+	parentUserGuid: string
 	createdBy: string
 	updatedBy: string
 	createdDateTime: Timestamp
 	updatedDateTime: Timestamp
 
 	constructor(
-		parentUserId: string,
+		parentUserGuid: string,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
 	) {
-		this.parentUserId = parentUserId
+		this.parentUserGuid = parentUserGuid
 		this.createdBy = createdBy
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime
@@ -59,12 +59,12 @@ export class SubUser {
 
 export class SubUserRequest extends BaseModel {
 	email: string
-	parentUserId: string
+	parentUserGuid: string
 
 	constructor(
 		id: number,
 		email: string,
-		parentUserId: string,
+		parentUserGuid: string,
 		status: number,
 		createdBy: string,
 		updatedBy: string,
@@ -73,7 +73,7 @@ export class SubUserRequest extends BaseModel {
 	) {
 		super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
 		this.email = email
-		this.parentUserId = parentUserId
+		this.parentUserGuid = parentUserGuid
 	}
 }
 
