@@ -50,7 +50,7 @@ export class FaceAuthController extends Controller {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userData = await this.userService.GetUserDetailsByIdService(request.userGuid)
+			const userData = await this.userService.getUserDetailsByIdService(request.userGuid)
 			if (userData == null) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
@@ -103,7 +103,7 @@ export class FaceAuthController extends Controller {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userData = await this.userService.GetUserDetailsByIdService(request.userGuid)
+			const userData = await this.userService.getUserDetailsByIdService(request.userGuid)
 			if (userData == null) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}

@@ -85,3 +85,19 @@ export interface EditUserDetailsByIdDto {
 export interface CreateSubUserRequestDto {
 	email: string
 }
+
+export interface DeleteSubUserByIdDto {
+	subUserGuid: string
+}
+
+export interface GetSubUserByResidentDto {
+	userId: number
+	userGuid: string
+	firstName: string
+	lastName: string
+	userName: string
+	contactNumber: string
+	gender: string
+	dateOfBirth: string
+	status: boolean
+}

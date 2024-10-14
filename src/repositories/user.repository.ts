@@ -224,4 +224,11 @@ export class UserRepository {
 		const docRef = doc(this.subUserRequestCollection, subUserRequestGuid)
 		await updateDoc(docRef, { ...subUserRequest })
 	}
+
+	editSubUserByIdRepository = async (subUserGuid: string, subUser: SubUser, user: User) => {
+		const subUserDocRef = doc(this.subUserCollection, subUserGuid)
+		await updateDoc(subUserDocRef, { ...subUser })
+		const userDocRef = doc(this.userCollection, subUserGuid)
+		await updateDoc(userDocRef, { ...user })
+	}
 }

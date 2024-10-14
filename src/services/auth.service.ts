@@ -85,7 +85,7 @@ export class AuthService {
 			if (user.disabled) {
 				throw new OperationError('User Account Disabled', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userInformation = await this.userService.GetUserByIdService(response.user.uid)
+			const userInformation = await this.userService.getUserByIdService(response.user.uid)
 			if (userInformation.role !== role) {
 				throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}

@@ -8,10 +8,11 @@ import {
 	CreateSubUserRequestDto,
 	CreateSystemAdminDto,
 	EditUserDetailsByIdDto,
+	GetSubUserByResidentDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
 } from '../dtos/user.dto'
-import { Resident, SubUser, SubUserRequest, SystemAdmin, User } from '../models/user.model'
+import { Resident, SubUser, SystemAdmin, User } from '../models/user.model'
 import { UserRepository } from '../repositories/user.repository'
 import {
 	convertDateStringToTimestamp,
@@ -157,7 +158,7 @@ export class UserService {
 		}
 	}
 
-	GetUserByIdService = async (userGuid: string) => {
+	getUserByIdService = async (userGuid: string) => {
 		try {
 			const userInformation = await this.userRepository.GetUserByIdRepository(userGuid)
 			let data: GetUserDto = {} as GetUserDto
@@ -182,7 +183,7 @@ export class UserService {
 		}
 	}
 
-	GetUserListService = async (isActive: boolean, page: number, limit: number) => {
+	getUserListService = async (isActive: boolean, page: number, limit: number) => {
 		try {
 			let offset = page * limit
 			const userResult = await this.authAdmin.listUsers()
@@ -220,7 +221,7 @@ export class UserService {
 		}
 	}
 
-	GetUserDetailsByIdService = async (userGuid: string) => {
+	getUserDetailsByIdService = async (userGuid: string) => {
 		try {
 			const userDetails = await this.userRepository.GetUserByIdRepository(userGuid)
 			let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto
@@ -382,7 +383,7 @@ export class UserService {
 		}
 	}
 
-	GetSubUserListByResidentService = async (userGuid: string, page: number, limit: number) => {
+	getSubUserListByResidentService = async (userGuid: string, page: number, limit: number) => {
 		try {
 			let offset = page * limit
 			let { rows, count } = await this.userRepository.getSubUserListByResidentRepository(
@@ -390,30 +391,74 @@ export class UserService {
 				offset,
 				limit,
 			)
-			let data: GetUserDto[] = []
-			data = rows && rows.length > 0
-					? await Promise.all(rows.map(async (userInformation) => {
-							return {
-								userId: userInformation.id,
-								userGuid: userInformation.guid ? userInformation.guid : '',
-								userName: userInformation.guid ? await this.authAdmin.getUser(userInformation.guid).then((user) => user.displayName) : "",
-								firstName: userInformation.firstName,
-								lastName: userInformation.lastName,
-								gender: userInformation.gender,
-								role: userInformation.role,
-								dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
-								contactNumber: userInformation.contactNumber,
-								createdBy: userInformation.createdBy,
-								createdDateTime: convertTimestampToUserTimezone(userInformation.createdDateTime),
-								updatedBy: userInformation.updatedBy,
-								updatedDateTime: convertTimestampToUserTimezone(userInformation.updatedDateTime),
-							} as GetUserDto
-					  })
-					)
+			let data: GetSubUserByResidentDto[] = []
+			data =
+				rows && rows.length > 0
+					? await Promise.all(
+							rows.map(async (userInformation) => {
+								return {
+									userId: userInformation.id,
+									userGuid: userInformation.guid ? userInformation.guid : '',
+									userName: userInformation.guid
+										? await this.authAdmin
+												.getUser(userInformation.guid)
+												.then((user) => user.displayName)
+										: '',
+									firstName: userInformation.firstName,
+									lastName: userInformation.lastName,
+									gender: userInformation.gender,
+									dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
+									contactNumber: userInformation.contactNumber,
+									status: userInformation.guid
+										? await this.authAdmin
+												.getUser(userInformation.guid)
+												.then((user) => !user.disabled)
+										: false,
+								} as GetSubUserByResidentDto
+							}),
+					  )
 					: []
 			return { data, count }
 		} catch (error: any) {
 			console.log(error)
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	editSubUserStatusByIdService = async (
+		subUserGuid: string,
+		updatedBy: string,
+		status: boolean,
+	) => {
+		try {
+			await this.authAdmin.updateUser(subUserGuid, { disabled: !status })
+			let subUser: SubUser = {
+				updatedBy: updatedBy,
+				updatedDateTime: getNowTimestamp(),
+			} as SubUser
+			let user: User = {
+				updatedBy: updatedBy,
+				updatedDateTime: getNowTimestamp(),
+			} as User
+			await this.userRepository.editSubUserByIdRepository(subUserGuid, subUser, user)
+		} catch (error) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	deleteSubUserByIdService = async (subUserGuid: string, updatedBy: string) => {
+		try {
+			let subUser: SubUser = {
+				updatedBy: updatedBy,
+				updatedDateTime: getNowTimestamp(),
+			} as SubUser
+			let user: User = {
+				status: DocumentStatus.SoftDeleted,
+				updatedBy: updatedBy,
+				updatedDateTime: getNowTimestamp(),
+			} as User
+			await this.userRepository.editSubUserByIdRepository(subUserGuid, subUser, user)
+		} catch (error) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

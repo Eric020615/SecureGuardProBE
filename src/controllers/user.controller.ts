@@ -12,6 +12,7 @@ import {
 	Request,
 	Query,
 	Put,
+	Delete,
 } from 'tsoa'
 import { IResponse } from '../dtos/index.dto'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -19,10 +20,8 @@ import { OperationError } from '../common/operation-error'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { UserService } from '../services/user.service'
 import {
-	CreateResidentDto,
-	CreateSubUserDto,
 	CreateSubUserRequestDto,
-	CreateSystemAdminDto,
+	DeleteSubUserByIdDto,
 	EditUserDetailsByIdDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
@@ -50,7 +49,7 @@ export class UserController extends Controller {
 		try {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			} 
+			}
 			await this.userService.createUserService(createUserDto, request.userGuid, request.role)
 			const response = {
 				message: 'User created successfully',
@@ -81,7 +80,7 @@ export class UserController extends Controller {
 		@Query() limit: number,
 	): Promise<IResponse<any>> {
 		try {
-			const { data, count } = await this.userService.GetUserListService(isActive, page, limit)
+			const { data, count } = await this.userService.getUserListService(isActive, page, limit)
 			const response = {
 				message: 'User list retrieve successfully',
 				status: '200',
@@ -119,7 +118,7 @@ export class UserController extends Controller {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await this.userService.GetUserDetailsByIdService(request.userGuid)
+			const data = await this.userService.getUserDetailsByIdService(request.userGuid)
 			const response = {
 				message: 'User details retrieve successfully',
 				status: '200',
@@ -178,7 +177,7 @@ export class UserController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getUserDetailsById(@Query() userGuid: string): Promise<IResponse<any>> {
 		try {
-			const data = await this.userService.GetUserDetailsByIdService(userGuid)
+			const data = await this.userService.getUserDetailsByIdService(userGuid)
 			const response = {
 				message: 'User details retrieve successfully',
 				status: '200',
@@ -266,7 +265,7 @@ export class UserController extends Controller {
 	@SuccessResponse('200', 'OK')
 	@Post('/sub-user/create')
 	@Security('jwt', ['RES'])
-	public async createSubUserRequest (
+	public async createSubUserRequest(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Body() createSubUserRequestDto: CreateSubUserRequestDto,
 	): Promise<IResponse<any>> {
@@ -307,7 +306,11 @@ export class UserController extends Controller {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const { data, count } = await this.userService.GetSubUserListByResidentService(request.userGuid, page, limit)
+			const { data, count } = await this.userService.getSubUserListByResidentService(
+				request.userGuid,
+				page,
+				limit,
+			)
 			const response = {
 				message: 'Sub user list retrieve successfully',
 				status: '200',
@@ -327,6 +330,71 @@ export class UserController extends Controller {
 					list: null,
 					count: 0,
 				},
+			}
+			return response
+		}
+	}
+
+	@Tags('User')
+	@OperationId('editSubUserStatusById')
+	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Put('/sub-user')
+	@Security('jwt', ['RES'])
+	public async editSubUserStatusById(
+		@Query() subUserGuid: string,
+		@Query() status: boolean,
+		@Request() request: ISecurityMiddlewareRequest,
+	): Promise<IResponse<any>> {
+		try {
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			await this.userService.editSubUserStatusByIdService(subUserGuid, request.userGuid, status)
+			const response = {
+				message: 'Sub user status updated successfully',
+				status: '200',
+				data: null
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to update sub user status',
+				status: '500',
+				data: null
+			}
+			return response
+		}
+	}
+
+	@Tags('User')
+	@OperationId('deleteSubUserById')
+	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Delete('/sub-user')
+	@Security('jwt', ['RES'])
+	public async deleteSubUserById(
+		@Body() deleteSubUserByIdDto: DeleteSubUserByIdDto,
+		@Request() request: ISecurityMiddlewareRequest,
+	): Promise<IResponse<any>> {
+		try {
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			await this.userService.deleteSubUserByIdService(deleteSubUserByIdDto.subUserGuid, request.userGuid)
+			const response = { 
+				message: 'Sub user deleted successfully',
+				status: '200',
+				data: null,
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to delete sub user',
+				status: '500',
+				data: null,
 			}
 			return response
 		}
