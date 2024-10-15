@@ -46,6 +46,28 @@ export class UserService {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
 
+	getEffectiveUserGuidService = async (userGuid: string, role: RoleEnum) => {
+		try {
+			switch(role) {
+				case RoleEnum.SYSTEM_ADMIN:
+				case RoleEnum.RESIDENT:
+					return userGuid
+				case RoleEnum.RESIDENT_SUBUSER:
+					const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(
+						userGuid,
+					)
+					if (!subUser) {
+						throw new OperationError('Sub user not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+					}
+					return subUser ? subUser.parentUserGuid : ''
+				default:
+					throw new OperationError('Invalid role', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
 	createUserService = async (
 		createUserDto: CreateResidentDto | CreateSubUserDto | CreateSystemAdminDto,
 		userGuid: string,
@@ -234,7 +256,7 @@ export class UserService {
 				lastName: userDetails.lastName,
 				email: userRecord.email ? userRecord.email : '',
 				gender: userDetails.gender,
-				role: userDetails.role,
+				role: userRecord.customClaims?.role ? userRecord.customClaims.role : '',
 				dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
 				isActive: !userRecord.disabled,
 				contactNumber: userDetails.contactNumber,
@@ -268,7 +290,7 @@ export class UserService {
 				}
 				return data
 			}
-			return null
+			return data
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -421,6 +443,17 @@ export class UserService {
 			return { data, count }
 		} catch (error: any) {
 			console.log(error)
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	getSubUserParentUserGuidByUserGuidService = async (userGuid: string) => {
+		try {
+			const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(
+				userGuid,
+			)
+			return subUser ? subUser.parentUserGuid : ''
+		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

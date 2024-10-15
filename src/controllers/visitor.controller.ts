@@ -21,12 +21,15 @@ import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto } from '../dtos/vis
 import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { count, limit } from 'firebase/firestore'
+import { UserService } from '../services/user.service'
 
 @Route('visitor')
 @provideSingleton(VisitorController)
 export class VisitorController extends Controller {
-	constructor(@inject(VisitorService) private visitorService: VisitorService) {
+	constructor(
+		@inject(VisitorService) private visitorService: VisitorService,
+		@inject(UserService) private userService: UserService,
+	) {
 		super()
 	}
 
@@ -35,7 +38,7 @@ export class VisitorController extends Controller {
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Post('/create')
-	@Security('jwt', ['RES', 'SA'])
+	@Security('jwt', ['RES', 'SUB', 'SA'])
 	public async createVisitor(
 		@Body() createVisitorDto: CreateVisitorDto,
 		@Request() request: ISecurityMiddlewareRequest,
@@ -44,7 +47,11 @@ export class VisitorController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.visitorService.createVisitorService(createVisitorDto, request.userGuid)
+			const userGuid = await this.userService.getEffectiveUserGuidService(
+				request.userGuid,
+				request.role,
+			)
+			await this.visitorService.createVisitorService(createVisitorDto, userGuid)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
 				message: 'Visitor created successfully',
@@ -68,25 +75,34 @@ export class VisitorController extends Controller {
 	@Response<IResponse<GetVisitorDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/')
-	@Security('jwt', ['RES', 'SA'])
+	@Security('jwt', ['RES', 'SUB', 'SA'])
 	public async getVisitorByResident(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() isPast: boolean,
 		@Query() page: number,
-		@Query() limit: number
+		@Query() limit: number,
 	): Promise<IResponse<IPaginatedResponse<GetVisitorDto>>> {
 		try {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const { data, count } = await this.visitorService.getVisitorByResidentService(request.userGuid, isPast, page, limit)
+			const userGuid = await this.userService.getEffectiveUserGuidService(
+				request.userGuid,
+				request.role,
+			)
+			const { data, count } = await this.visitorService.getVisitorByResidentService(
+				userGuid,
+				isPast,
+				page,
+				limit,
+			)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
 				data: {
 					list: data,
-					count: count
-				}
+					count: count,
+				},
 			}
 			return response
 		} catch (err) {
@@ -96,8 +112,8 @@ export class VisitorController extends Controller {
 				status: '500',
 				data: {
 					list: null,
-					count: 0
-				}
+					count: 0,
+				},
 			}
 			return response
 		}
@@ -141,9 +157,7 @@ export class VisitorController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/admin')
 	// @Security("jwt", ["SA"])
-	public async getAllVisitors(
-		
-	): Promise<IResponse<any>> {
+	public async getAllVisitors(): Promise<IResponse<any>> {
 		try {
 			const data = await this.visitorService.getAllVisitorService()
 			const response = {
@@ -178,7 +192,15 @@ export class VisitorController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, visitorGuid, request.userGuid)
+			const userGuid = await this.userService.getEffectiveUserGuidService(
+				request.userGuid,
+				request.role,
+			)
+			await this.visitorService.editVisitorByIdService(
+				editVisitorByIdDto,
+				visitorGuid,
+				userGuid,
+			)
 			const response = {
 				message: 'Visitor updated successfully',
 				status: '200',

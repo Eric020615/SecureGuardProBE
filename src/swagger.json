@@ -1487,6 +1487,7 @@
 					{
 						"jwt": [
 							"RES",
+							"SUB",
 							"SA"
 						]
 					}
@@ -1539,6 +1540,7 @@
 					{
 						"jwt": [
 							"RES",
+							"SUB",
 							"SA"
 						]
 					}
@@ -1870,7 +1872,8 @@
 					{
 						"jwt": [
 							"SA",
-							"RES"
+							"RES",
+							"SUB"
 						]
 					}
 				],
@@ -1910,7 +1913,8 @@
 					{
 						"jwt": [
 							"SA",
-							"RES"
+							"RES",
+							"SUB"
 						]
 					}
 				],
@@ -2635,6 +2639,7 @@
 					{
 						"jwt": [
 							"RES",
+							"SUB",
 							"SA"
 						]
 					}
@@ -2687,7 +2692,8 @@
 					{
 						"jwt": [
 							"RES",
-							"SA"
+							"SA",
+							"SUB"
 						]
 					}
 				],
@@ -2816,7 +2822,8 @@
 					{
 						"jwt": [
 							"SA",
-							"RES"
+							"RES",
+							"SUB"
 						]
 					}
 				],
@@ -2868,7 +2875,8 @@
 					{
 						"jwt": [
 							"SA",
-							"RES"
+							"RES",
+							"SUB"
 						]
 					}
 				],
@@ -3090,16 +3098,7 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "role",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/RoleEnum"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {

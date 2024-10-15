@@ -74,9 +74,9 @@ export class AuthController extends Controller {
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Post('/log-in')
-	public async login(@Body() loginDto: LoginDto, @Query() role: RoleEnum): Promise<IResponse<any>> {
+	public async login(@Body() loginDto: LoginDto): Promise<IResponse<any>> {
 		try {
-			const token = await this.authService.loginService(loginDto, role)
+			const token = await this.authService.loginService(loginDto)
 			const response = {
 				message: 'Account login successfully',
 				status: '200',
@@ -94,7 +94,7 @@ export class AuthController extends Controller {
 				return response
 			}
 			const response = {
-				message: '',
+				message: err,
 				status: '500',
 				data: null,
 			}

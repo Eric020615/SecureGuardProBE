@@ -167,6 +167,14 @@ export class UserRepository {
 		return id
 	}
 
+	getSubUserParentUserGuidByUserGuidRepository = async (userGuid: string) => {
+		const subUserDocRef = doc(this.subUserCollection, userGuid)
+		const subUserDoc = await getDoc(subUserDocRef)
+		let result: SubUser = {} as SubUser
+		result = subUserDoc.data() as SubUser
+		return result
+	}
+
 	getSubUserListByResidentRepository = async (
 		userGuid: string,
 		offset: number,
@@ -175,9 +183,7 @@ export class UserRepository {
 		if (!userGuid) {
 			return { rows: [], count: 0 }
 		}
-		const subUserConstraints = [
-			where('parentUserGuid', '==', userGuid),
-		]
+		const subUserConstraints = [where('parentUserGuid', '==', userGuid)]
 		const querySnapshot = await getDocs(query(this.subUserCollection, ...subUserConstraints))
 		let subUser: string[] = []
 		querySnapshot.forEach((doc) => {

@@ -4,7 +4,6 @@ import {
 	Controller,
 	OperationId,
 	Post,
-	Get,
 	Response,
 	Route,
 	SuccessResponse,
@@ -54,6 +53,7 @@ export class FaceAuthController extends Controller {
 			if (userData == null) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
 			const data = await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[userData.role],
 				id: `${request.role} ${userData.userId.toString()}`,
@@ -66,7 +66,7 @@ export class FaceAuthController extends Controller {
 						data: createUserFaceAuthDto.faceData,
 					},
 				],
-				person_code: userData.userGuid,
+				person_code: userGuid,
 				phone_num: userData.contactNumber,
 			})
 			if (data) {

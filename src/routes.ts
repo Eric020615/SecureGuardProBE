@@ -603,7 +603,7 @@ export function RegisterRoutes(app: Router) {
 
     
         app.post('/visitor/create',
-            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            authenticateMiddleware([{"jwt":["RES","SUB","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
             ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.createVisitor)),
 
@@ -640,7 +640,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/visitor',
-            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            authenticateMiddleware([{"jwt":["RES","SUB","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
             ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorByResident)),
 
@@ -863,7 +863,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/user/profile',
-            authenticateMiddleware([{"jwt":["SA","RES"]}]),
+            authenticateMiddleware([{"jwt":["SA","RES","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getUserProfileById)),
 
@@ -899,7 +899,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/user/profile',
-            authenticateMiddleware([{"jwt":["SA","RES"]}]),
+            authenticateMiddleware([{"jwt":["SA","RES","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.editUserProfileById)),
 
@@ -1413,7 +1413,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/facility/create',
-            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            authenticateMiddleware([{"jwt":["RES","SUB","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.createFacilityBooking)),
 
@@ -1450,7 +1450,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/facility',
-            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getFacilityBookingHistory)),
 
@@ -1526,7 +1526,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/facility/cancel',
-            authenticateMiddleware([{"jwt":["SA","RES"]}]),
+            authenticateMiddleware([{"jwt":["SA","RES","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.cancelFacilityBooking)),
 
@@ -1563,7 +1563,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/facility/available-slot/check',
-            authenticateMiddleware([{"jwt":["SA","RES"]}]),
+            authenticateMiddleware([{"jwt":["SA","RES","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
             ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.checkFacilitySlot)),
 
@@ -1718,7 +1718,6 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_login(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     loginDto: {"in":"body","name":"loginDto","required":true,"ref":"LoginDto"},
-                    role: {"in":"query","name":"role","required":true,"ref":"RoleEnum"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

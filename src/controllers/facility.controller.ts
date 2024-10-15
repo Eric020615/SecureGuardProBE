@@ -1,6 +1,5 @@
 import {
 	CancelFacilityBookingDto,
-	CheckFacilitySlotDto,
 	CreateFacilityBookingDto,
 	GetFacilityBookingHistoryDto,
 	SpaceAvailabilityDto,
@@ -27,7 +26,7 @@ import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FacilityService } from '../services/facility.service'
-import { list } from 'firebase/storage'
+import { UserService } from '../services/user.service'
 
 @Route('facility')
 @provideSingleton(FacilityController)
@@ -35,6 +34,8 @@ export class FacilityController extends Controller {
 	constructor(
 		@inject(FacilityService)
 		private facilityService: FacilityService,
+		@inject(UserService)
+		private userService: UserService,
 	) {
 		super()
 	}
@@ -44,7 +45,7 @@ export class FacilityController extends Controller {
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Post('/create')
-	@Security('jwt', ['RES', 'SA'])
+	@Security('jwt', ['RES', 'SUB', 'SA'])
 	public async createFacilityBooking(
 		@Body() createFacilityBookingDto: CreateFacilityBookingDto,
 		@Request() request: ISecurityMiddlewareRequest,
@@ -53,9 +54,10 @@ export class FacilityController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
 			await this.facilityService.createFacilityBookingService(
 				createFacilityBookingDto,
-				request.userGuid,
+				userGuid,
 			)
 			const response = {
 				message: 'Facility booking created successfully',
@@ -87,7 +89,7 @@ export class FacilityController extends Controller {
 	@Response<IResponse<GetFacilityBookingHistoryDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/')
-	@Security('jwt', ['RES', 'SA'])
+	@Security('jwt', ['RES', 'SA', 'SUB'])
 	public async getFacilityBookingHistory(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() isPast: boolean,
@@ -98,8 +100,9 @@ export class FacilityController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
 			const { data, count } = await this.facilityService.getFacilityBookingService(
-				request.userGuid,
+				userGuid,
 				isPast,
 				page,
 				limit,
@@ -167,7 +170,7 @@ export class FacilityController extends Controller {
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Put('/cancel')
-	@Security('jwt', ['SA', 'RES'])
+	@Security('jwt', ['SA', 'RES', 'SUB'])
 	public async cancelFacilityBooking(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Body() cancelFacilityBookingDto: CancelFacilityBookingDto,
@@ -176,8 +179,9 @@ export class FacilityController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
 			await this.facilityService.cancelFacilityBookingService(
-				request.userGuid,
+				userGuid,
 				cancelFacilityBookingDto,
 			)
 			const response = {
@@ -202,7 +206,7 @@ export class FacilityController extends Controller {
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/available-slot/check')
-	@Security('jwt', ['SA', 'RES'])
+	@Security('jwt', ['SA', 'RES', 'SUB'])
 	public async checkFacilitySlot(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() facilityId: string,

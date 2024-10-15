@@ -74,7 +74,7 @@ export class AuthService {
 		}
 	}
 
-	loginService = async (loginDto: LoginDto, role: RoleEnum) => {
+	loginService = async (loginDto: LoginDto) => {
 		try {
 			const response = await signInWithEmailAndPassword(
 				this.auth,
@@ -82,6 +82,7 @@ export class AuthService {
 				loginDto.password,
 			)
 			const user = await this.authAdmin.getUser(response.user.uid)
+			const role = user.customClaims?.role || 'No role assigned';
 			if (user.disabled) {
 				throw new OperationError('User Account Disabled', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
