@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { AuthTokenPayloadDto, LoginDto, RegisterUserDto, ResetPasswordDto } from '../dtos/auth.dto'
+import { AuthTokenPayloadDto, LoginDto, RegisterUserDto, RequestResetPasswordDto, ResetPasswordDto } from '../dtos/auth.dto'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { FirebaseClient } from '../config/initFirebase'
 import { createToken } from '../config/jwt'
@@ -16,6 +16,7 @@ import { DocumentStatus } from '../common/constants'
 import { SubUserRequest } from '../models/user.model'
 import { EmailService } from '../helper/email'
 import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGrid'
+import { UserRecord } from 'firebase-admin/auth'
 
 @provideSingleton(AuthService)
 export class AuthService {
@@ -92,6 +93,9 @@ export class AuthService {
 			)
 			const user = await this.authAdmin.getUser(response.user.uid)
 			const role = user.customClaims?.role || 'No role assigned'
+			if (!loginDto.role.includes(role)){
+				throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
 			if (user.disabled) {
 				throw new OperationError('User Account Disabled', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
@@ -136,18 +140,18 @@ export class AuthService {
 		}
 	}
 
-	sendResetPasswordEmail = async (resetPasswordDto: ResetPasswordDto) => {
+	sendResetPasswordEmail = async (requestResetPasswordDto: RequestResetPasswordDto) => {
 		try {
-			const isEmailExist = await this.userService.isEmailRegistered(resetPasswordDto.email)
+			const isEmailExist = await this.userService.isEmailRegistered(requestResetPasswordDto.email)
 			if(!isEmailExist) {
 				throw new OperationError('Email not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const link = await this.authAdmin.generatePasswordResetLink(resetPasswordDto.email)
+			const link = await this.authAdmin.generatePasswordResetLink(requestResetPasswordDto.email)
 			if (!link) {
 				throw new OperationError('Failed to send reset password email', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const [success, message] = await this.emailService.sendEmail(
-				resetPasswordDto.email,
+				requestResetPasswordDto.email,
 				SendGridTemplateIds.PasswordReset,
 				{
 					resetPasswordUrl: link,
@@ -157,6 +161,25 @@ export class AuthService {
 				throw new OperationError(message, HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 		} catch (error) {
+			if (error instanceof FirebaseError) {
+				throw new OperationError(
+					convertFirebaseAuthEnumMessage(error.code),
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
+			}
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	resetPasswordService = async (resetPasswordDto: ResetPasswordDto, userGuid: string) => {
+		try {
+			const user : UserRecord = await this.authAdmin.getUser(userGuid)
+			await signInWithEmailAndPassword(this.auth, user.email as string, resetPasswordDto.currentPassword); // Sign in the user with the current password
+			if (resetPasswordDto.currentPassword === resetPasswordDto.newPassword) {
+				throw new OperationError('New password cannot be the same as the current password', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			await this.authAdmin.updateUser(userGuid, { password: resetPasswordDto.newPassword }) // Update the user's password
+		} catch (error: any) {
 			if (error instanceof FirebaseError) {
 				throw new OperationError(
 					convertFirebaseAuthEnumMessage(error.code),

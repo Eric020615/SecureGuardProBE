@@ -1290,16 +1290,23 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"role": {
+						"items": {
+							"$ref": "#/components/schemas/RoleEnum"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"email",
-					"password"
+					"password",
+					"role"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ResetPasswordDto": {
+			"RequestResetPasswordDto": {
 				"properties": {
 					"email": {
 						"type": "string"
@@ -1307,6 +1314,22 @@
 				},
 				"required": [
 					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResetPasswordDto": {
+				"properties": {
+					"currentPassword": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"currentPassword",
+					"newPassword"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3125,7 +3148,7 @@
 		},
 		"/auth/reset-password/request": {
 			"post": {
-				"operationId": "Reset Password",
+				"operationId": "Forgot Password",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -3155,6 +3178,59 @@
 					"Auth"
 				],
 				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RequestResetPasswordDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/reset-password": {
+			"post": {
+				"operationId": "Reset Password",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SA",
+							"SUB"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,

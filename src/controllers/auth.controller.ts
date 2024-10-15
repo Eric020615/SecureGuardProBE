@@ -2,6 +2,7 @@ import {
 	AuthTokenPayloadDto,
 	LoginDto,
 	RegisterUserDto,
+	RequestResetPasswordDto,
 	ResetPasswordDto,
 	SubUserAuthTokenPayloadDto,
 } from '../dtos/auth.dto'
@@ -104,15 +105,57 @@ export class AuthController extends Controller {
 	}
 
 	@Tags('Auth')
-	@OperationId('Reset Password')
+	@OperationId('Forgot Password')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Post('/reset-password/request')
-	public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<IResponse<any>> {
+	public async requestResetPassword(
+		@Body() requestResetPasswordDto: RequestResetPasswordDto,
+	): Promise<IResponse<any>> {
 		try {
-			await this.authService.sendResetPasswordEmail(resetPasswordDto)
+			await this.authService.sendResetPasswordEmail(requestResetPasswordDto)
 			const response = {
 				message: 'Reset password email sent successfully',
+				status: '200',
+				data: null,
+			}
+			return response
+		} catch (err: any) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			if (err instanceof OperationError) {
+				const response = {
+					message: err.message ? err.message : '',
+					status: '500',
+					data: null,
+				}
+				return response
+			}
+			const response = {
+				message: err,
+				status: '500',
+				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('Auth')
+	@OperationId('Reset Password')
+	@Response<IResponse<any>>('400', 'Bad Request')
+	@SuccessResponse('200', 'OK')
+	@Post('/reset-password')
+	@Security('jwt', ['RES', 'SA', 'SUB'])
+	public async resetPassword(
+		@Body() resetPasswordDto: ResetPasswordDto,
+		@Request() request: ISecurityMiddlewareRequest,
+	): Promise<IResponse<any>> {
+		try {
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			await this.authService.resetPasswordService(resetPasswordDto, request.userGuid)
+			const response = {
+				message: 'Password reset successfully',
 				status: '200',
 				data: null,
 			}

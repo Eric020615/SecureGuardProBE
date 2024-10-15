@@ -14,6 +14,7 @@ export interface SubUserAuthTokenPayloadDto {
 export interface LoginDto {
 	email: string
 	password: string
+	role: RoleEnum[]
 }
 
 export interface RegisterUserDto {
@@ -22,6 +23,11 @@ export interface RegisterUserDto {
 	confirmPassword: string
 }
 
-export interface ResetPasswordDto {
+export interface RequestResetPasswordDto {
 	email: string
+}
+
+export interface ResetPasswordDto {
+	currentPassword: string
+	newPassword: string
 }
