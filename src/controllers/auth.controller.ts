@@ -2,6 +2,7 @@ import {
 	AuthTokenPayloadDto,
 	LoginDto,
 	RegisterUserDto,
+	ResetPasswordDto,
 	SubUserAuthTokenPayloadDto,
 } from '../dtos/auth.dto'
 import {
@@ -81,6 +82,39 @@ export class AuthController extends Controller {
 				message: 'Account login successfully',
 				status: '200',
 				data: token,
+			}
+			return response
+		} catch (err: any) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			if (err instanceof OperationError) {
+				const response = {
+					message: err.message ? err.message : '',
+					status: '500',
+					data: null,
+				}
+				return response
+			}
+			const response = {
+				message: err,
+				status: '500',
+				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('Auth')
+	@OperationId('Reset Password')
+	@Response<IResponse<any>>('400', 'Bad Request')
+	@SuccessResponse('200', 'OK')
+	@Post('/reset-password/request')
+	public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<IResponse<any>> {
+		try {
+			await this.authService.sendResetPasswordEmail(resetPasswordDto)
+			const response = {
+				message: 'Reset password email sent successfully',
+				status: '200',
+				data: null,
 			}
 			return response
 		} catch (err: any) {

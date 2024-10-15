@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { AuthTokenPayloadDto, LoginDto, RegisterUserDto } from '../dtos/auth.dto'
+import { AuthTokenPayloadDto, LoginDto, RegisterUserDto, ResetPasswordDto } from '../dtos/auth.dto'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { FirebaseClient } from '../config/initFirebase'
 import { createToken } from '../config/jwt'
@@ -14,6 +14,8 @@ import { UserService } from './user.service'
 import { UserRepository } from '../repositories/user.repository'
 import { DocumentStatus } from '../common/constants'
 import { SubUserRequest } from '../models/user.model'
+import { EmailService } from '../helper/email'
+import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGrid'
 
 @provideSingleton(AuthService)
 export class AuthService {
@@ -23,6 +25,8 @@ export class AuthService {
 	constructor(
 		@inject(UserService)
 		private userService: UserService,
+		@inject(EmailService)
+		private emailService: EmailService,
 		@inject(FirebaseAdmin)
 		private firebaseAdmin: FirebaseAdmin,
 		@inject(FirebaseClient)
@@ -52,10 +56,15 @@ export class AuthService {
 				await this.authAdmin.updateUser(user.uid, { disabled: true })
 			}
 			if (userRole === RoleEnum.RESIDENT_SUBUSER) {
-				const request = await this.userRepository.getSubUserRequestByEmailRepository(registerUserDto.email)
-				await this.userRepository.editSubUserRequestRepository(request[0].guid as string, {
-					status: DocumentStatus.Active,
-				} as SubUserRequest)
+				const request = await this.userRepository.getSubUserRequestByEmailRepository(
+					registerUserDto.email,
+				)
+				await this.userRepository.editSubUserRequestRepository(
+					request[0].guid as string,
+					{
+						status: DocumentStatus.Active,
+					} as SubUserRequest,
+				)
 			}
 			await this.authAdmin.setCustomUserClaims(user.uid, { role: userRole })
 			const token = createToken({
@@ -82,7 +91,7 @@ export class AuthService {
 				loginDto.password,
 			)
 			const user = await this.authAdmin.getUser(response.user.uid)
-			const role = user.customClaims?.role || 'No role assigned';
+			const role = user.customClaims?.role || 'No role assigned'
 			if (user.disabled) {
 				throw new OperationError('User Account Disabled', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
@@ -117,6 +126,37 @@ export class AuthService {
 				throw new OperationError('User Account Disabled', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 		} catch (error: any) {
+			if (error instanceof FirebaseError) {
+				throw new OperationError(
+					convertFirebaseAuthEnumMessage(error.code),
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
+			}
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	sendResetPasswordEmail = async (resetPasswordDto: ResetPasswordDto) => {
+		try {
+			const isEmailExist = await this.userService.isEmailRegistered(resetPasswordDto.email)
+			if(!isEmailExist) {
+				throw new OperationError('Email not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const link = await this.authAdmin.generatePasswordResetLink(resetPasswordDto.email)
+			if (!link) {
+				throw new OperationError('Failed to send reset password email', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const [success, message] = await this.emailService.sendEmail(
+				resetPasswordDto.email,
+				SendGridTemplateIds.PasswordReset,
+				{
+					resetPasswordUrl: link,
+				} as PasswordResetTemplateData,
+			)
+			if (!success) {
+				throw new OperationError(message, HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+		} catch (error) {
 			if (error instanceof FirebaseError) {
 				throw new OperationError(
 					convertFirebaseAuthEnumMessage(error.code),

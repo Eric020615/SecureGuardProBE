@@ -22,4 +22,6 @@ export interface RegisterUserDto {
 	confirmPassword: string
 }
 
-// export type UserCreationParams = Pick<LoginDto, "email" | "password">;
+export interface ResetPasswordDto {
+	email: string
+}
