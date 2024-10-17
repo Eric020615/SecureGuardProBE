@@ -1,11 +1,11 @@
 import { Request } from 'express'
-import { decryptToken } from '../config/jwt'
 import { AuthTokenPayloadDto, SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import { AuthService } from '../services/auth.service'
 import { RoleEnum } from '../common/role'
 import { iocContainer } from '../ioc'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
+import { JwtConfig } from '../config/jwtConfig'
 
 export interface ISecurityMiddlewareRequest extends Request {
 	userGuid: string
@@ -15,8 +15,8 @@ export interface ISecurityMiddlewareRequest extends Request {
 	subUserRequestGuid: string
 }
 
-export const checkUserPermission = (token: string, scopes?: string[]) => {
-	const userData = decryptToken<AuthTokenPayloadDto>(token)
+export const checkUserPermission = (jwtConfig: JwtConfig, token: string, scopes?: string[]) => {
+	const userData = jwtConfig.decryptToken<AuthTokenPayloadDto>(token)
 	if (!userData) {
 		throw new OperationError('INVALID_OR_MISSING_TOKEN_DATA', HttpStatusCode.FORBIDDEN)
 	}
@@ -36,11 +36,12 @@ export const expressAuthentication = async (
 	response?: any,
 ): Promise<any> => {
 	let authService: AuthService = iocContainer.get(AuthService)
+	let jwtConfig: JwtConfig = iocContainer.get(JwtConfig)
 	const token = request.body.token || request.query.token || request.headers['authorization']
 	const check = request.query.check === 'true'
 	try {
 		if (securityName === 'jwt') {
-			const userData = checkUserPermission(token, scopes)
+			const userData = checkUserPermission(jwtConfig, token, scopes)
 			if (check) {
 				await authService.checkUserStatus(userData.userGuid)
 			}
@@ -49,13 +50,13 @@ export const expressAuthentication = async (
 			return Promise.resolve({})
 		}
 		if (securityName === 'newUser') {
-			const userData = checkUserPermission(token, scopes)
+			const userData = checkUserPermission(jwtConfig, token, scopes)
 			request.userGuid = userData.userGuid
 			request.role = userData.role
 			return Promise.resolve({})
 		}
 		if (securityName === 'subUserAuth') {
-			const subUserData = decryptToken<SubUserAuthTokenPayloadDto>(token)
+			const subUserData = jwtConfig.decryptToken<SubUserAuthTokenPayloadDto>(token)
 			await authService.checkUserStatus(subUserData.parentUserGuid)
 			request.subUserEmail = subUserData.subUserEmail
 			request.parentUserGuid = subUserData.parentUserGuid

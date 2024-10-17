@@ -2,7 +2,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { AuthTokenPayloadDto, LoginDto, RegisterUserDto, RequestResetPasswordDto, ResetPasswordDto } from '../dtos/auth.dto'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { FirebaseClient } from '../config/initFirebase'
-import { createToken } from '../config/jwt'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 import { FirebaseError } from 'firebase/app'
@@ -17,6 +16,7 @@ import { SubUserRequest } from '../models/user.model'
 import { EmailService } from '../helper/email'
 import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGrid'
 import { UserRecord } from 'firebase-admin/auth'
+import { JwtConfig } from '../config/jwtConfig'
 
 @provideSingleton(AuthService)
 export class AuthService {
@@ -34,6 +34,8 @@ export class AuthService {
 		private firebaseClient: FirebaseClient,
 		@inject(UserRepository)
 		private userRepository: UserRepository,
+		@inject(JwtConfig)
+		private jwtConfig: JwtConfig,
 	) {
 		this.auth = this.firebaseClient.auth
 		this.authAdmin = this.firebaseAdmin.auth
@@ -68,7 +70,7 @@ export class AuthService {
 				)
 			}
 			await this.authAdmin.setCustomUserClaims(user.uid, { role: userRole })
-			const token = createToken({
+			const token = this.jwtConfig.createToken({
 				userGuid: user.uid,
 				role: userRole,
 			} as AuthTokenPayloadDto)
@@ -103,7 +105,7 @@ export class AuthService {
 			if (userInformation.role !== role) {
 				throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const token = createToken({
+			const token = this.jwtConfig.createToken({
 				userGuid: response.user.uid,
 				role: userInformation.role,
 			} as AuthTokenPayloadDto)

@@ -27,10 +27,10 @@ import { inject } from 'inversify'
 import { FileService } from '../helper/file'
 import { EmailService } from '../helper/email'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
-import { createToken } from '../config/jwt'
 import * as dotenv from 'dotenv'
 import { DocumentStatus } from '../common/constants'
 import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
+import { JwtConfig } from '../config/jwtConfig'
 
 dotenv.config()
 
@@ -42,6 +42,7 @@ export class UserService {
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
 		@inject(FileService) private fileService: FileService,
 		@inject(EmailService) private emailService: EmailService,
+		@inject(JwtConfig) private jwtConfig: JwtConfig,
 	) {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
@@ -381,7 +382,7 @@ export class UserService {
 				updatedBy: userId,
 				updatedDateTime: getNowTimestamp(),
 			})
-			const token = createToken({
+			const token = this.jwtConfig.createToken({
 				subUserEmail: createSubUserRequestDto.email,
 				parentUserGuid: userId,
 				subUserRequestGuid: subUserRequestGuid,
