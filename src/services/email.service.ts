@@ -1,6 +1,6 @@
-import { provideSingleton } from './provideSingleton'
 import sgMail from '@sendgrid/mail'
 import * as dotenv from 'dotenv'
+import { provideSingleton } from '../helper/provideSingleton'
 
 interface EmailOptions {
 	to: string

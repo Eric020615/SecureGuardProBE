@@ -13,10 +13,10 @@ import { UserService } from './user.service'
 import { UserRepository } from '../repositories/user.repository'
 import { DocumentStatus } from '../common/constants'
 import { SubUserRequest } from '../models/user.model'
-import { EmailService } from '../helper/email'
 import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGrid'
 import { UserRecord } from 'firebase-admin/auth'
 import { JwtConfig } from '../config/jwtConfig'
+import { EmailService } from './email.service'
 
 @provideSingleton(AuthService)
 export class AuthService {

@@ -24,13 +24,13 @@ import { RoleEnum } from '../common/role'
 import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { FileService } from '../helper/file'
-import { EmailService } from '../helper/email'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
 import * as dotenv from 'dotenv'
 import { DocumentStatus } from '../common/constants'
 import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import { JwtConfig } from '../config/jwtConfig'
+import { FileService } from './file.service'
+import { EmailService } from './email.service'
 
 dotenv.config()
 

@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
 import { Cookie, CookieJar } from 'tough-cookie'
 import { wrapper } from 'axios-cookiejar-support'
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import queryString from 'querystring'
 import CryptoJS from 'crypto-js'
 import { provideSingleton } from '../helper/provideSingleton'

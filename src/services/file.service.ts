@@ -2,7 +2,7 @@ import { ref, uploadString, getDownloadURL, getStorage } from "firebase/storage"
 import { inject } from 'inversify';
 import { FirebaseClient } from '../config/initFirebase'; // adjust the path as needed
 import { GeneralFileDto } from "../dtos/index.dto";
-import { provideSingleton } from "./provideSingleton";
+import { provideSingleton } from "../helper/provideSingleton";
 
 @provideSingleton(FileService)
 export class FileService {

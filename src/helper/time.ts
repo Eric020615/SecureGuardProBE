@@ -8,7 +8,6 @@ export const convertDateStringToTimestamp = (dateString: string) => {
   return Timestamp.fromDate(moment.utc(dateString).toDate())
 }
 
-
 export const convertTimestampToUserTimezone = (timestamp: Timestamp | null) => {
   if(!timestamp){
     return ""
