@@ -120,12 +120,12 @@ export class VisitorController extends Controller {
 	}
 
 	@Tags('Visitor')
-	@OperationId('getVisitorDetailsByResident')
+	@OperationId('getVisitorDetails')
 	@Response<IResponse<GetVisitorDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/details')
-	@Security('jwt', ['RES'])
-	public async getVisitorDetailsByResident(
+	@Security('jwt', ['RES', 'SUB', 'SA'])
+	public async getVisitorDetails (
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() visitorGuid: string,
 	): Promise<IResponse<any>> {
@@ -133,7 +133,7 @@ export class VisitorController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await this.visitorService.getVisitorDetailsByResidentService(visitorGuid)
+			const data = await this.visitorService.getVisitorDetailsService(visitorGuid)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',

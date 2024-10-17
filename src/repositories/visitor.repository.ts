@@ -93,7 +93,7 @@ export class VisitorRepository {
 		return { rows, count }
 	}
 
-	async getVisitorDetailsByResidentRepository(visitorGuid: string) {
+	async getVisitorDetailsRepository(visitorGuid: string) {
 		const visitorDocRef = doc(this.visitorCollection, visitorGuid)
 		const visitorDoc = await getDoc(visitorDocRef)
 		let result: Visitor = {} as Visitor

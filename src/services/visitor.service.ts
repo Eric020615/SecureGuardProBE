@@ -94,9 +94,9 @@ export class VisitorService {
 		}
 	}
 
-	getVisitorDetailsByResidentService = async (visitorGuid: string) => {
+	getVisitorDetailsService = async (visitorGuid: string) => {
 		try {
-			const visitors = await this.visitorRepository.getVisitorDetailsByResidentRepository(
+			const visitors = await this.visitorRepository.getVisitorDetailsRepository(
 				visitorGuid,
 			)
 			let data: GetVisitorDto = {} as GetVisitorDto
@@ -107,6 +107,7 @@ export class VisitorService {
 				visitorCategory: visitors.visitorCategory,
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
+				status: visitors.status,
 				createdBy: visitors.createdBy,
 				updatedBy: visitors.updatedBy,
 				createdDateTime: convertTimestampToUserTimezone(visitors.createdDateTime),
@@ -133,6 +134,7 @@ export class VisitorService {
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
+							status: visitor.status,
 							createdBy: visitor.createdBy,
 							updatedBy: visitor.updatedBy,
 							createdDateTime: convertTimestampToUserTimezone(visitor.createdDateTime),

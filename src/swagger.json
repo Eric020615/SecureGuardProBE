@@ -53,6 +53,17 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DocumentStatus": {
+				"enum": [
+					1,
+					0,
+					-1,
+					2,
+					3,
+					4
+				],
+				"type": "number"
+			},
 			"GetVisitorDto": {
 				"properties": {
 					"visitorId": {
@@ -74,6 +85,9 @@
 					"visitDateTime": {
 						"type": "string"
 					},
+					"status": {
+						"$ref": "#/components/schemas/DocumentStatus"
+					},
 					"createdBy": {
 						"type": "string"
 					},
@@ -94,6 +108,7 @@
 					"visitorCategory",
 					"visitorContactNumber",
 					"visitDateTime",
+					"status",
 					"createdBy",
 					"updatedBy",
 					"createdDateTime",
@@ -1399,7 +1414,7 @@
 		},
 		"/visitor/details": {
 			"get": {
-				"operationId": "getVisitorDetailsByResident",
+				"operationId": "getVisitorDetails",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -1431,7 +1446,9 @@
 				"security": [
 					{
 						"jwt": [
-							"RES"
+							"RES",
+							"SUB",
+							"SA"
 						]
 					}
 				],

@@ -47,6 +47,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DocumentStatus": {
+        "dataType": "refEnum",
+        "enums": [1,0,-1,2,3,4],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetVisitorDto": {
         "dataType": "refObject",
         "properties": {
@@ -56,6 +61,7 @@ const models: TsoaRoute.Models = {
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
+            "status": {"ref":"DocumentStatus","required":true},
             "createdBy": {"dataType":"string","required":true},
             "updatedBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
@@ -598,11 +604,11 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/visitor/details',
-            authenticateMiddleware([{"jwt":["RES"]}]),
+            authenticateMiddleware([{"jwt":["RES","SUB","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
-            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorDetailsByResident)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorDetails)),
 
-            async function VisitorController_getVisitorDetailsByResident(request: ExRequest, response: ExResponse, next: any) {
+            async function VisitorController_getVisitorDetails(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     visitorGuid: {"in":"query","name":"visitorGuid","required":true,"dataType":"string"},
@@ -622,7 +628,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'getVisitorDetailsByResident',
+                methodName: 'getVisitorDetails',
                 controller,
                 response,
                 next,

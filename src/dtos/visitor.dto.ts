@@ -1,3 +1,5 @@
+import { DocumentStatus } from "../common/constants";
+
 export interface CreateVisitorDto {
     visitorName: string;
     visitorCategory: string;
@@ -19,6 +21,7 @@ export interface GetVisitorDto {
     visitorCategory: string;
     visitorContactNumber: string;
     visitDateTime: string;
+    status: DocumentStatus;
     createdBy: string;
     updatedBy: string;
     createdDateTime: string;
