@@ -72,7 +72,7 @@ export class NoticeController extends Controller {
 	public async getAllNotice(
 		@Query() page: number,
 		@Query() limit: number
-	): Promise<IResponse<IPaginatedResponse<GetNoticeDto>>> {
+	): Promise<IPaginatedResponse<GetNoticeDto>> {
 		try {
 			let { data, count } = await this.noticeService.getAllNoticeService(page, limit)
 			const response = {
@@ -106,7 +106,7 @@ export class NoticeController extends Controller {
 	public async getNotice(
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IResponse<IPaginatedResponse<GetNoticeDto>>> {
+	): Promise<IPaginatedResponse<GetNoticeDto>> {
 		try {
 			let { data, count } = await this.noticeService.getNoticeService(page, limit)
 			const response = {

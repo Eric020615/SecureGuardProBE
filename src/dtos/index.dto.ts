@@ -5,13 +5,17 @@ export interface GeneralFileDto {
 
 export interface IResponse<T> {
 	message?: string
-	data?: T | T[] | IPaginatedResponse<T> | null
+	data?: T | T[] | null
 	status?: string
 }
 
 export interface IPaginatedResponse<T> {
-	list?: T[] | null
-	count: number
+	message?: string
+	status?: string
+	data: {
+		list: T[] | null
+		count: number
+	}
 }
 
 export interface PaginationParams {

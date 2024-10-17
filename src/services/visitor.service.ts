@@ -63,7 +63,7 @@ export class VisitorService {
 		limit: number,
 	) => {
 		try {
-			let offset = (page) * limit
+			let offset = page * limit + 1
 			let { rows, count } = await this.visitorRepository.getVisitorByResidentRepository(
 				userId,
 				isPast,
@@ -119,12 +119,13 @@ export class VisitorService {
 		}
 	}
 
-	getAllVisitorService = async () => {
+	getAllVisitorService = async (page: number, limit: number) => {
 		try {
-			const visitors = await this.visitorRepository.getAllVisitorsRepository()
+			let offset = page * limit + 1
+			let { rows, count } = await this.visitorRepository.getAllVisitorsRepository(offset, limit) 
 			let data: GetVisitorDto[] = []
-			data = visitors
-				? visitors.map((visitor) => {
+			data = rows
+				? rows.map((visitor) => {
 						return {
 							visitorId: visitor.id,
 							visitorGuid: visitor.guid ? visitor.guid : '',
@@ -139,7 +140,7 @@ export class VisitorService {
 						} as GetVisitorDto
 				  })
 				: []
-			return data
+			return { data, count }
 		} catch (error: any) {
 			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)

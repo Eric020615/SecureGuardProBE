@@ -407,7 +407,7 @@ export class UserService {
 
 	getSubUserListByResidentService = async (userGuid: string, page: number, limit: number) => {
 		try {
-			let offset = page * limit
+			let offset = page * limit + 1
 			let { rows, count } = await this.userRepository.getSubUserListByResidentRepository(
 				userGuid,
 				offset,

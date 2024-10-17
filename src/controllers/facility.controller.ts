@@ -95,7 +95,7 @@ export class FacilityController extends Controller {
 		@Query() isPast: boolean,
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IResponse<IPaginatedResponse<GetFacilityBookingHistoryDto>>> {
+	): Promise<IPaginatedResponse<GetFacilityBookingHistoryDto>> {
 		try {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -139,7 +139,7 @@ export class FacilityController extends Controller {
 	public async getAllFacilityBooking(
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IResponse<IPaginatedResponse<GetFacilityBookingHistoryDto>>> {
+	): Promise<IPaginatedResponse<GetFacilityBookingHistoryDto>> {
 		try {
 			const { data, count } = await this.facilityService.getAllFacilityBookingService(page, limit)
 			const response = {

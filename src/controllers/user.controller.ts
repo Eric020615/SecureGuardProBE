@@ -14,7 +14,7 @@ import {
 	Put,
 	Delete,
 } from 'tsoa'
-import { IResponse } from '../dtos/index.dto'
+import { IPaginatedResponse, IResponse } from '../dtos/index.dto'
 import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
@@ -23,6 +23,7 @@ import {
 	CreateSubUserRequestDto,
 	DeleteSubUserByIdDto,
 	EditUserDetailsByIdDto,
+	GetSubUserByResidentDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
 } from '../dtos/user.dto'
@@ -78,7 +79,7 @@ export class UserController extends Controller {
 		@Query() isActive: boolean,
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IResponse<any>> {
+	): Promise<IPaginatedResponse<GetUserDto>> {
 		try {
 			const { data, count } = await this.userService.getUserListService(isActive, page, limit)
 			const response = {
@@ -301,7 +302,7 @@ export class UserController extends Controller {
 		@Query() page: number,
 		@Query() limit: number,
 		@Request() request: ISecurityMiddlewareRequest,
-	): Promise<IResponse<any>> {
+	): Promise<IPaginatedResponse<GetSubUserByResidentDto>> {
 		try {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)

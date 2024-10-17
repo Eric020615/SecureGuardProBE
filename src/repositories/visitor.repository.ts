@@ -102,15 +102,14 @@ export class VisitorRepository {
 		return result
 	}
 
-	async getAllVisitorsRepository() {
-		const q = query(this.visitorCollection)
-		const querySnapshot = await getDocs(q)
-		let result: Visitor[] = []
-		querySnapshot.forEach((doc) => {
-			let data = doc.data() as Visitor
-			data.guid = doc.id
-			result.push(data)
-		})
-		return result
+	async getAllVisitorsRepository(offset: number, pageSize: number) {
+		const constraints = [orderBy('id', 'asc')]
+		let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
+			this.visitorCollection,
+			offset,
+			pageSize,
+			constraints,
+		)
+		return { rows, count }
 	}
 }

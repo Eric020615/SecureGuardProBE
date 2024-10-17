@@ -81,7 +81,7 @@ export class VisitorController extends Controller {
 		@Query() isPast: boolean,
 		@Query() page: number,
 		@Query() limit: number,
-	): Promise<IResponse<IPaginatedResponse<GetVisitorDto>>> {
+	): Promise<IPaginatedResponse<GetVisitorDto>> {
 		try {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -156,14 +156,24 @@ export class VisitorController extends Controller {
 	@Response<IResponse<GetVisitorDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/admin')
-	// @Security("jwt", ["SA"])
-	public async getAllVisitors(): Promise<IResponse<any>> {
+	@Security('jwt', ['SA'])
+	public async getAllVisitors(
+		@Request() request: ISecurityMiddlewareRequest,
+		@Query() page: number,
+		@Query() limit: number,
+	): Promise<IPaginatedResponse<GetVisitorDto>> {
 		try {
-			const data = await this.visitorService.getAllVisitorService()
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const { data, count } = await this.visitorService.getAllVisitorService(page, limit)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
-				data: data,
+				data: {
+					list: data,
+					count: count,
+				},
 			}
 			return response
 		} catch (err) {
@@ -171,7 +181,10 @@ export class VisitorController extends Controller {
 			const response = {
 				message: 'Failed to retrieve visitors',
 				status: '500',
-				data: null,
+				data: {
+					list: null,
+					count: 0,
+				},
 			}
 			return response
 		}
@@ -196,11 +209,7 @@ export class VisitorController extends Controller {
 				request.userGuid,
 				request.role,
 			)
-			await this.visitorService.editVisitorByIdService(
-				editVisitorByIdDto,
-				visitorGuid,
-				userGuid,
-			)
+			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, visitorGuid, userGuid)
 			const response = {
 				message: 'Visitor updated successfully',
 				status: '200',
