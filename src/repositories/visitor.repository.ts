@@ -112,4 +112,26 @@ export class VisitorRepository {
 		)
 		return { rows, count }
 	}
+	
+	// async getVisitorByEmailRepository(
+	// 	userId: string,
+	// ) {
+	// 	const constraints = [
+	// 		where('createdBy', '==', userId),
+	// 		where(
+	// 			'visitDateTime',
+	// 			isPast ? '<=' : '>',
+	// 			convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
+	// 		),
+	// 		where('status', '==', DocumentStatus.Active),
+	// 		orderBy('id', 'asc'),
+	// 	]
+	// 	let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
+	// 		this.visitorCollection,
+	// 		offset,
+	// 		pageSize,
+	// 		constraints,
+	// 	)
+	// 	return { rows, count }
+	// }
 }

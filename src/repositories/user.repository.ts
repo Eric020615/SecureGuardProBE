@@ -97,7 +97,7 @@ export class UserRepository {
 		})
 	}
 
-	GetUserByIdRepository = async (userGuid: string) => {
+	getUserByIdRepository = async (userGuid: string) => {
 		const docRef = doc(this.userCollection, userGuid)
 		const userDoc = await getDoc(docRef)
 		let result: User = {} as User
@@ -106,14 +106,13 @@ export class UserRepository {
 		return result
 	}
 
-	GetUserListRepository = async (userList: UserRecord[], offset: number, pageSize: number) => {
+	getUserListRepository = async (userList: UserRecord[], offset: number, pageSize: number) => {
 		const userGuid = userList.map((user) => user.uid)
 		if (userGuid.length === 0) {
 			return { rows: [], count: 0 }
 		}
 		const constraints = [
 			where('__name__', 'in', userGuid),
-			where('status', '==', DocumentStatus.Active),
 			orderBy('id', 'asc'),
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<User>(
@@ -125,7 +124,7 @@ export class UserRepository {
 		return { rows, count }
 	}
 
-	GetResidentDetailsRepository = async (userId: string) => {
+	getResidentDetailsRepository = async (userId: string) => {
 		const docRef = doc(this.residentCollection, userId)
 		const resDoc = await getDoc(docRef)
 		let result: Resident = {} as Resident
@@ -133,7 +132,7 @@ export class UserRepository {
 		return result
 	}
 
-	GetSystemAdminDetailsRepository = async (userId: string) => {
+	getSystemAdminDetailsRepository = async (userId: string) => {
 		const docRef = doc(this.systemAdminCollection, userId)
 		const resDoc = await getDoc(docRef)
 		let result: SystemAdmin = {} as SystemAdmin
@@ -237,4 +236,6 @@ export class UserRepository {
 		const userDocRef = doc(this.userCollection, subUserGuid)
 		await updateDoc(userDocRef, { ...user })
 	}
+
+
 }

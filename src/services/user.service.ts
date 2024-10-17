@@ -183,7 +183,7 @@ export class UserService {
 
 	getUserByIdService = async (userGuid: string) => {
 		try {
-			const userInformation = await this.userRepository.GetUserByIdRepository(userGuid)
+			const userInformation = await this.userRepository.getUserByIdRepository(userGuid)
 			let data: GetUserDto = {} as GetUserDto
 			data = {
 				userId: userInformation.id,
@@ -216,7 +216,7 @@ export class UserService {
 			} else {
 				userList = userResult.users.filter((user) => user.disabled)
 			}
-			let { rows, count } = await this.userRepository.GetUserListRepository(userList, offset, limit)
+			let { rows, count } = await this.userRepository.getUserListRepository(userList, offset, limit)
 			let data: GetUserDto[] = []
 			data =
 				rows && rows.length > 0
@@ -246,7 +246,7 @@ export class UserService {
 
 	getUserDetailsByIdService = async (userGuid: string) => {
 		try {
-			const userDetails = await this.userRepository.GetUserByIdRepository(userGuid)
+			const userDetails = await this.userRepository.getUserByIdRepository(userGuid)
 			let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto
 			const userRecord = await this.authAdmin.getUser(userGuid)
 			data = {
@@ -267,7 +267,7 @@ export class UserService {
 				updatedDateTime: convertTimestampToUserTimezone(userDetails.updatedDateTime),
 			}
 			if (userDetails.role === RoleEnum.RESIDENT) {
-				const residentDetails = await this.userRepository.GetResidentDetailsRepository(userGuid)
+				const residentDetails = await this.userRepository.getResidentDetailsRepository(userGuid)
 				if (!residentDetails) {
 					return data
 				}
@@ -279,7 +279,7 @@ export class UserService {
 				return data
 			}
 			if (data.role === RoleEnum.SYSTEM_ADMIN) {
-				const systemAdminDetails = await this.userRepository.GetSystemAdminDetailsRepository(
+				const systemAdminDetails = await this.userRepository.getSystemAdminDetailsRepository(
 					userGuid,
 				)
 				if (!systemAdminDetails) {
@@ -482,6 +482,8 @@ export class UserService {
 
 	deleteSubUserByIdService = async (subUserGuid: string, updatedBy: string) => {
 		try {
+			// can make it delete in the future for auth
+			await this.authAdmin.updateUser(subUserGuid, { disabled: true })
 			let subUser: SubUser = {
 				updatedBy: updatedBy,
 				updatedDateTime: getNowTimestamp(),
