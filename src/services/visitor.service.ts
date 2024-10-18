@@ -1,6 +1,6 @@
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
-import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto } from '../dtos/visitor.dto'
+import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto, GetVisitorByDateDto } from '../dtos/visitor.dto'
 import { VisitorRepository } from '../repositories/visitor.repository'
 import { Visitor } from '../models/visitor.model'
 import {
@@ -145,6 +145,19 @@ export class VisitorService {
 			return { data, count }
 		} catch (error: any) {
 			console.log(error)
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	getVisitorCountsByDayService = async (startDate: string, endDate: string) => {
+		try {
+			console.log(startDate)
+			let data: GetVisitorByDateDto[] = [];
+			let visitorCountsByDay = await this.visitorRepository.getVisitorCountsByDayRepository(startDate, endDate);
+			data = visitorCountsByDay ? visitorCountsByDay : []
+			console.log(data)
+			return data
+		} catch (error) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

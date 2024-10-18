@@ -12,7 +12,7 @@ import {
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
 import { Visitor } from '../models/visitor.model'
-import { convertDateStringToTimestamp } from '../helper/time'
+import { convertDateStringToTimestamp, convertTimestampToUserTimezone } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
@@ -112,7 +112,48 @@ export class VisitorRepository {
 		)
 		return { rows, count }
 	}
-	
+
+	async getVisitorCountsByDayRepository(startDate: string, endDate: string) {
+		// Convert start and end date to Firestore Timestamps
+		console.log(startDate)
+		console.log(endDate)
+		const startTimestamp = convertDateStringToTimestamp(startDate)
+		const endTimestamp = convertDateStringToTimestamp(endDate)
+
+		// Query Firestore for visitors within the date range
+		const q = query(
+			this.visitorCollection,
+			where('visitDateTime', '>=', startTimestamp),
+			where('visitDateTime', '<=', endTimestamp),
+		)
+
+		const snapshot = await getDocs(q)
+
+		// Create a map to store counts for each date
+		const visitorCountMap: { [date: string]: number } = {}
+
+		// Iterate over the visitors and group by day
+		snapshot.forEach((doc) => {
+			const data = doc.data() as Visitor
+			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime)
+
+			// Increment count for that day
+			if (visitorCountMap[visitDateString]) {
+				visitorCountMap[visitDateString]++
+			} else {
+				visitorCountMap[visitDateString] = 1
+			}
+		})
+
+		const visitorCounts = Object.entries(visitorCountMap).map(
+			([date, count]) => ({
+				date,
+				count,
+			}),
+		)
+		return visitorCounts
+	}
+
 	// async getVisitorByEmailRepository(
 	// 	userId: string,
 	// ) {

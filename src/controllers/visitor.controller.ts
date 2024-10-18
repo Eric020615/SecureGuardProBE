@@ -17,7 +17,7 @@ import {
 import { HttpStatusCode } from '../common/http-status-code'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
-import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto } from '../dtos/visitor.dto'
+import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto, GetVisitorByDateDto } from '../dtos/visitor.dto'
 import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -185,6 +185,39 @@ export class VisitorController extends Controller {
 					list: null,
 					count: 0,
 				},
+			}
+			return response
+		}
+	}
+
+	@Tags('Visitor')
+	@OperationId('getVisitorCountsByDay')
+	@Response<IResponse<GetVisitorByDateDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Get('/admin/analytics')
+	@Security('jwt', ['SA'])
+	public async getVisitorCountsByDay(
+		@Request() request: ISecurityMiddlewareRequest,
+		@Query() startDate: string,
+		@Query() endDate: string
+	): Promise<IResponse<GetVisitorByDateDto>> {
+		try {
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const data = await this.visitorService.getVisitorCountsByDayService(startDate, endDate)
+			const response = {
+				message: 'Visitors retrieve successfully',
+				status: '200',
+				data: data
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to retrieve visitors',
+				status: '500',
+				data: null
 			}
 			return response
 		}
