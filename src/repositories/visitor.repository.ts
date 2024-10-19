@@ -12,7 +12,7 @@ import {
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
 import { Visitor } from '../models/visitor.model'
-import { convertDateStringToTimestamp, convertTimestampToUserTimezone } from '../helper/time'
+import { convertDateStringToTimestamp, convertTimestampToUserTimezone, generateAllDatesInRange } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
@@ -124,14 +124,21 @@ export class VisitorRepository {
 		)
 
 		const snapshot = await getDocs(q)
-		const visitorCountMap: { [date: string]: number } = {}
+		let visitorCountMap: { [date: string]: number } = {}
+		let dateRange = generateAllDatesInRange(startDate, endDate)
+		dateRange.forEach((date) => {
+			visitorCountMap[date] = 0
+		})
 		snapshot.forEach((doc) => {
 			const data = doc.data() as Visitor
-			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime, ITimeFormat.date)
-			if (visitorCountMap[visitDateString]) {
-				visitorCountMap[visitDateString]++
-			} else {
-				visitorCountMap[visitDateString] = 1
+			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime, ITimeFormat.isoDateTime)
+			let index = 0
+			while(index < dateRange.length) {
+				if(visitDateString > dateRange[index] && visitDateString < dateRange[index + 1]){
+					visitorCountMap[dateRange[index]]++
+					break
+				}
+				index++
 			}
 		})
 		return visitorCountMap;

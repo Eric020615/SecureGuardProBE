@@ -1,6 +1,11 @@
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
-import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto, GetVisitorByDateDto } from '../dtos/visitor.dto'
+import {
+	CreateVisitorDto,
+	GetVisitorDto,
+	EditVisitorByIdDto,
+	GetVisitorByDateDto,
+} from '../dtos/visitor.dto'
 import { VisitorRepository } from '../repositories/visitor.repository'
 import { Visitor } from '../models/visitor.model'
 import {
@@ -12,6 +17,7 @@ import {
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { DocumentStatus } from '../common/constants'
+import moment from 'moment'
 
 @provideSingleton(VisitorService)
 export class VisitorService {
@@ -97,9 +103,7 @@ export class VisitorService {
 
 	getVisitorDetailsService = async (visitorGuid: string) => {
 		try {
-			const visitors = await this.visitorRepository.getVisitorDetailsRepository(
-				visitorGuid,
-			)
+			const visitors = await this.visitorRepository.getVisitorDetailsRepository(visitorGuid)
 			let data: GetVisitorDto = {} as GetVisitorDto
 			data = {
 				visitorId: visitors.id,
@@ -124,7 +128,7 @@ export class VisitorService {
 	getAllVisitorService = async (page: number, limit: number) => {
 		try {
 			let offset = page * limit + 1
-			let { rows, count } = await this.visitorRepository.getAllVisitorsRepository(offset, limit) 
+			let { rows, count } = await this.visitorRepository.getAllVisitorsRepository(offset, limit)
 			let data: GetVisitorDto[] = []
 			data = rows
 				? rows.map((visitor) => {
@@ -152,15 +156,14 @@ export class VisitorService {
 
 	getVisitorCountsByDayService = async (startDate: string, endDate: string) => {
 		try {
-			console.log(startDate)
-			let data: GetVisitorByDateDto[] = [];
-			let visitorCountsByDay = await this.visitorRepository.getVisitorCountsByDayRepository(startDate, endDate);
-			let allDatesInRange = generateAllDatesInRange(startDate, endDate)
-			data = allDatesInRange.map((date) => ({
-				date,
-				count: visitorCountsByDay[date.split("T")[0]] || 0, // Default to 0 if no visitors on that date
-			}))
-			console.log(data)
+			let data: GetVisitorByDateDto[] = []
+			let visitorCountsByDay = await this.visitorRepository.getVisitorCountsByDayRepository(
+				startDate,
+				endDate,
+			)
+			Object.keys(visitorCountsByDay).map((date) => {
+				data.push({ date: date, count: visitorCountsByDay[date] })
+			})
 			return data
 		} catch (error) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
