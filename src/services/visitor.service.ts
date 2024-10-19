@@ -6,6 +6,7 @@ import { Visitor } from '../models/visitor.model'
 import {
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
+	generateAllDatesInRange,
 	getNowTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
@@ -154,7 +155,11 @@ export class VisitorService {
 			console.log(startDate)
 			let data: GetVisitorByDateDto[] = [];
 			let visitorCountsByDay = await this.visitorRepository.getVisitorCountsByDayRepository(startDate, endDate);
-			data = visitorCountsByDay ? visitorCountsByDay : []
+			let allDatesInRange = generateAllDatesInRange(startDate, endDate)
+			data = allDatesInRange.map((date) => ({
+				date,
+				count: visitorCountsByDay[date.split("T")[0]] || 0, // Default to 0 if no visitors on that date
+			}))
 			console.log(data)
 			return data
 		} catch (error) {

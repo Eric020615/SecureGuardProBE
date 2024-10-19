@@ -17,7 +17,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, ITimeFormat } from '../common/constants'
 import { RepositoryService } from './repository'
 
 @provideSingleton(VisitorRepository)
@@ -114,13 +114,9 @@ export class VisitorRepository {
 	}
 
 	async getVisitorCountsByDayRepository(startDate: string, endDate: string) {
-		// Convert start and end date to Firestore Timestamps
-		console.log(startDate)
-		console.log(endDate)
 		const startTimestamp = convertDateStringToTimestamp(startDate)
 		const endTimestamp = convertDateStringToTimestamp(endDate)
 
-		// Query Firestore for visitors within the date range
 		const q = query(
 			this.visitorCollection,
 			where('visitDateTime', '>=', startTimestamp),
@@ -128,30 +124,17 @@ export class VisitorRepository {
 		)
 
 		const snapshot = await getDocs(q)
-
-		// Create a map to store counts for each date
 		const visitorCountMap: { [date: string]: number } = {}
-
-		// Iterate over the visitors and group by day
 		snapshot.forEach((doc) => {
 			const data = doc.data() as Visitor
-			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime)
-
-			// Increment count for that day
+			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime, ITimeFormat.date)
 			if (visitorCountMap[visitDateString]) {
 				visitorCountMap[visitDateString]++
 			} else {
 				visitorCountMap[visitDateString] = 1
 			}
 		})
-
-		const visitorCounts = Object.entries(visitorCountMap).map(
-			([date, count]) => ({
-				date,
-				count,
-			}),
-		)
-		return visitorCounts
+		return visitorCountMap;
 	}
 
 	// async getVisitorByEmailRepository(
