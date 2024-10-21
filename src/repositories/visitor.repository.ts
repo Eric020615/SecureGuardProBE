@@ -17,7 +17,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
-import { DocumentStatus, ITimeFormat } from '../common/constants'
+import { DocumentStatus, ITimeFormat, PaginationDirection } from '../common/constants'
 import { RepositoryService } from './repository'
 
 @provideSingleton(VisitorRepository)
@@ -71,7 +71,7 @@ export class VisitorRepository {
 	async getVisitorByResidentRepository(
 		userId: string,
 		isPast: boolean,
-		offset: number,
+		id: number,
 		pageSize: number,
 	) {
 		const constraints = [
@@ -86,7 +86,7 @@ export class VisitorRepository {
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
 			this.visitorCollection,
-			offset,
+			id,
 			pageSize,
 			constraints,
 		)
@@ -102,13 +102,14 @@ export class VisitorRepository {
 		return result
 	}
 
-	async getAllVisitorsRepository(offset: number, pageSize: number) {
+	async getAllVisitorsRepository(direction: PaginationDirection, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
 			this.visitorCollection,
-			offset,
+			id,
 			pageSize,
 			constraints,
+			direction
 		)
 		return { rows, count }
 	}

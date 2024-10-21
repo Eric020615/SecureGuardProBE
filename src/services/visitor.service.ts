@@ -16,7 +16,7 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, PaginationDirection } from '../common/constants'
 import moment from 'moment'
 
 @provideSingleton(VisitorService)
@@ -66,15 +66,14 @@ export class VisitorService {
 	getVisitorByResidentService = async (
 		userId: string,
 		isPast: boolean,
-		page: number,
+		id: number,
 		limit: number,
 	) => {
 		try {
-			let offset = page * limit + 1
 			let { rows, count } = await this.visitorRepository.getVisitorByResidentRepository(
 				userId,
 				isPast,
-				offset,
+				id,
 				limit,
 			)
 			let data: GetVisitorDto[] = []
@@ -125,10 +124,9 @@ export class VisitorService {
 		}
 	}
 
-	getAllVisitorService = async (page: number, limit: number) => {
+	getAllVisitorService = async (direction: PaginationDirection, id: number, limit: number) => {
 		try {
-			let offset = page * limit + 1
-			let { rows, count } = await this.visitorRepository.getAllVisitorsRepository(offset, limit)
+			let { rows, count } = await this.visitorRepository.getAllVisitorsRepository(direction, id, limit)
 			let data: GetVisitorDto[] = []
 			data = rows
 				? rows.map((visitor) => {

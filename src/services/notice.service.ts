@@ -10,7 +10,7 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, PaginationDirection } from '../common/constants'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
@@ -36,10 +36,9 @@ export class NoticeService {
 		}
 	}
 
-	getAllNoticeService = async (page: number, limit: number) => {
+	getAllNoticeService = async (direction: PaginationDirection, id: number, limit: number) => {
 		try {
-			let offset = (page * limit) + 1
-			const { rows, count } = await this.noticeRepository.getAllNoticeRepository(offset, limit)
+			const { rows, count } = await this.noticeRepository.getAllNoticeRepository(direction, id, limit)
 			let data: GetNoticeDto[] = []
 			data = rows
 				? rows.map((notice) => {
@@ -63,10 +62,9 @@ export class NoticeService {
 		}
 	}
 
-	getNoticeService = async (page: number, limit: number) => {
+	getNoticeService = async (id: number, limit: number) => {
 		try {
-			let offset = (page * limit) + 1
-			let { rows, count } = await this.noticeRepository.getNoticeRepository(offset, limit)
+			let { rows, count } = await this.noticeRepository.getNoticeRepository(id, limit)
 			let data: GetNoticeDto[] = []
 			data = rows
 				? rows.map((notice) => {

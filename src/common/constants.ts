@@ -40,3 +40,8 @@ export const ITimeFormat = {
 	weekOfYear: 'YYYY [Week] WW', // 2024 Week 35
 	dayOfYear: 'YYYY [Day] DDD', // 2024 Day 243
 }
+
+export enum PaginationDirection {
+	Next = 'next',
+	Previous = 'prev',
+}

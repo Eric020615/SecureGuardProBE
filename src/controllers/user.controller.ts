@@ -29,6 +29,7 @@ import {
 } from '../dtos/user.dto'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { PaginationDirection } from '../common/constants'
 
 @Route('user')
 @provideSingleton(UserController)
@@ -77,11 +78,12 @@ export class UserController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getUserList(
 		@Query() isActive: boolean,
-		@Query() page: number,
+		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetUserDto>> {
 		try {
-			const { data, count } = await this.userService.getUserListService(isActive, page, limit)
+			const { data, count } = await this.userService.getUserListService(isActive, direction, id, limit)
 			const response = {
 				message: 'User list retrieve successfully',
 				status: '200',
@@ -299,7 +301,7 @@ export class UserController extends Controller {
 	@Get('/sub-user/list')
 	@Security('jwt', ['RES'])
 	public async getSubUserList(
-		@Query() page: number,
+		@Query() id: number,
 		@Query() limit: number,
 		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IPaginatedResponse<GetSubUserByResidentDto>> {
@@ -309,7 +311,7 @@ export class UserController extends Controller {
 			}
 			const { data, count } = await this.userService.getSubUserListByResidentService(
 				request.userGuid,
-				page,
+				id,
 				limit,
 			)
 			const response = {

@@ -19,7 +19,7 @@ import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
 import { RepositoryService } from './repository'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, PaginationDirection } from '../common/constants'
 
 @provideSingleton(UserRepository)
 export class UserRepository {
@@ -106,7 +106,7 @@ export class UserRepository {
 		return result
 	}
 
-	getUserListRepository = async (userList: UserRecord[], offset: number, pageSize: number) => {
+	getUserListRepository = async (userList: UserRecord[], direction: PaginationDirection, id: number, pageSize: number) => {
 		const userGuid = userList.map((user) => user.uid)
 		if (userGuid.length === 0) {
 			return { rows: [], count: 0 }
@@ -117,9 +117,10 @@ export class UserRepository {
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<User>(
 			this.userCollection,
-			offset,
+			id,
 			pageSize,
 			constraints,
+			direction
 		)
 		return { rows, count }
 	}
@@ -176,7 +177,7 @@ export class UserRepository {
 
 	getSubUserListByResidentRepository = async (
 		userGuid: string,
-		offset: number,
+		id: number,
 		pageSize: number,
 	) => {
 		if (!userGuid) {
@@ -198,7 +199,7 @@ export class UserRepository {
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<User>(
 			this.userCollection,
-			offset,
+			id,
 			pageSize,
 			constraints,
 		)

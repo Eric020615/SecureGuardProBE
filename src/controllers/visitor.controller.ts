@@ -22,6 +22,7 @@ import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { UserService } from '../services/user.service'
+import { PaginationDirection } from '../common/constants'
 
 @Route('visitor')
 @provideSingleton(VisitorController)
@@ -79,7 +80,7 @@ export class VisitorController extends Controller {
 	public async getVisitorByResident(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() isPast: boolean,
-		@Query() page: number,
+		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetVisitorDto>> {
 		try {
@@ -93,7 +94,7 @@ export class VisitorController extends Controller {
 			const { data, count } = await this.visitorService.getVisitorByResidentService(
 				userGuid,
 				isPast,
-				page,
+				id,
 				limit,
 			)
 			const response = {
@@ -159,14 +160,15 @@ export class VisitorController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getAllVisitors(
 		@Request() request: ISecurityMiddlewareRequest,
-		@Query() page: number,
+		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetVisitorDto>> {
 		try {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const { data, count } = await this.visitorService.getAllVisitorService(page, limit)
+			const { data, count } = await this.visitorService.getAllVisitorService(direction, id, limit)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',

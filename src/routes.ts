@@ -100,6 +100,16 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaginationDirection.Next": {
+        "dataType": "refEnum",
+        "enums": ["next"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaginationDirection.Previous": {
+        "dataType": "refEnum",
+        "enums": ["prev"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetVisitorByDateDto": {
         "dataType": "refObject",
         "properties": {
@@ -602,7 +612,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     isPast: {"in":"query","name":"isPast","required":true,"dataType":"boolean"},
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
@@ -677,7 +687,8 @@ export function RegisterRoutes(app: Router) {
             async function VisitorController_getAllVisitors(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
@@ -828,7 +839,8 @@ export function RegisterRoutes(app: Router) {
             async function UserController_getUserList(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     isActive: {"in":"query","name":"isActive","required":true,"dataType":"boolean"},
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
@@ -1085,7 +1097,7 @@ export function RegisterRoutes(app: Router) {
 
             async function UserController_getSubUserList(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
@@ -1235,7 +1247,8 @@ export function RegisterRoutes(app: Router) {
 
             async function NoticeController_getAllNotice(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
@@ -1271,7 +1284,7 @@ export function RegisterRoutes(app: Router) {
 
             async function NoticeController_getNotice(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
@@ -1454,7 +1467,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     isPast: {"in":"query","name":"isPast","required":true,"dataType":"boolean"},
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 
@@ -1491,7 +1504,8 @@ export function RegisterRoutes(app: Router) {
 
             async function FacilityController_getAllFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    page: {"in":"query","name":"page","required":true,"dataType":"double"},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
 

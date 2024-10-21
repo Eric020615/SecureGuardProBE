@@ -5,10 +5,12 @@ import {
 	query,
 	QueryConstraint,
 	getCountFromServer,
-	startAt,
+	startAfter,
+	endBefore,
 } from 'firebase/firestore'
 import { BaseModel } from '../models/base.model'
 import { provideTransient } from '../helper/provideSingleton'
+import { PaginationDirection } from '../common/constants';
 
 @provideTransient(RepositoryService)
 export class RepositoryService {
@@ -16,13 +18,22 @@ export class RepositoryService {
 
 	public async getPaginatedData<T extends BaseModel>(
 		collection: Client,
-		offset: number,
+		id: number,
 		pageSize: number,
 		constraints: QueryConstraint[],
+		direction: PaginationDirection = PaginationDirection.Next,
 	): Promise<{ rows: T[]; count: number }> {
 		try {
 			let q = null
-			q = query(collection, ...constraints, limit(pageSize), startAt(offset))
+			if(direction === PaginationDirection.Next) {
+				q = query(collection, ...constraints, limit(pageSize), startAfter(id))
+			}
+			else if (direction === PaginationDirection.Previous) {
+				q = query(collection, ...constraints, limit(pageSize), endBefore(id))
+			}
+			else {
+				q = query(collection, ...constraints, limit(pageSize), endBefore(id))
+			}
 			const querySnapshot = await getDocs(q)
 			let rows: T[] = []
 			querySnapshot.forEach((doc) => {

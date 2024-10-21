@@ -26,7 +26,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
 import * as dotenv from 'dotenv'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, PaginationDirection } from '../common/constants'
 import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import { JwtConfig } from '../config/jwtConfig'
 import { FileService } from './file.service'
@@ -206,9 +206,8 @@ export class UserService {
 		}
 	}
 
-	getUserListService = async (isActive: boolean, page: number, limit: number) => {
+	getUserListService = async (isActive: boolean, direction: PaginationDirection, id: number, limit: number) => {
 		try {
-			let offset = page * limit
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
 			if (isActive) {
@@ -216,7 +215,7 @@ export class UserService {
 			} else {
 				userList = userResult.users.filter((user) => user.disabled)
 			}
-			let { rows, count } = await this.userRepository.getUserListRepository(userList, offset, limit)
+			let { rows, count } = await this.userRepository.getUserListRepository(userList, direction, id, limit)
 			let data: GetUserDto[] = []
 			data =
 				rows && rows.length > 0
@@ -406,12 +405,11 @@ export class UserService {
 		}
 	}
 
-	getSubUserListByResidentService = async (userGuid: string, page: number, limit: number) => {
+	getSubUserListByResidentService = async (userGuid: string, id: number, limit: number) => {
 		try {
-			let offset = page * limit + 1
 			let { rows, count } = await this.userRepository.getSubUserListByResidentRepository(
 				userGuid,
-				offset,
+				id,
 				limit,
 			)
 			let data: GetSubUserByResidentDto[] = []

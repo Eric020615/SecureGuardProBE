@@ -22,6 +22,7 @@ import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
+import { PaginationDirection } from '../common/constants'
 
 @Route('notice')
 @provideSingleton(NoticeController)
@@ -70,18 +71,19 @@ export class NoticeController extends Controller {
 	@Get('/admin')
 	@Security('jwt', ['SA'])
 	public async getAllNotice(
-		@Query() page: number,
-		@Query() limit: number
+		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() id: number,
+		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetNoticeDto>> {
 		try {
-			let { data, count } = await this.noticeService.getAllNoticeService(page, limit)
+			let { data, count } = await this.noticeService.getAllNoticeService(direction, id, limit)
 			const response = {
 				message: 'Notices retrieved successfully',
 				status: '200',
 				data: {
 					list: data,
 					count: count,
-				}
+				},
 			}
 			return response
 		} catch (err) {
@@ -92,7 +94,7 @@ export class NoticeController extends Controller {
 				data: {
 					list: null,
 					count: 0,
-				}
+				},
 			}
 			return response
 		}
@@ -104,18 +106,18 @@ export class NoticeController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/')
 	public async getNotice(
-		@Query() page: number,
+		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetNoticeDto>> {
 		try {
-			let { data, count } = await this.noticeService.getNoticeService(page, limit)
+			let { data, count } = await this.noticeService.getNoticeService(id, limit)
 			const response = {
 				message: 'Notices retrieved successfully',
 				status: '200',
 				data: {
 					list: data,
 					count: count,
-				}
+				},
 			}
 			return response
 		} catch (err) {
@@ -126,7 +128,7 @@ export class NoticeController extends Controller {
 				data: {
 					list: null,
 					count: 0,
-				}
+				},
 			}
 			return response
 		}

@@ -210,6 +210,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PaginationDirection.Next": {
+				"enum": [
+					"next"
+				],
+				"type": "string"
+			},
+			"PaginationDirection.Previous": {
+				"enum": [
+					"prev"
+				],
+				"type": "string"
+			},
 			"GetVisitorByDateDto": {
 				"properties": {
 					"date": {
@@ -1468,7 +1480,7 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -1580,7 +1592,13 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "page",
+						"name": "direction",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -1815,7 +1833,13 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "direction",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -2170,7 +2194,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "page",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -2388,7 +2412,13 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "page",
+						"name": "direction",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -2442,7 +2472,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "page",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -2705,7 +2735,7 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -2765,7 +2795,13 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "page",
+						"name": "direction",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",

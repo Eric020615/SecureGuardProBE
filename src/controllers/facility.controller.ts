@@ -27,6 +27,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FacilityService } from '../services/facility.service'
 import { UserService } from '../services/user.service'
+import { PaginationDirection } from '../common/constants'
 
 @Route('facility')
 @provideSingleton(FacilityController)
@@ -93,7 +94,7 @@ export class FacilityController extends Controller {
 	public async getFacilityBookingHistory(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() isPast: boolean,
-		@Query() page: number,
+		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetFacilityBookingHistoryDto>> {
 		try {
@@ -104,7 +105,7 @@ export class FacilityController extends Controller {
 			const { data, count } = await this.facilityService.getFacilityBookingService(
 				userGuid,
 				isPast,
-				page,
+				id,
 				limit,
 			)
 			const response = {
@@ -137,11 +138,12 @@ export class FacilityController extends Controller {
 	@Get('/admin')
 	@Security('jwt', ['SA'])
 	public async getAllFacilityBooking(
-		@Query() page: number,
+		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetFacilityBookingHistoryDto>> {
 		try {
-			const { data, count } = await this.facilityService.getAllFacilityBookingService(page, limit)
+			const { data, count } = await this.facilityService.getAllFacilityBookingService(direction, id, limit)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',

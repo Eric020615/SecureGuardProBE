@@ -19,7 +19,7 @@ import { FacilityBooking } from '../models/facilityBooking.model'
 import { RepositoryService } from './repository'
 import { SequenceRepository } from './sequence.repository'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, PaginationDirection } from '../common/constants'
 import { Facility } from '../models/facility.model'
 import { SpaceAvailabilityDto } from '../dtos/facility.dto'
 
@@ -62,7 +62,7 @@ export class FacilityBookingRepository {
 	async getFacilityBookingRepository(
 		userId: string,
 		isPast: boolean,
-		offset: number,
+		lastId: number,
 		pageSize: number,
 	) {
 		const constraints = [
@@ -77,20 +77,21 @@ export class FacilityBookingRepository {
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
 			this.facilityBookingCollection,
-			offset,
+			lastId,
 			pageSize,
 			constraints,
 		)
 		return { rows, count }
 	}
 
-	async getAllFacilityBookingRepository(offset: number, pageSize: number) {
+	async getAllFacilityBookingRepository(direction: PaginationDirection, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
 		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
 			this.facilityBookingCollection,
-			offset,
+			id,
 			pageSize,
 			constraints,
+			direction,
 		)
 		return { rows, count }
 	}

@@ -15,7 +15,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, PaginationDirection } from '../common/constants'
 import { RepositoryService } from './repository'
 
 @provideSingleton(NoticeRepository)
@@ -49,20 +49,21 @@ export class NoticeRepository {
 		})
 	}
 
-	async getAllNoticeRepository(offset: number, pageSize: number) {
+	async getAllNoticeRepository(direction: PaginationDirection, id: number, pageSize: number) {
 		const constraints = [
 			orderBy('id', 'asc')
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
 			this.noticeCollection,
-			offset,
+			id,
 			pageSize,
 			constraints,
+			direction
 		)
 		return { rows, count }
 	}
 
-	async getNoticeRepository(offset: number, pageSize: number) {
+	async getNoticeRepository(id: number, pageSize: number) {
 		const constraints = [
 			where(
 				'startDate',
@@ -79,7 +80,7 @@ export class NoticeRepository {
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
 			this.noticeCollection,
-			offset,
+			id,
 			pageSize,
 			constraints,
 		)

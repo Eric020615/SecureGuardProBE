@@ -34,3 +34,7 @@ export const generateAllDatesInRange = (startDate: string, endDate: string): str
 	}
 	return dateArray
 }
+
+export const getCurrentDate = () => {
+    return moment().utc().toDate()
+};

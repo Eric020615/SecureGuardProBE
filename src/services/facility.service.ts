@@ -16,7 +16,7 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatus, PaginationDirection } from '../common/constants'
 
 @provideSingleton(FacilityService)
 export class FacilityService {
@@ -77,15 +77,14 @@ export class FacilityService {
 	getFacilityBookingService = async (
 		userId: string,
 		isPast: boolean,
-		page: number,
+		id: number,
 		limit: number,
 	) => {
 		try {
-			let offset = page * limit + 1
 			let { rows, count } = await this.facilityRepository.getFacilityBookingRepository(
 				userId,
 				isPast,
-				offset,
+				id,
 				limit,
 			)
 			let data: GetFacilityBookingHistoryDto[] = []
@@ -113,11 +112,11 @@ export class FacilityService {
 		}
 	}
 
-	getAllFacilityBookingService = async (page: number, limit: number) => {
+	getAllFacilityBookingService = async (direction: PaginationDirection, id: number, limit: number) => {
 		try {
-			let offset = page * limit + 1
 			let { rows, count } = await this.facilityRepository.getAllFacilityBookingRepository(
-				offset,
+				direction,
+				id,
 				limit,
 			)
 			let data: GetFacilityBookingHistoryDto[] = []
