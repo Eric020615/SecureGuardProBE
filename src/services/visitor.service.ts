@@ -17,7 +17,6 @@ import {
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { DocumentStatus, PaginationDirection } from '../common/constants'
-import moment from 'moment'
 
 @provideSingleton(VisitorService)
 export class VisitorService {

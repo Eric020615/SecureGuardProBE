@@ -12,7 +12,11 @@ import {
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
 import { Visitor } from '../models/visitor.model'
-import { convertDateStringToTimestamp, convertTimestampToUserTimezone, generateAllDatesInRange } from '../helper/time'
+import {
+	convertDateStringToTimestamp,
+	convertTimestampToUserTimezone,
+	generateAllDatesInRange,
+} from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
@@ -109,7 +113,7 @@ export class VisitorRepository {
 			id,
 			pageSize,
 			constraints,
-			direction
+			direction,
 		)
 		return { rows, count }
 	}
@@ -132,17 +136,21 @@ export class VisitorRepository {
 		})
 		snapshot.forEach((doc) => {
 			const data = doc.data() as Visitor
-			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime, ITimeFormat.isoDateTime)
+			const visitDateString = convertTimestampToUserTimezone(
+				data.visitDateTime,
+				ITimeFormat.isoDateTime,
+			)
 			let index = 0
-			while(index < dateRange.length) {
-				if(visitDateString > dateRange[index] && visitDateString < dateRange[index + 1]){
+			while (index < dateRange.length) {
+				let visitDate = moment.utc(visitDateString)
+				if (visitDate.isBetween(moment.utc(dateRange[index]), moment.utc(dateRange[index + 1]), undefined, '[]')) {
 					visitorCountMap[dateRange[index]]++
 					break
 				}
 				index++
 			}
 		})
-		return visitorCountMap;
+		return visitorCountMap
 	}
 
 	// async getVisitorByEmailRepository(

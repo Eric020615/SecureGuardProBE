@@ -27,7 +27,6 @@ export const generateAllDatesInRange = (startDate: string, endDate: string): str
 	const start = moment.utc(startDate)
 	const end = moment.utc(endDate)
 	const dateArray: string[] = []
-
 	while (start.isSameOrBefore(end)) {
 		dateArray.push(start.format(ITimeFormat.isoDateTime))
 		start.add(1, 'day')
@@ -36,5 +35,5 @@ export const generateAllDatesInRange = (startDate: string, endDate: string): str
 }
 
 export const getCurrentDate = () => {
-    return moment().utc().toDate()
-};
+	return moment().utc().toDate()
+}
