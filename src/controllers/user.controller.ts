@@ -43,7 +43,7 @@ export class UserController extends Controller {
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Post('/create')
-	@Security('newUser', ['RES', 'SA', 'SUB'])
+	@Security('newUser', ['RES', 'SA', 'SUB', 'STF'])
 	public async createUser(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Body() createUserDto: any,

@@ -152,7 +152,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoleEnum": {
         "dataType": "refEnum",
-        "enums": ["SA","RES","SUB"],
+        "enums": ["SA","STF","RES","SUB"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetUserDto": {
@@ -795,7 +795,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/user/create',
-            authenticateMiddleware([{"newUser":["RES","SA","SUB"]}]),
+            authenticateMiddleware([{"newUser":["RES","SA","SUB","STF"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createUser)),
 

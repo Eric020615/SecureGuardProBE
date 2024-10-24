@@ -37,7 +37,7 @@ export interface CreateResidentDto extends CreateUserDto {
 	supportedFiles: GeneralFileDto[]
 }
 
-export interface CreateSystemAdminDto extends CreateUserDto {
+export interface CreateStaffDto extends CreateUserDto {
 	staffId: string
 	supportedFiles: GeneralFileDto[]
 }

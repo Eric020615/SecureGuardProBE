@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import 'moment-timezone'
-import { Resident, SubUser, SubUserRequest, SystemAdmin, User } from '../models/user.model'
+import { Resident, SubUser, SubUserRequest, Staff, User } from '../models/user.model'
 import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -27,7 +27,7 @@ export class UserRepository {
 	private subUserRequestCollection
 	private subUserCollection
 	private residentCollection
-	private systemAdminCollection
+	private staffCollection
 
 	constructor(
 		@inject(FirebaseClient)
@@ -43,7 +43,7 @@ export class UserRepository {
 		this.subUserRequestCollection = collection(this.firebaseClient.firestore, 'subUserRequest')
 		this.subUserCollection = collection(this.firebaseClient.firestore, 'subUser')
 		this.residentCollection = collection(this.firebaseClient.firestore, 'resident')
-		this.systemAdminCollection = collection(this.firebaseClient.firestore, 'systemAdmin')
+		this.staffCollection = collection(this.firebaseClient.firestore, 'staff')
 	}
 
 	createResidentRepository = async (user: User, resident: Resident, userId: string) => {
@@ -63,7 +63,7 @@ export class UserRepository {
 		})
 	}
 
-	createSystemAdminRepository = async (user: User, systemAdmin: SystemAdmin, userId: string) => {
+	createStaffRepository = async (user: User, staff: Staff, userId: string) => {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
@@ -73,9 +73,9 @@ export class UserRepository {
 				throw new Error('Failed to generate id')
 			}
 			const userDocRef = doc(this.userCollection, userId)
-			const systemAdminDocRef = doc(this.systemAdminCollection, userId)
+			const staffDocRef = doc(this.staffCollection, userId)
 			await setDoc(userDocRef, { ...user })
-			await setDoc(systemAdminDocRef, { ...systemAdmin })
+			await setDoc(staffDocRef, { ...staff })
 			await updateDoc(userDocRef, { id: id })
 		})
 	}
@@ -133,11 +133,11 @@ export class UserRepository {
 		return result
 	}
 
-	getSystemAdminDetailsRepository = async (userId: string) => {
-		const docRef = doc(this.systemAdminCollection, userId)
+	getStaffDetailsRepository = async (userId: string) => {
+		const docRef = doc(this.staffCollection, userId)
 		const resDoc = await getDoc(docRef)
-		let result: SystemAdmin = {} as SystemAdmin
-		result = resDoc.data() as SystemAdmin
+		let result: Staff = {} as Staff
+		result = resDoc.data() as Staff
 		return result
 	}
 

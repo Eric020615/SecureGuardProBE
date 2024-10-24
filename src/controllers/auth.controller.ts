@@ -45,6 +45,7 @@ export class AuthController extends Controller {
 		@Query() role: RoleEnum,
 	): Promise<IResponse<any>> {
 		try {
+			console.log('registerUserDto', registerUserDto)
 			const token = await this.authService.registerService(registerUserDto, role)
 			const response = {
 				message: 'Account Created successfully',

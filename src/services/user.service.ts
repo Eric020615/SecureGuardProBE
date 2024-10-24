@@ -6,13 +6,13 @@ import {
 	CreateResidentDto,
 	CreateSubUserDto,
 	CreateSubUserRequestDto,
-	CreateSystemAdminDto,
+	CreateStaffDto,
 	EditUserDetailsByIdDto,
 	GetSubUserByResidentDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
 } from '../dtos/user.dto'
-import { Resident, SubUser, SystemAdmin, User } from '../models/user.model'
+import { Resident, SubUser, Staff, User } from '../models/user.model'
 import { UserRepository } from '../repositories/user.repository'
 import {
 	convertDateStringToTimestamp,
@@ -70,7 +70,7 @@ export class UserService {
 	}
 
 	createUserService = async (
-		createUserDto: CreateResidentDto | CreateSubUserDto | CreateSystemAdminDto,
+		createUserDto: CreateResidentDto | CreateSubUserDto | CreateStaffDto,
 		userGuid: string,
 		role: RoleEnum,
 	) => {
@@ -78,7 +78,7 @@ export class UserService {
 			if (
 				!this.instanceOfCreateResidentDto(createUserDto) &&
 				!this.instanceOfCreateSubUserDto(createUserDto) &&
-				!this.instanceOfCreateSystemAdminDto(createUserDto)
+				!this.instanceOfCreateStaffDto(createUserDto)
 			) {
 				throw new OperationError('Invalid request', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
@@ -113,9 +113,9 @@ export class UserService {
 				)
 			}
 
-			if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateSystemAdminDto(createUserDto)) {
+			if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateStaffDto(createUserDto)) {
 				const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
-				await this.userRepository.createSystemAdminRepository(
+				await this.userRepository.createStaffRepository(
 					new User(
 						0,
 						createUserDto.firstName,
@@ -130,8 +130,39 @@ export class UserService {
 						getNowTimestamp(),
 						getNowTimestamp(),
 					),
-					new SystemAdmin(
+					new Staff(
 						createUserDto.staffId,
+						true,
+						userGuid,
+						userGuid,
+						getNowTimestamp(),
+						getNowTimestamp(),
+						fileUrl ? fileUrl : [],
+					),
+					userGuid,
+				)
+			}
+
+			if (role === RoleEnum.STAFF && this.instanceOfCreateStaffDto(createUserDto)) {
+				const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
+				await this.userRepository.createStaffRepository(
+					new User(
+						0,
+						createUserDto.firstName,
+						createUserDto.lastName,
+						createUserDto.contactNumber,
+						createUserDto.gender,
+						convertDateStringToTimestamp(createUserDto.dateOfBirth),
+						role,
+						1,
+						userGuid,
+						userGuid,
+						getNowTimestamp(),
+						getNowTimestamp(),
+					),
+					new Staff(
+						createUserDto.staffId,
+						false,
 						userGuid,
 						userGuid,
 						getNowTimestamp(),
@@ -277,16 +308,16 @@ export class UserService {
 				}
 				return data
 			}
-			if (data.role === RoleEnum.SYSTEM_ADMIN) {
-				const systemAdminDetails = await this.userRepository.getSystemAdminDetailsRepository(
+			if (data.role === RoleEnum.SYSTEM_ADMIN || data.role === RoleEnum.STAFF) {
+				const staffDetails = await this.userRepository.getStaffDetailsRepository(
 					userGuid,
 				)
-				if (!systemAdminDetails) {
+				if (!staffDetails) {
 					return data
 				}
 				data.roleInformation = {
-					staffId: systemAdminDetails.staffId,
-					supportedFiles: systemAdminDetails.supportedDocumentUrl,
+					staffId: staffDetails.staffId,
+					supportedFiles: staffDetails.supportedDocumentUrl,
 				}
 				return data
 			}
@@ -501,7 +532,7 @@ export class UserService {
 		return 'floorNumber' in object && 'unitNumber' in object
 	}
 
-	instanceOfCreateSystemAdminDto = (object: any): object is CreateSystemAdminDto => {
+	instanceOfCreateStaffDto = (object: any): object is CreateStaffDto => {
 		return 'staffId' in object
 	}
 

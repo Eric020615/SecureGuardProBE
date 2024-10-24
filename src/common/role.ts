@@ -1,5 +1,6 @@
 export enum RoleEnum {
     'SYSTEM_ADMIN' = 'SA',
+    'STAFF' = 'STF',
     'RESIDENT' = 'RES',
     'RESIDENT_SUBUSER' = 'SUB'
 }  
@@ -11,6 +12,7 @@ export enum GenderEnum {
 
 export type RoleParam =
   | "SA"
+  | "STF"
   | "RES"
   | "SUB";
 

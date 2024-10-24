@@ -106,9 +106,10 @@ export class Resident {
 	}
 }
 
-export class SystemAdmin {
+export class Staff {
 	id?: string
 	staffId: string
+	isAdmin: boolean
 	createdBy: string
 	updatedBy: string
 	createdDateTime: Timestamp
@@ -117,6 +118,7 @@ export class SystemAdmin {
 
 	constructor(
 		staffId: string,
+		isAdmin: boolean,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,
@@ -124,6 +126,7 @@ export class SystemAdmin {
 		supprtedDocumentUrl: string[],
 	) {
 		this.staffId = staffId
+		this.isAdmin = isAdmin
 		this.createdBy = createdBy
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime

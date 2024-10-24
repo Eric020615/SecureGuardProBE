@@ -324,6 +324,7 @@
 			"RoleEnum": {
 				"enum": [
 					"SA",
+					"STF",
 					"RES",
 					"SUB"
 				],
@@ -1769,7 +1770,8 @@
 						"newUser": [
 							"RES",
 							"SA",
-							"SUB"
+							"SUB",
+							"STF"
 						]
 					}
 				],
