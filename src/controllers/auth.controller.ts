@@ -45,7 +45,6 @@ export class AuthController extends Controller {
 		@Query() role: RoleEnum,
 	): Promise<IResponse<any>> {
 		try {
-			console.log('registerUserDto', registerUserDto)
 			const token = await this.authService.registerService(registerUserDto, role)
 			const response = {
 				message: 'Account Created successfully',
@@ -145,7 +144,7 @@ export class AuthController extends Controller {
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Post('/reset-password')
-	@Security('jwt', ['RES', 'SA', 'SUB'])
+	@Security('jwt', ['RES', 'SA', 'STF', 'SUB'])
 	public async resetPassword(
 		@Body() resetPasswordDto: ResetPasswordDto,
 		@Request() request: ISecurityMiddlewareRequest,
@@ -185,7 +184,7 @@ export class AuthController extends Controller {
 	@Response<IResponse<AuthTokenPayloadDto>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
 	@Get('/check-auth')
-	@Security('jwt', ['RES', 'SA', 'SUB'])
+	@Security('jwt', ['RES', 'SA', 'STF', 'SUB'])
 	public async checkAuth(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() check?: boolean,

@@ -113,7 +113,7 @@ export class UserController extends Controller {
 	@Response<IResponse<GetUserDetailsByIdDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/profile')
-	@Security('jwt', ['SA', 'RES', 'SUB'])
+	@Security('jwt', ['SA', 'RES', 'SUB', 'STF'])
 	public async getUserProfileById(
 		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
@@ -145,7 +145,7 @@ export class UserController extends Controller {
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Put('/profile')
-	@Security('jwt', ['SA', 'RES', 'SUB'])
+	@Security('jwt', ['SA', 'RES', 'SUB', 'STF'])
 	public async editUserProfileById(
 		@Body() editUserDetailsByIdDto: EditUserDetailsByIdDto,
 		@Request() request: ISecurityMiddlewareRequest,

@@ -871,7 +871,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/user/profile',
-            authenticateMiddleware([{"jwt":["SA","RES","SUB"]}]),
+            authenticateMiddleware([{"jwt":["SA","RES","SUB","STF"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getUserProfileById)),
 
@@ -907,7 +907,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/user/profile',
-            authenticateMiddleware([{"jwt":["SA","RES","SUB"]}]),
+            authenticateMiddleware([{"jwt":["SA","RES","SUB","STF"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.editUserProfileById)),
 
@@ -1792,7 +1792,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/auth/reset-password',
-            authenticateMiddleware([{"jwt":["RES","SA","SUB"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA","STF","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.resetPassword)),
 
@@ -1829,7 +1829,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/auth/check-auth',
-            authenticateMiddleware([{"jwt":["RES","SA","SUB"]}]),
+            authenticateMiddleware([{"jwt":["RES","SA","STF","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.checkAuth)),
 
