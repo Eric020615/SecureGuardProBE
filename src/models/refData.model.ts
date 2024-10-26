@@ -12,16 +12,14 @@ export class FloorRefData {
 }
 
 export class Unit {
-	unitId: string;
+	unitId?: string;
 	isAssigned: boolean;
 	assignedTo: string | null;
 
     constructor(
-        unitId: string,
         isAssigned: boolean,
         assignedTo: string | null,
     ){
-        this.unitId = unitId;
         this.isAssigned = isAssigned;
         this.assignedTo = assignedTo;
     }

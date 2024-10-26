@@ -309,7 +309,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "floorId": {"dataType":"string","required":true},
-            "units": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"assignedTo":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"isAssigned":{"dataType":"boolean","required":true},"unitId":{"dataType":"string","required":true}}},"required":true},
+            "units": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"assignedTo":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"isAssigned":{"dataType":"boolean","required":true},"unitId":{"dataType":"string"}}},"required":true},
         },
         "additionalProperties": false,
     },

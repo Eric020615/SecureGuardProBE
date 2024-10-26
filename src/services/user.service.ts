@@ -31,6 +31,8 @@ import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import { JwtConfig } from '../config/jwtConfig'
 import { FileService } from './file.service'
 import { EmailService } from './email.service'
+import { RefDataRepository } from '../repositories/refData.repository'
+import { Unit } from '../models/refData.model'
 
 dotenv.config()
 
@@ -39,6 +41,7 @@ export class UserService {
 	private authAdmin
 	constructor(
 		@inject(UserRepository) private userRepository: UserRepository,
+		@inject(RefDataRepository) private refDataRepository: RefDataRepository,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
 		@inject(FileService) private fileService: FileService,
 		@inject(EmailService) private emailService: EmailService,
@@ -49,7 +52,7 @@ export class UserService {
 
 	getEffectiveUserGuidService = async (userGuid: string, role: RoleEnum) => {
 		try {
-			switch(role) {
+			switch (role) {
 				case RoleEnum.SYSTEM_ADMIN:
 				case RoleEnum.RESIDENT:
 					return userGuid
@@ -108,6 +111,38 @@ export class UserService {
 						getNowTimestamp(),
 						getNowTimestamp(),
 						fileUrl ? fileUrl : [],
+					),
+					userGuid,
+				)
+				await this.refDataRepository.updatePropertyByResidentRepository(
+					createUserDto.floorNumber,
+					createUserDto.unitNumber,
+					new Unit(true, userGuid),
+				)
+			}
+
+			if (role === RoleEnum.RESIDENT_SUBUSER && this.instanceOfCreateSubUserDto(createUserDto)) {
+				await this.userRepository.createSubUserRepository(
+					new User(
+						0,
+						createUserDto.firstName,
+						createUserDto.lastName,
+						createUserDto.contactNumber,
+						createUserDto.gender,
+						convertDateStringToTimestamp(createUserDto.dateOfBirth),
+						role,
+						1,
+						userGuid,
+						userGuid,
+						getNowTimestamp(),
+						getNowTimestamp(),
+					),
+					new SubUser(
+						createUserDto.parentUserGuid,
+						userGuid,
+						userGuid,
+						getNowTimestamp(),
+						getNowTimestamp(),
 					),
 					userGuid,
 				)
@@ -173,32 +208,6 @@ export class UserService {
 				)
 			}
 
-			if (role === RoleEnum.RESIDENT_SUBUSER && this.instanceOfCreateSubUserDto(createUserDto)) {
-				await this.userRepository.createSubUserRepository(
-					new User(
-						0,
-						createUserDto.firstName,
-						createUserDto.lastName,
-						createUserDto.contactNumber,
-						createUserDto.gender,
-						convertDateStringToTimestamp(createUserDto.dateOfBirth),
-						role,
-						1,
-						userGuid,
-						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
-					),
-					new SubUser(
-						createUserDto.parentUserGuid,
-						userGuid,
-						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
-					),
-					userGuid,
-				)
-			}
 			await this.authAdmin.updateUser(userGuid, { displayName: createUserDto.userName })
 		} catch (error: any) {
 			console.log(error)
@@ -237,7 +246,12 @@ export class UserService {
 		}
 	}
 
-	getUserListService = async (isActive: boolean, direction: PaginationDirection, id: number, limit: number) => {
+	getUserListService = async (
+		isActive: boolean,
+		direction: PaginationDirection,
+		id: number,
+		limit: number,
+	) => {
 		try {
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
@@ -246,7 +260,12 @@ export class UserService {
 			} else {
 				userList = userResult.users.filter((user) => user.disabled)
 			}
-			let { rows, count } = await this.userRepository.getUserListRepository(userList, direction, id, limit)
+			let { rows, count } = await this.userRepository.getUserListRepository(
+				userList,
+				direction,
+				id,
+				limit,
+			)
 			let data: GetUserDto[] = []
 			data =
 				rows && rows.length > 0
@@ -309,9 +328,7 @@ export class UserService {
 				return data
 			}
 			if (data.role === RoleEnum.SYSTEM_ADMIN || data.role === RoleEnum.STAFF) {
-				const staffDetails = await this.userRepository.getStaffDetailsRepository(
-					userGuid,
-				)
+				const staffDetails = await this.userRepository.getStaffDetailsRepository(userGuid)
 				if (!staffDetails) {
 					return data
 				}

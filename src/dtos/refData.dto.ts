@@ -1,7 +1,7 @@
 export interface GetPropertyListDto {
 	floorId: string
 	units: {
-		unitId: string
+		unitId?: string
 		isAssigned: boolean
 		assignedTo: string | null
 	}[]
