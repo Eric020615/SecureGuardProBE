@@ -744,6 +744,74 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GetPropertyListDto": {
+				"properties": {
+					"floorId": {
+						"type": "string"
+					},
+					"units": {
+						"items": {
+							"properties": {
+								"assignedTo": {
+									"type": "string",
+									"nullable": true
+								},
+								"isAssigned": {
+									"type": "boolean"
+								},
+								"unitId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"assignedTo",
+								"isAssigned",
+								"unitId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"floorId",
+					"units"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetPropertyListDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetPropertyListDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetPropertyListDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -2322,6 +2390,41 @@
 						}
 					}
 				}
+			}
+		},
+		"/ref-data/property": {
+			"get": {
+				"operationId": "getPropertyList",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetPropertyListDto-Array_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetPropertyListDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Ref Data"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/notice/create": {

@@ -7,6 +7,8 @@ import { VisitorController } from './controllers/visitor.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './controllers/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { RefDataController } from './controllers/refData.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { NoticeController } from './controllers/notice.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FacilityController } from './controllers/facility.controller';
@@ -299,6 +301,25 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "subUserGuid": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetPropertyListDto": {
+        "dataType": "refObject",
+        "properties": {
+            "floorId": {"dataType":"string","required":true},
+            "units": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"assignedTo":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"isAssigned":{"dataType":"boolean","required":true},"unitId":{"dataType":"string","required":true}}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetPropertyListDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetPropertyListDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetPropertyListDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -1192,6 +1213,40 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'deleteSubUserById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/ref-data/property',
+            ...(fetchMiddlewares<RequestHandler>(RefDataController)),
+            ...(fetchMiddlewares<RequestHandler>(RefDataController.prototype.getPropertyList)),
+
+            async function RefDataController_getPropertyList(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<RefDataController>(RefDataController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getPropertyList',
                 controller,
                 response,
                 next,
