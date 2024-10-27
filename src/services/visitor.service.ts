@@ -12,7 +12,7 @@ import {
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
 	generateAllDatesInRange,
-	getNowTimestamp,
+	getCurrentTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -33,8 +33,8 @@ export class VisitorService {
 					DocumentStatus.Active,
 					userId,
 					userId,
-					getNowTimestamp(),
-					getNowTimestamp(),
+					getCurrentTimestamp(),
+					getCurrentTimestamp(),
 				),
 			)
 		} catch (error: any) {
@@ -54,7 +54,7 @@ export class VisitorService {
 				visitorContactNumber: editVisitorByIdDto.visitorContactNumber,
 				visitDateTime: convertDateStringToTimestamp(editVisitorByIdDto.visitDateTime),
 				updatedBy: userId,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as Visitor
 			await this.visitorRepository.editVisitorByIdRepository(visitorGuid, visitor)
 		} catch (error: any) {

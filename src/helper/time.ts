@@ -19,7 +19,7 @@ export const convertTimestampToUserTimezone = (
 	return moment(timestamp.toDate()).utc().format(timeFormat)
 }
 
-export const getNowTimestamp = () => {
+export const getCurrentTimestamp = () => {
 	return Timestamp.fromDate(moment().utc().toDate())
 }
 
@@ -37,3 +37,7 @@ export const generateAllDatesInRange = (startDate: string, endDate: string): str
 export const getCurrentDate = () => {
 	return moment().utc().toDate()
 }
+
+export const getCurrentDateString = (dateFormat: string) => {
+    return moment().utc().format(dateFormat);
+};

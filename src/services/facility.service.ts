@@ -12,7 +12,7 @@ import { HttpStatusCode } from '../common/http-status-code'
 import {
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
-	getNowTimestamp,
+	getCurrentTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -65,8 +65,8 @@ export class FacilityService {
 					DocumentStatus.Active,
 					userId,
 					userId,
-					getNowTimestamp(),
-					getNowTimestamp(),
+					getCurrentTimestamp(),
+					getCurrentTimestamp(),
 				),
 			)
 		} catch (error: any) {
@@ -156,7 +156,7 @@ export class FacilityService {
 					? cancelFacilityBookingDto.cancelRemark
 					: 'Cancel by user',
 				updatedBy: userId,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as FacilityBooking
 			await this.facilityRepository.cancelFacilityBookingRepository(
 				facilityBooking,

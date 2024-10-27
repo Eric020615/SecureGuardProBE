@@ -9,6 +9,7 @@ import {
 	Tags,
 	Security,
 	Request,
+	Query,
 } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
 import { provideSingleton } from '../helper/provideSingleton'
@@ -26,15 +27,16 @@ export class RefDataController extends Controller {
 		super()
 	}
 
-	@Tags('Ref Data')
+	@Tags('RefData')
 	@OperationId('getPropertyList')
 	@Response<IResponse<GetPropertyListDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/property')
 	public async getPropertyList(
+		@Query() checkOccupied: boolean,
 	): Promise<IResponse<GetPropertyListDto[]>> {
 		try {
-			const data = await this.refDataService.getPropertyListService()
+			const data = await this.refDataService.getPropertyListService(checkOccupied)
 			const response = {
 				message: 'Property list retrieve successfully',
 				status: '200',

@@ -17,7 +17,7 @@ import { UserRepository } from '../repositories/user.repository'
 import {
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
-	getNowTimestamp,
+	getCurrentTimestamp,
 } from '../helper/time'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { RoleEnum } from '../common/role'
@@ -87,7 +87,10 @@ export class UserService {
 			}
 
 			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
-				const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
+				const fileUrl = await this.fileService.uploadMultipleFiles(
+					createUserDto.supportedFiles,
+					`supportedFiles/${userGuid}`,
+				)
 				await this.userRepository.createResidentRepository(
 					new User(
 						0,
@@ -100,16 +103,16 @@ export class UserService {
 						1,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 					),
 					new Resident(
 						createUserDto.floorNumber,
 						createUserDto.unitNumber,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 						fileUrl ? fileUrl : [],
 					),
 					userGuid,
@@ -134,22 +137,25 @@ export class UserService {
 						1,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 					),
 					new SubUser(
 						createUserDto.parentUserGuid,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 					),
 					userGuid,
 				)
 			}
 
 			if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateStaffDto(createUserDto)) {
-				const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
+				const fileUrl = await this.fileService.uploadMultipleFiles(
+					createUserDto.supportedFiles,
+					`supportedFiles/${userGuid}`,
+				)
 				await this.userRepository.createStaffRepository(
 					new User(
 						0,
@@ -162,16 +168,16 @@ export class UserService {
 						1,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 					),
 					new Staff(
 						createUserDto.staffId,
 						true,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 						fileUrl ? fileUrl : [],
 					),
 					userGuid,
@@ -179,7 +185,10 @@ export class UserService {
 			}
 
 			if (role === RoleEnum.STAFF && this.instanceOfCreateStaffDto(createUserDto)) {
-				const fileUrl = await this.fileService.uploadFile(createUserDto.supportedFiles, userGuid)
+				const fileUrl = await this.fileService.uploadMultipleFiles(
+					createUserDto.supportedFiles,
+					`supportedFiles/${userGuid}`,
+				)
 				await this.userRepository.createStaffRepository(
 					new User(
 						0,
@@ -192,16 +201,16 @@ export class UserService {
 						1,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 					),
 					new Staff(
 						createUserDto.staffId,
 						false,
 						userGuid,
 						userGuid,
-						getNowTimestamp(),
-						getNowTimestamp(),
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
 						fileUrl ? fileUrl : [],
 					),
 					userGuid,
@@ -356,7 +365,7 @@ export class UserService {
 				gender: editUserDetailsByIdDto.gender,
 				dateOfBirth: convertDateStringToTimestamp(editUserDetailsByIdDto.dateOfBirth),
 				updatedBy: userId,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as User
 			await this.userRepository.editUserDetailsByIdRepository(userId, user)
 			await this.authAdmin.updateUser(userId, { displayName: editUserDetailsByIdDto.userName })
@@ -374,7 +383,7 @@ export class UserService {
 			await this.authAdmin.updateUser(userId, { disabled: false })
 			await this.userRepository.updateUserStatusByIdRepository(userId, {
 				updatedBy: updatedBy,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as User)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -393,7 +402,7 @@ export class UserService {
 			await this.authAdmin.updateUser(userId, { disabled: true })
 			await this.userRepository.updateUserStatusByIdRepository(userId, {
 				updatedBy: updatedBy,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as User)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -425,9 +434,9 @@ export class UserService {
 				parentUserGuid: userId,
 				status: DocumentStatus.Pending,
 				createdBy: userId,
-				createdDateTime: getNowTimestamp(),
+				createdDateTime: getCurrentTimestamp(),
 				updatedBy: userId,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			})
 			const token = this.jwtConfig.createToken({
 				subUserEmail: createSubUserRequestDto.email,
@@ -514,11 +523,11 @@ export class UserService {
 			await this.authAdmin.updateUser(subUserGuid, { disabled: !status })
 			let subUser: SubUser = {
 				updatedBy: updatedBy,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as SubUser
 			let user: User = {
 				updatedBy: updatedBy,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as User
 			await this.userRepository.editSubUserByIdRepository(subUserGuid, subUser, user)
 		} catch (error) {
@@ -532,12 +541,12 @@ export class UserService {
 			await this.authAdmin.updateUser(subUserGuid, { disabled: true })
 			let subUser: SubUser = {
 				updatedBy: updatedBy,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as SubUser
 			let user: User = {
 				status: DocumentStatus.SoftDeleted,
 				updatedBy: updatedBy,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as User
 			await this.userRepository.editSubUserByIdRepository(subUserGuid, subUser, user)
 		} catch (error) {

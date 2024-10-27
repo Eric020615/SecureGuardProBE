@@ -811,6 +811,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CreateParcelDto": {
+				"properties": {
+					"parcelImage": {
+						"type": "string"
+					},
+					"floor": {
+						"type": "string"
+					},
+					"unit": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"parcelImage",
+					"floor",
+					"unit"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -2424,6 +2444,57 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/parcel/create": {
+			"post": {
+				"operationId": "createParcel",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Parcel"
+				],
+				"security": [
+					{
+						"jwt": [
+							"STF"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateParcelDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/notice/create": {

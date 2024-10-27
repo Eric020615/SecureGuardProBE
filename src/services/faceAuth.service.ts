@@ -2,7 +2,7 @@ import { inject } from 'inversify'
 import { provideSingleton } from '../helper/provideSingleton'
 import { FaceAuthRepository } from '../repositories/faceAuth.repository'
 import { FaceAuth } from '../models/faceAuth.model'
-import { getNowTimestamp } from '../helper/time'
+import { getCurrentTimestamp } from '../helper/time'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 
@@ -20,8 +20,8 @@ export class FaceAuthService {
 				new FaceAuth(
 					userId,
 					userId,
-					getNowTimestamp(),
-					getNowTimestamp(),
+					getCurrentTimestamp(),
+					getCurrentTimestamp(),
 				),
 			)
 		} catch (error: any) {

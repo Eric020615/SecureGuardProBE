@@ -12,9 +12,9 @@ export class RefDataService {
 		private refDataRepository: RefDataRepository,
 	) {}
 
-	getPropertyListService = async () => {
+	getPropertyListService = async (checkOccupied: boolean) => {
 		try {
-			let propertyList = await this.refDataRepository.getPropertyListRepository()
+			let propertyList = await this.refDataRepository.getPropertyListRepository(checkOccupied)
 			let data: GetPropertyListDto[] = []
 			data = propertyList
 				? Object.entries(propertyList).map(([floorId, units]) => ({

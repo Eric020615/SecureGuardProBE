@@ -1,11 +1,5 @@
 import {
 	collection,
-	collectionGroup,
-	doc,
-	getDoc,
-	getDocs,
-	query,
-	updateDoc,
 } from 'firebase/firestore'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -27,7 +21,7 @@ export class RefDataRepository {
 		this.refDataCollection = collection(this.firebaseClient.firestore, 'refData')
 	}
 
-	getPropertyListRepository = async () => {
+	getPropertyListRepository = async (checkOccupied: boolean) => {
 		const propertyDocRef = this.firebaseAdmin.firestore.doc('refData/property')
 		const subCollections = await propertyDocRef.listCollections()
 		const result: Record<string, Unit[]> = {}
@@ -37,7 +31,7 @@ export class RefDataRepository {
 			const units: Unit[] = []
 			for (const unitDoc of unitSnapshots.docs) {
 				const unit = unitDoc.data() as Unit
-				if (unit.isAssigned) continue
+				if (unit.isAssigned && checkOccupied) continue
 				unit.unitId = unitDoc.id
 				units.push(unit)
 			}

@@ -9,6 +9,8 @@ import { UserController } from './controllers/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { RefDataController } from './controllers/refData.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ParcelController } from './controllers/parcel.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { NoticeController } from './controllers/notice.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FacilityController } from './controllers/facility.controller';
@@ -320,6 +322,16 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetPropertyListDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetPropertyListDto"}}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateParcelDto": {
+        "dataType": "refObject",
+        "properties": {
+            "parcelImage": {"dataType":"string","required":true},
+            "floor": {"dataType":"string","required":true},
+            "unit": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -1247,6 +1259,43 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getPropertyList',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/parcel/create',
+            authenticateMiddleware([{"jwt":["STF"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController)),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController.prototype.createParcel)),
+
+            async function ParcelController_createParcel(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    createParcelDto: {"in":"body","name":"createParcelDto","required":true,"ref":"CreateParcelDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<ParcelController>(ParcelController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'createParcel',
                 controller,
                 response,
                 next,

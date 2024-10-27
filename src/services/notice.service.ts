@@ -6,7 +6,7 @@ import { HttpStatusCode } from '../common/http-status-code'
 import {
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
-	getNowTimestamp,
+	getCurrentTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -27,8 +27,8 @@ export class NoticeService {
 					DocumentStatus.Active,
 					userId,
 					userId,
-					getNowTimestamp(),
-					getNowTimestamp(),
+					getCurrentTimestamp(),
+					getCurrentTimestamp(),
 				),
 			)
 		} catch (error: any) {
@@ -120,7 +120,7 @@ export class NoticeService {
 				startDate: convertDateStringToTimestamp(editNoticeDto.startDate),
 				endDate: convertDateStringToTimestamp(editNoticeDto.endDate),
 				updatedBy: userId,
-				updatedDateTime: getNowTimestamp(),
+				updatedDateTime: getCurrentTimestamp(),
 			} as Notice
 			await this.noticeRepository.editNoticeByIdRepository(editNoticeDto.noticeGuid, notice)
 		} catch (error: any) {
