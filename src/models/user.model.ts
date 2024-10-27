@@ -79,8 +79,8 @@ export class SubUserRequest extends BaseModel {
 
 export class Resident {
 	id?: string
-	unitNumber: string
-	floorNumber: string
+	unit: string
+	floor: string
 	createdBy: string
 	updatedBy: string
 	createdDateTime: Timestamp
@@ -88,16 +88,16 @@ export class Resident {
 	supportedDocumentUrl: string[]
 
 	constructor(
-		unitNumber: string,
-		floorNumber: string,
+		unit: string,
+		floor: string,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
 		supprtedDocumentUrl: string[],
 	) {
-		this.unitNumber = unitNumber
-		this.floorNumber = floorNumber
+		this.unit = unit
+		this.floor = floor
 		this.createdBy = createdBy
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime

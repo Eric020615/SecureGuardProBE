@@ -32,8 +32,8 @@ export interface CreateSubUserDto extends CreateUserDto {
 }
 
 export interface CreateResidentDto extends CreateUserDto {
-	unitNumber: string
-	floorNumber: string
+	unit: string
+	floor: string
 	supportedFiles: GeneralFileDto[]
 }
 
@@ -62,8 +62,8 @@ export interface GetUserDetailsByIdDto {
 }
 
 export interface ResidentInformationDto {
-	floorNumber: string
-	unitNumber: string
+	floor: string
+	unit: string
 	supportedFiles: string[]
 }
 

@@ -202,8 +202,8 @@ const models: TsoaRoute.Models = {
     "ResidentInformationDto": {
         "dataType": "refObject",
         "properties": {
-            "floorNumber": {"dataType":"string","required":true},
-            "unitNumber": {"dataType":"string","required":true},
+            "floor": {"dataType":"string","required":true},
+            "unit": {"dataType":"string","required":true},
             "supportedFiles": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": false,
@@ -332,6 +332,42 @@ const models: TsoaRoute.Models = {
             "parcelImage": {"dataType":"string","required":true},
             "floor": {"dataType":"string","required":true},
             "unit": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetParcelDto": {
+        "dataType": "refObject",
+        "properties": {
+            "parcelId": {"dataType":"double","required":true},
+            "parcelGuid": {"dataType":"string","required":true},
+            "parcelImage": {"dataType":"string","required":true},
+            "floor": {"dataType":"string","required":true},
+            "unit": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetParcelDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "status": {"dataType":"string"},
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"list":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDto"}},{"dataType":"enum","enums":[null]}],"required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetParcelDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -1242,6 +1278,7 @@ export function RegisterRoutes(app: Router) {
 
             async function RefDataController_getPropertyList(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    checkOccupied: {"in":"query","name":"checkOccupied","required":true,"dataType":"boolean"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1296,6 +1333,44 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'createParcel',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/parcel',
+            authenticateMiddleware([{"jwt":["RES","SUB"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController)),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController.prototype.getParcelByResident)),
+
+            async function ParcelController_getParcelByResident(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
+                    limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<ParcelController>(ParcelController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getParcelByResident',
                 controller,
                 response,
                 next,

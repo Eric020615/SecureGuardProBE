@@ -107,8 +107,8 @@ export class UserService {
 						getCurrentTimestamp(),
 					),
 					new Resident(
-						createUserDto.floorNumber,
-						createUserDto.unitNumber,
+						createUserDto.floor,
+						createUserDto.unit,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
@@ -118,8 +118,8 @@ export class UserService {
 					userGuid,
 				)
 				await this.refDataRepository.updatePropertyByResidentRepository(
-					createUserDto.floorNumber,
-					createUserDto.unitNumber,
+					createUserDto.floor,
+					createUserDto.unit,
 					new Unit(true, userGuid),
 				)
 			}
@@ -330,8 +330,8 @@ export class UserService {
 					return data
 				}
 				data.roleInformation = {
-					floorNumber: residentDetails.floorNumber,
-					unitNumber: residentDetails.unitNumber,
+					floor: residentDetails.floor,
+					unit: residentDetails.unit,
 					supportedFiles: residentDetails.supportedDocumentUrl,
 				}
 				return data
@@ -555,7 +555,7 @@ export class UserService {
 	}
 
 	instanceOfCreateResidentDto = (object: any): object is CreateResidentDto => {
-		return 'floorNumber' in object && 'unitNumber' in object
+		return 'floor' in object && 'unit' in object
 	}
 
 	instanceOfCreateStaffDto = (object: any): object is CreateStaffDto => {

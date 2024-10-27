@@ -460,10 +460,10 @@
 			},
 			"ResidentInformationDto": {
 				"properties": {
-					"floorNumber": {
+					"floor": {
 						"type": "string"
 					},
-					"unitNumber": {
+					"unit": {
 						"type": "string"
 					},
 					"supportedFiles": {
@@ -474,8 +474,8 @@
 					}
 				},
 				"required": [
-					"floorNumber",
-					"unitNumber",
+					"floor",
+					"unit",
 					"supportedFiles"
 				],
 				"type": "object",
@@ -828,6 +828,118 @@
 					"floor",
 					"unit"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetParcelDto": {
+				"properties": {
+					"parcelId": {
+						"type": "number",
+						"format": "double"
+					},
+					"parcelGuid": {
+						"type": "string"
+					},
+					"parcelImage": {
+						"type": "string"
+					},
+					"floor": {
+						"type": "string"
+					},
+					"unit": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"parcelId",
+					"parcelGuid",
+					"parcelImage",
+					"floor",
+					"unit",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPaginatedResponse_GetParcelDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"count": {
+								"type": "number",
+								"format": "double"
+							},
+							"list": {
+								"items": {
+									"$ref": "#/components/schemas/GetParcelDto"
+								},
+								"type": "array",
+								"nullable": true
+							}
+						},
+						"required": [
+							"count",
+							"list"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetParcelDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetParcelDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetParcelDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -2440,10 +2552,19 @@
 					}
 				},
 				"tags": [
-					"Ref Data"
+					"RefData"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "checkOccupied",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
 			}
 		},
 		"/parcel/create": {
@@ -2495,6 +2616,67 @@
 						}
 					}
 				}
+			}
+		},
+		"/parcel": {
+			"get": {
+				"operationId": "getParcelByResident",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IPaginatedResponse_GetParcelDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetParcelDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Parcel"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SUB"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/notice/create": {
