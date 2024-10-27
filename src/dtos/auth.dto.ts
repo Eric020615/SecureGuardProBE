@@ -15,6 +15,7 @@ export interface LoginDto {
 	email: string
 	password: string
 	role: RoleEnum[]
+	notificationToken?: string
 }
 
 export interface RegisterUserDto {

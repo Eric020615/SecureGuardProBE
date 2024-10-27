@@ -558,6 +558,7 @@ const models: TsoaRoute.Models = {
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
             "role": {"dataType":"array","array":{"dataType":"refEnum","ref":"RoleEnum"},"required":true},
+            "notificationToken": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -1307,7 +1308,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/parcel/create',
+        app.post('/parcel/staff',
             authenticateMiddleware([{"jwt":["STF"]}]),
             ...(fetchMiddlewares<RequestHandler>(ParcelController)),
             ...(fetchMiddlewares<RequestHandler>(ParcelController.prototype.createParcel)),
@@ -1371,6 +1372,44 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getParcelByResident',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/parcel/staff',
+            authenticateMiddleware([{"jwt":["STF"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController)),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController.prototype.getParcelByStaff)),
+
+            async function ParcelController_getParcelByStaff(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
+                    limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<ParcelController>(ParcelController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getParcelByStaff',
                 controller,
                 response,
                 next,

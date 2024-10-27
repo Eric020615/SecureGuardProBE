@@ -95,7 +95,6 @@ export class AuthService {
 			)
 			const user = await this.authAdmin.getUser(response.user.uid)
 			const role = user.customClaims?.role || 'No role assigned'
-
 			if (!loginDto.role.includes(role)){
 				throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
@@ -110,7 +109,7 @@ export class AuthService {
 				userGuid: response.user.uid,
 				role: userInformation.role,
 			} as AuthTokenPayloadDto)
-			return token
+			return { token, userGuid: response.user.uid }
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
 				console.log(error)

@@ -73,4 +73,35 @@ export class ParcelService {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
+
+	getParcelByStaffService = async (id: number, limit: number, userGuid: string) => {
+		try {
+			let { rows, count } = await this.parcelRepository.getParcelByStaffRepository(
+				id,
+				limit,
+				userGuid,
+			)
+			let data: GetParcelDto[] = []
+			data = rows
+				? rows.map((parcel) => {
+						return {
+							parcelId: parcel.id,
+							parcelGuid: parcel.guid,
+							parcelImage: parcel.parcelImageUrl,
+							floor: parcel.floor,
+							unit: parcel.unit,
+							status: parcel.status,
+							createdBy: parcel.createdBy,
+							createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
+							updatedBy: parcel.updatedBy,
+							updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
+						} as GetParcelDto
+				  })
+				: []
+			return { data, count }
+		} catch (error: any) {
+			console.log(error)
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
 }

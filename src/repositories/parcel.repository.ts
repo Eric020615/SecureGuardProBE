@@ -54,4 +54,19 @@ export class ParcelRepository {
 		)
 		return { rows, count }
 	}
+
+	async getParcelByStaffRepository(id: number, pageSize: number, userGuid: string) {
+		const constraints = [
+			where('createdBy', '==', userGuid),
+			where('status', '==', DocumentStatus.Active),
+			orderBy('id', 'asc'),
+		]
+		let { rows, count } = await this.repositoryService.getPaginatedData<Parcel>(
+			this.parcelCollection,
+			id,
+			pageSize,
+			constraints,
+		)
+		return { rows, count }
+	}
 }

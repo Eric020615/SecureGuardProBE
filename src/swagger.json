@@ -1431,6 +1431,9 @@
 							"$ref": "#/components/schemas/RoleEnum"
 						},
 						"type": "array"
+					},
+					"notificationToken": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -2567,7 +2570,7 @@
 				]
 			}
 		},
-		"/parcel/create": {
+		"/parcel/staff": {
 			"post": {
 				"operationId": "createParcel",
 				"responses": {
@@ -2616,6 +2619,64 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "getParcelByStaff",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IPaginatedResponse_GetParcelDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetParcelDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Parcel"
+				],
+				"security": [
+					{
+						"jwt": [
+							"STF"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/parcel": {

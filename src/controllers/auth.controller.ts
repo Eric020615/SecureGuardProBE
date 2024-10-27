@@ -28,11 +28,12 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { AuthService } from '../services/auth.service'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
+import { NotificationService } from '../services/notification.service'
 
 @Route('auth')
 @provideSingleton(AuthController)
 export class AuthController extends Controller {
-	constructor(@inject(AuthService) private authService: AuthService) {
+	constructor(@inject(AuthService) private authService: AuthService, @inject(NotificationService) private notificationService: NotificationService) {
 		super()
 	}
 	@Tags('Auth')
@@ -78,7 +79,10 @@ export class AuthController extends Controller {
 	@Post('/log-in')
 	public async login(@Body() loginDto: LoginDto): Promise<IResponse<any>> {
 		try {
-			const token = await this.authService.loginService(loginDto)
+			const { token, userGuid } = await this.authService.loginService(loginDto)
+			if(loginDto.notificationToken && userGuid) {
+				await this.notificationService.createNotificationTokenService(loginDto.notificationToken, userGuid)
+			}
 			const response = {
 				message: 'Account login successfully',
 				status: '200',
