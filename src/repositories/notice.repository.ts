@@ -1,12 +1,4 @@
-import {
-	addDoc,
-	collection,
-	doc,
-	getDoc,
-	where,
-	orderBy,
-	updateDoc,
-} from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, where, orderBy, updateDoc } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
 import { Notice } from '../models/notice.model'
@@ -50,31 +42,21 @@ export class NoticeRepository {
 	}
 
 	async getAllNoticeRepository(direction: PaginationDirection, id: number, pageSize: number) {
-		const constraints = [
-			orderBy('id', 'asc')
-		]
+		const constraints = [orderBy('id', 'asc')]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
 			this.noticeCollection,
 			id,
 			pageSize,
 			constraints,
-			direction
+			direction,
 		)
 		return { rows, count }
 	}
 
 	async getNoticeRepository(id: number, pageSize: number) {
 		const constraints = [
-			where(
-				'startDate',
-				'<=',
-				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
-			),
-			where(
-				'endDate',
-				'>',
-				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
-			),
+			where('startDate', '<=', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())),
+			where('endDate', '>', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())),
 			where('status', '==', DocumentStatus.Active),
 			orderBy('id', 'asc'),
 		]

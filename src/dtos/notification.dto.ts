@@ -1,5 +1,5 @@
 export interface ExpoNotificationRequest {
-	to: string // Expo push token of the recipient, e.g., "ExponentPushToken[xxxxxxxxxxxxxx]"
+	to: string | string[] // Expo push token of the recipient, e.g., "ExponentPushToken[xxxxxxxxxxxxxx]"
 	title?: string // Title of the notification
 	body?: string // Message body of the notification
 	data?: Record<string, any> // Additional data to send along with the notification
@@ -17,4 +17,18 @@ export interface ExpoNotificationResponse {
 			error?: string // Details on the error if the status is "error"
 		}
 	}
+}
+
+export interface GetNotificationDto {
+	notificationId: number
+	notificationGuid: string
+	userGuid: string
+	title: string
+	body: string
+	data: any
+	isRead: boolean
+	createdBy: string
+	createdDateTime: string
+	updatedBy: string
+	updatedDateTime: string
 }

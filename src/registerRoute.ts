@@ -4,8 +4,6 @@ import { RegisterRoutes } from './routes'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJson from './swagger.json'
-import { OperationError } from './common/operation-error'
-import { HttpStatusCode } from './common/http-status-code'
 
 interface IError {
 	status?: number
@@ -15,7 +13,7 @@ interface IError {
 }
 
 const corsOptions = {
-	origin: ['http://localhost:8081', 'http://localhost:4000'],
+	origin: ['http://localhost:8081', 'http://localhost:8082', 'http://localhost:4000'],
 	optionsSuccessStatus: 200,
 }
 

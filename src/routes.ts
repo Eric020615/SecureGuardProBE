@@ -11,6 +11,8 @@ import { RefDataController } from './controllers/refData.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ParcelController } from './controllers/parcel.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { NotificationController } from './controllers/notification.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { NoticeController } from './controllers/notice.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FacilityController } from './controllers/facility.controller';
@@ -367,6 +369,44 @@ const models: TsoaRoute.Models = {
         "properties": {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetNotificationDto": {
+        "dataType": "refObject",
+        "properties": {
+            "notificationId": {"dataType":"double","required":true},
+            "notificationGuid": {"dataType":"string","required":true},
+            "userGuid": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+            "body": {"dataType":"string","required":true},
+            "data": {"dataType":"any","required":true},
+            "isRead": {"dataType":"boolean","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedResponse_GetNotificationDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "status": {"dataType":"string"},
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"list":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNotificationDto"}},{"dataType":"enum","enums":[null]}],"required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetNotificationDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNotificationDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetNotificationDto"}}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -1410,6 +1450,44 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getParcelByStaff',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/notification',
+            authenticateMiddleware([{"jwt":["RES","SUB","STF"]}]),
+            ...(fetchMiddlewares<RequestHandler>(NotificationController)),
+            ...(fetchMiddlewares<RequestHandler>(NotificationController.prototype.getNotification)),
+
+            async function NotificationController_getNotification(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
+                    limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<NotificationController>(NotificationController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getNotification',
                 controller,
                 response,
                 next,

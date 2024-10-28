@@ -53,22 +53,16 @@ export class ParcelController extends Controller {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.parcelService.createParcelService(createParcelDto, request.userGuid)
-			const userGuid = await this.refDataService.getUserGuidByPropertyService(
+			const residentUserGuid = await this.refDataService.getUserGuidByPropertyService(
 				createParcelDto.floor,
 				createParcelDto.unit,
 			)
-			await this.notificationService.getNotificationTokenByUserGuidService(userGuid)
-			await this.notificationService.sendNotificationByTokenService(
-				userGuid,
+			await this.notificationService.handleNotificationService(
 				'Parcel Received',
 				'You have received a parcel',
 				{},
-			)
-			await this.notificationService.createNotificationService(
-				'Parcel Received',
-				'You have received a parcel',
-				{},
-				request.userGuid,
+				residentUserGuid,
+				true,
 			)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
@@ -79,6 +73,7 @@ export class ParcelController extends Controller {
 			return response
 		} catch (err) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			console.log(err)
 			const response = {
 				message: 'Failed to create parcel',
 				status: '500',
@@ -152,11 +147,7 @@ export class ParcelController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			let { data, count } = await this.parcelService.getParcelByStaffService(
-				id,
-				limit,
-				request.userGuid,
-			)
+			let { data, count } = await this.parcelService.getParcelByStaffService(id, limit, request.userGuid)
 			const response = {
 				message: 'Parcel retrieved successfully',
 				status: '200',

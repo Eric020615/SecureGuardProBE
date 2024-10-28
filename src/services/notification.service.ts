@@ -6,7 +6,8 @@ import { NotificationRepository } from '../repositories/notification.repository'
 import { NotificationManager } from '../config/notification'
 import { Notification } from '../models/notification.model'
 import { DocumentStatus } from '../common/constants'
-import { getCurrentTimestamp } from '../helper/time'
+import { convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
+import { GetNotificationDto } from '../dtos/notification.dto'
 
 @provideSingleton(NotificationService)
 export class NotificationService {
@@ -14,6 +15,26 @@ export class NotificationService {
 		@inject(NotificationRepository) private notificationRepository: NotificationRepository,
 		@inject(NotificationManager) private notificationManager: NotificationManager,
 	) {}
+
+	handleNotificationService = async (
+		title: string,
+		body: string,
+		data: Record<string, any>,
+		userGuid: string,
+		shouldPersist: boolean,
+	) => {
+		try {
+			const notificationToken = await this.getNotificationTokenByUserGuidService(userGuid)
+			if (notificationToken) {
+				await this.sendNotificationByTokenService(notificationToken, title, body, data)
+			}
+			if (shouldPersist) {
+				await this.createNotificationService(title, body, data, userGuid)
+			}
+		} catch (error) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
 
 	createNotificationTokenService = async (token: string, userGuid: string) => {
 		try {
@@ -25,17 +46,15 @@ export class NotificationService {
 
 	getNotificationTokenByUserGuidService = async (userGuid: string) => {
 		try {
-			const tokens = await this.notificationRepository.getNotificationTokenByUserGuidRepository(
-				userGuid,
-			)
-			return tokens
+			const data = await this.notificationRepository.getNotificationTokenByUserGuidRepository(userGuid)
+			return data.tokens
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
 
 	sendNotificationByTokenService = async (
-		token: string,
+		token: string | string[],
 		title: string,
 		body: string,
 		data: Record<string, any>,
@@ -59,12 +78,7 @@ export class NotificationService {
 		}
 	}
 
-	createNotificationService = async (
-		title: string,
-		body: string,
-		data: Record<string, any>,
-		userGuid: string,
-	) => {
+	createNotificationService = async (title: string, body: string, data: Record<string, any>, userGuid: string) => {
 		try {
 			await this.notificationRepository.createNotificationRepository(
 				new Notification(
@@ -81,6 +95,33 @@ export class NotificationService {
 					getCurrentTimestamp(),
 				),
 			)
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	getNotificationService = async (id: number, limit: number, userGuid: string) => {
+		try {
+			let { rows, count } = await this.notificationRepository.getNotificationRepository(id, limit, userGuid)
+			let data: GetNotificationDto[] = []
+			data = rows
+				? rows.map((notification) => {
+						return {
+							notificationId: notification.id,
+							notificationGuid: notification.guid,
+							userGuid: notification.userGuid,
+							title: notification.title,
+							body: notification.body,
+							data: notification.data,
+							isRead: notification.isRead,
+							createdBy: notification.createdBy,
+							createdDateTime: convertTimestampToUserTimezone(notification.createdDateTime),
+							updatedBy: notification.updatedBy,
+							updatedDateTime: convertTimestampToUserTimezone(notification.updatedDateTime),
+						} as GetNotificationDto
+				  })
+				: []
+			return { data, count }
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

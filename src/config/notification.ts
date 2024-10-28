@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { provideSingleton } from '../helper/provideSingleton'
 import { ExpoNotificationRequest, ExpoNotificationResponse } from '../dtos/notification.dto'
 
@@ -16,14 +16,17 @@ export class NotificationManager {
 	// Handler function to perform requests
 	public async pushNotification(data: ExpoNotificationRequest): Promise<[boolean, ExpoNotificationResponse]> {
 		try {
-			const response = await axios.post<ExpoNotificationResponse>(this.notificationConfig.notificationUrl, data, {
+			const response = await axios.post(this.notificationConfig.notificationUrl, data, {
 				headers: {
-					'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
 				},
 			})
 			return [true, response.data]
 		} catch (error: any) {
-			return [false, error.response.data]
+            if (error instanceof AxiosError) {
+                console.log(error.response?.data)
+            }
+			return [false, error]
 		}
 	}
 }

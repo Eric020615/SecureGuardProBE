@@ -17,7 +17,8 @@ import { inject } from 'inversify'
 import { DocumentStatus } from '../common/constants'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
-import { Notification } from '../models/notification.model'
+import { Notification, NotificationToken } from '../models/notification.model'
+import { RepositoryService } from './repository'
 
 @provideSingleton(NotificationRepository)
 export class NotificationRepository {
@@ -31,15 +32,11 @@ export class NotificationRepository {
 		private firebaseAdmin: FirebaseAdmin,
 		@inject(SequenceRepository)
 		private sequenceRepository: SequenceRepository,
+		@inject(RepositoryService)
+		private repositoryService: RepositoryService,
 	) {
-		this.notificationTokenCollection = collection(
-			this.firebaseClient.firestore,
-			'notificationToken',
-		)
-		this.notificationCollection = collection(
-			this.firebaseClient.firestore, 
-			'notification'
-		)
+		this.notificationTokenCollection = collection(this.firebaseClient.firestore, 'notificationToken')
+		this.notificationCollection = collection(this.firebaseClient.firestore, 'notification')
 	}
 
 	async createNotificationTokenRepository(token: string, userGuid: string) {
@@ -55,15 +52,9 @@ export class NotificationRepository {
 	}
 
 	async getNotificationTokenByUserGuidRepository(userGuid: string) {
-		const constraints = [
-			where('__name__', '==', userGuid),
-			where('status', '==', DocumentStatus.Active),
-			orderBy('id', 'asc'),
-		]
-		const querySnapshot = await getDocs(query(this.notificationTokenCollection, ...constraints))
-		const data = querySnapshot.docs.map((doc) => {
-			return { ...doc.data(), id: doc.id }
-		})
+		const docRef = doc(this.notificationTokenCollection, userGuid)
+		const querySnapshot = await getDoc(docRef)
+		const data = querySnapshot.data() as NotificationToken
 		return data
 	}
 
@@ -79,5 +70,20 @@ export class NotificationRepository {
 			const docRef = await addDoc(this.notificationCollection, { ...data })
 			await updateDoc(docRef, { id: id })
 		})
+	}
+
+	async getNotificationRepository(id: number, pageSize: number, userGuid: string) {
+		const constraints = [
+			where('userGuid', '==', userGuid),
+			where('status', '==', DocumentStatus.Active),
+			orderBy('id', 'asc'),
+		]
+		let { rows, count } = await this.repositoryService.getPaginatedData<Notification>(
+			this.notificationCollection,
+			id,
+			pageSize,
+			constraints,
+		)
+		return { rows, count }
 	}
 }
