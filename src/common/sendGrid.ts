@@ -1,5 +1,3 @@
-// src/common/emailTemplates.ts
-
 // Enum for SendGrid Template IDs
 export enum SendGridTemplateIds {
 	SubUserRegistration = 'd-765bf808211f4887aace92ee08cb979c',

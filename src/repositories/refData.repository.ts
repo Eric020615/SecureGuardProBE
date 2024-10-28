@@ -64,4 +64,18 @@ export class RefDataRepository {
 			...updatedUnit,
 		})
 	}
+
+	getUserGuidByPropertyRepository = async (floor: string, unit: string) => {
+		const propertyDocRef = this.firebaseAdmin.firestore.doc('refData/property')
+		const unitDocRef = propertyDocRef.collection(floor).doc(unit)
+		const unitSnapshot = await unitDocRef.get()
+		const unitData = unitSnapshot.data() as Unit
+		if (!unitData) {
+			throw new OperationError('Unit not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+		if (!unitData.assignedTo || unitData.assignedTo === '') {
+			throw new OperationError('Unit not assigned to anyone', HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+		return unitData.assignedTo
+	}
 }

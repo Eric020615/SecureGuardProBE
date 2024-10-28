@@ -23,11 +23,18 @@ import { inject } from 'inversify'
 import { UserService } from '../services/user.service'
 import { RoleEnum } from '../common/role'
 import { ResidentInformationDto } from '../dtos/user.dto'
+import { RefDataService } from '../services/refData.service'
+import { NotificationService } from '../services/notification.service'
 
 @Route('parcel')
 @provideSingleton(ParcelController)
 export class ParcelController extends Controller {
-	constructor(@inject(ParcelService) private parcelService: ParcelService, @inject(UserService) private userService: UserService) {
+	constructor(
+		@inject(ParcelService) private parcelService: ParcelService,
+		@inject(UserService) private userService: UserService,
+		@inject(RefDataService) private refDataService: RefDataService,
+		@inject(NotificationService) private notificationService: NotificationService,
+	) {
 		super()
 	}
 
@@ -46,6 +53,23 @@ export class ParcelController extends Controller {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.parcelService.createParcelService(createParcelDto, request.userGuid)
+			const userGuid = await this.refDataService.getUserGuidByPropertyService(
+				createParcelDto.floor,
+				createParcelDto.unit,
+			)
+			await this.notificationService.getNotificationTokenByUserGuidService(userGuid)
+			await this.notificationService.sendNotificationByTokenService(
+				userGuid,
+				'Parcel Received',
+				'You have received a parcel',
+				{},
+			)
+			await this.notificationService.createNotificationService(
+				'Parcel Received',
+				'You have received a parcel',
+				{},
+				request.userGuid,
+			)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
 				message: 'Parcels created successfully',
@@ -84,7 +108,12 @@ export class ParcelController extends Controller {
 				throw new OperationError('ROLE_NOT_PERMITTED', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			let roleInformation = userData.roleInformation as ResidentInformationDto
-			let { data, count } = await this.parcelService.getParcelByResidentService(id, limit, roleInformation.floor, roleInformation.unit);
+			let { data, count } = await this.parcelService.getParcelByResidentService(
+				id,
+				limit,
+				roleInformation.floor,
+				roleInformation.unit,
+			)
 			const response = {
 				message: 'Parcel retrieved successfully',
 				status: '200',
@@ -123,7 +152,11 @@ export class ParcelController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			let { data, count } = await this.parcelService.getParcelByStaffService(id, limit, request.userGuid);
+			let { data, count } = await this.parcelService.getParcelByStaffService(
+				id,
+				limit,
+				request.userGuid,
+			)
 			const response = {
 				message: 'Parcel retrieved successfully',
 				status: '200',

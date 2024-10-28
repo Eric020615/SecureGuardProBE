@@ -28,4 +28,13 @@ export class RefDataService {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
+
+	getUserGuidByPropertyService = async (floor: string, unit: string) => {
+		try {
+			let userGuid = await this.refDataRepository.getUserGuidByPropertyRepository(floor, unit)
+			return userGuid
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
 }
