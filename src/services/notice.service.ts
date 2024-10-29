@@ -1,4 +1,4 @@
-import { CreateNoticeDto, GetNoticeDto, EditNoticeDto } from '../dtos/notice.dto'
+import { CreateNoticeDto, GetNoticeDto, EditNoticeDto, GetNoticeDetailsDto } from '../dtos/notice.dto'
 import { NoticeRepository } from '../repositories/notice.repository'
 import { Notice } from '../models/notice.model'
 import { OperationError } from '../common/operation-error'
@@ -36,9 +36,9 @@ export class NoticeService {
 		}
 	}
 
-	getAllNoticeService = async (direction: PaginationDirection, id: number, limit: number) => {
+	getNoticeByAdminService = async (direction: PaginationDirection, id: number, limit: number) => {
 		try {
-			const { rows, count } = await this.noticeRepository.getAllNoticeRepository(direction, id, limit)
+			const { rows, count } = await this.noticeRepository.getNoticeByAdminRepository(direction, id, limit)
 			let data: GetNoticeDto[] = []
 			data = rows
 				? rows.map((notice) => {
@@ -49,10 +49,7 @@ export class NoticeService {
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
 							endDate: convertTimestampToUserTimezone(notice.endDate),
-							createdBy: notice.createdBy,
-							createdDateTime: convertTimestampToUserTimezone(notice.createdDateTime),
-							updatedBy: notice.updatedBy,
-							updatedDateTime: convertTimestampToUserTimezone(notice.updatedDateTime),
+							status: DocumentStatus[notice.status]
 						} as GetNoticeDto
 				  })
 				: []
@@ -75,10 +72,7 @@ export class NoticeService {
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
 							endDate: convertTimestampToUserTimezone(notice.endDate),
-							createdBy: notice.createdBy,
-							createdDateTime: convertTimestampToUserTimezone(notice.createdDateTime),
-							updatedBy: notice.updatedBy,
-							updatedDateTime: convertTimestampToUserTimezone(notice.updatedDateTime),
+							status: DocumentStatus[notice.status]
 						} as GetNoticeDto
 				  })
 				: []
@@ -88,10 +82,11 @@ export class NoticeService {
 		}
 	}
 
-	getNoticeByIdService = async (noticeGuid: string) => {
+	getNoticeDetailsByIdService = async (noticeGuid: string) => {
 		try {
-			const notice = await this.noticeRepository.getNoticeByIdRepository(noticeGuid)
-			let data: GetNoticeDto = {} as GetNoticeDto
+			const notice = await this.noticeRepository.getNoticeDetailsByIdRepository(noticeGuid)
+			console.log(notice)
+			let data: GetNoticeDetailsDto = {} as GetNoticeDetailsDto
 			if (notice != null) {
 				data = {
 					noticeId: notice.id,
@@ -100,11 +95,12 @@ export class NoticeService {
 					description: notice.description,
 					startDate: convertTimestampToUserTimezone(notice.startDate),
 					endDate: convertTimestampToUserTimezone(notice.endDate),
+					status: DocumentStatus[notice.status],
 					createdBy: notice.createdBy,
 					createdDateTime: convertTimestampToUserTimezone(notice.createdDateTime),
 					updatedBy: notice.updatedBy,
 					updatedDateTime: convertTimestampToUserTimezone(notice.updatedDateTime),
-				} as GetNoticeDto
+				} as GetNoticeDetailsDto
 			}
 			return data
 		} catch (error: any) {

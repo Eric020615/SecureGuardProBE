@@ -106,7 +106,7 @@ export class UserRepository {
 		return result
 	}
 
-	getUserListRepository = async (userList: UserRecord[], direction: PaginationDirection, id: number, pageSize: number) => {
+	getUserListByAdminRepository = async (userList: UserRecord[], direction: PaginationDirection, id: number, pageSize: number) => {
 		const userGuid = userList.map((user) => user.uid)
 		if (userGuid.length === 0) {
 			return { rows: [], count: 0 }

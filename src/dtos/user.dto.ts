@@ -26,6 +26,18 @@ export interface GetUserDto {
 	updatedDateTime: string
 }
 
+export interface GetUserByAdminDto {
+    userId: number
+    userGuid: string
+    firstName: string
+    lastName: string
+    userName: string
+    contactNumber: string
+    gender: GenderEnum
+    role: RoleEnum
+    userStatus: string
+}
+
 export interface CreateSubUserDto extends CreateUserDto {
 	parentUserGuid: string
 	subUserRequestGuid: string

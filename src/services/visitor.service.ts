@@ -5,13 +5,13 @@ import {
 	GetVisitorDto,
 	EditVisitorByIdDto,
 	GetVisitorByDateDto,
+	GetVisitorDetailsDto,
 } from '../dtos/visitor.dto'
 import { VisitorRepository } from '../repositories/visitor.repository'
 import { Visitor } from '../models/visitor.model'
 import {
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
-	generateAllDatesInRange,
 	getCurrentTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
@@ -42,11 +42,7 @@ export class VisitorService {
 		}
 	}
 
-	editVisitorByIdService = async (
-		editVisitorByIdDto: EditVisitorByIdDto,
-		visitorGuid: string,
-		userId: string,
-	) => {
+	editVisitorByIdService = async (editVisitorByIdDto: EditVisitorByIdDto, visitorGuid: string, userId: string) => {
 		try {
 			let visitor: Visitor = {
 				visitorName: editVisitorByIdDto.visitorName,
@@ -62,19 +58,9 @@ export class VisitorService {
 		}
 	}
 
-	getVisitorByResidentService = async (
-		userId: string,
-		isPast: boolean,
-		id: number,
-		limit: number,
-	) => {
+	getVisitorByResidentService = async (userId: string, isPast: boolean, id: number, limit: number) => {
 		try {
-			let { rows, count } = await this.visitorRepository.getVisitorByResidentRepository(
-				userId,
-				isPast,
-				id,
-				limit,
-			)
+			let { rows, count } = await this.visitorRepository.getVisitorByResidentRepository(userId, isPast, id, limit)
 			let data: GetVisitorDto[] = []
 			data = rows
 				? rows.map((visitor) => {
@@ -85,10 +71,7 @@ export class VisitorService {
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
-							createdBy: visitor.createdBy,
-							updatedBy: visitor.updatedBy,
-							createdDateTime: convertTimestampToUserTimezone(visitor.createdDateTime),
-							updatedDateTime: convertTimestampToUserTimezone(visitor.updatedDateTime),
+							status: DocumentStatus[visitor.status],
 						} as GetVisitorDto
 				  })
 				: []
@@ -102,7 +85,7 @@ export class VisitorService {
 	getVisitorDetailsService = async (visitorGuid: string) => {
 		try {
 			const visitors = await this.visitorRepository.getVisitorDetailsRepository(visitorGuid)
-			let data: GetVisitorDto = {} as GetVisitorDto
+			let data: GetVisitorDetailsDto = {} as GetVisitorDetailsDto
 			data = {
 				visitorId: visitors.id,
 				visitorGuid: visitors.guid ? visitors.guid : '',
@@ -110,7 +93,7 @@ export class VisitorService {
 				visitorCategory: visitors.visitorCategory,
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
-				status: visitors.status,
+				status: DocumentStatus[visitors.status],
 				createdBy: visitors.createdBy,
 				updatedBy: visitors.updatedBy,
 				createdDateTime: convertTimestampToUserTimezone(visitors.createdDateTime),
@@ -123,9 +106,9 @@ export class VisitorService {
 		}
 	}
 
-	getAllVisitorService = async (direction: PaginationDirection, id: number, limit: number) => {
+	getVisitorByAdminService = async (direction: PaginationDirection, id: number, limit: number) => {
 		try {
-			let { rows, count } = await this.visitorRepository.getAllVisitorsRepository(direction, id, limit)
+			let { rows, count } = await this.visitorRepository.getVisitorByAdminRepository(direction, id, limit)
 			let data: GetVisitorDto[] = []
 			data = rows
 				? rows.map((visitor) => {
@@ -136,11 +119,7 @@ export class VisitorService {
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
-							status: visitor.status,
-							createdBy: visitor.createdBy,
-							updatedBy: visitor.updatedBy,
-							createdDateTime: convertTimestampToUserTimezone(visitor.createdDateTime),
-							updatedDateTime: convertTimestampToUserTimezone(visitor.updatedDateTime),
+							status: DocumentStatus[visitor.status],
 						} as GetVisitorDto
 				  })
 				: []
@@ -154,10 +133,7 @@ export class VisitorService {
 	getVisitorCountsByDayService = async (startDate: string, endDate: string) => {
 		try {
 			let data: GetVisitorByDateDto[] = []
-			let visitorCountsByDay = await this.visitorRepository.getVisitorCountsByDayRepository(
-				startDate,
-				endDate,
-			)
+			let visitorCountsByDay = await this.visitorRepository.getVisitorCountsByDayRepository(startDate, endDate)
 			Object.keys(visitorCountsByDay).map((date) => {
 				data.push({ date: date, count: visitorCountsByDay[date] })
 			})

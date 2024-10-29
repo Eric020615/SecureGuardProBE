@@ -106,7 +106,7 @@ export class VisitorRepository {
 		return result
 	}
 
-	async getAllVisitorsRepository(direction: PaginationDirection, id: number, pageSize: number) {
+	async getVisitorByAdminRepository(direction: PaginationDirection, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
 			this.visitorCollection,

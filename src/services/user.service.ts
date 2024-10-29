@@ -11,6 +11,7 @@ import {
 	GetSubUserByResidentDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
+	GetUserByAdminDto,
 } from '../dtos/user.dto'
 import { Resident, SubUser, Staff, User } from '../models/user.model'
 import { UserRepository } from '../repositories/user.repository'
@@ -255,7 +256,7 @@ export class UserService {
 		}
 	}
 
-	getUserListService = async (
+	getUserListByAdminService = async (
 		isActive: boolean,
 		direction: PaginationDirection,
 		id: number,
@@ -269,13 +270,13 @@ export class UserService {
 			} else {
 				userList = userResult.users.filter((user) => user.disabled)
 			}
-			let { rows, count } = await this.userRepository.getUserListRepository(
+			let { rows, count } = await this.userRepository.getUserListByAdminRepository(
 				userList,
 				direction,
 				id,
 				limit,
 			)
-			let data: GetUserDto[] = []
+			let data: GetUserByAdminDto[] = []
 			data =
 				rows && rows.length > 0
 					? rows.map((userInformation, index) => {
@@ -287,13 +288,9 @@ export class UserService {
 								lastName: userInformation.lastName,
 								gender: userInformation.gender,
 								role: userInformation.role,
-								dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
 								contactNumber: userInformation.contactNumber,
-								createdBy: userInformation.createdBy,
-								createdDateTime: convertTimestampToUserTimezone(userInformation.createdDateTime),
-								updatedBy: userInformation.updatedBy,
-								updatedDateTime: convertTimestampToUserTimezone(userInformation.updatedDateTime),
-							} as GetUserDto
+								userStatus: userList[index].disabled ? 'Inactive' : 'Active',
+							} as GetUserByAdminDto
 					  })
 					: []
 			return { data, count }

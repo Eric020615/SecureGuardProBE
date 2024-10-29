@@ -41,7 +41,7 @@ export class NoticeRepository {
 		})
 	}
 
-	async getAllNoticeRepository(direction: PaginationDirection, id: number, pageSize: number) {
+	async getNoticeByAdminRepository(direction: PaginationDirection, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
 			this.noticeCollection,
@@ -69,7 +69,7 @@ export class NoticeRepository {
 		return { rows, count }
 	}
 
-	async getNoticeByIdRepository(noticeGuid: string) {
+	async getNoticeDetailsByIdRepository(noticeGuid: string) {
 		const noticeDocRef = doc(this.noticeCollection, noticeGuid)
 		const noticeDoc = await getDoc(noticeDocRef)
 		let result: Notice = {} as Notice

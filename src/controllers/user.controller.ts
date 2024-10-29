@@ -24,6 +24,7 @@ import {
 	DeleteSubUserByIdDto,
 	EditUserDetailsByIdDto,
 	GetSubUserByResidentDto,
+	GetUserByAdminDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
 } from '../dtos/user.dto'
@@ -71,19 +72,19 @@ export class UserController extends Controller {
 	}
 
 	@Tags('User')
-	@OperationId('getUserList')
-	@Response<IResponse<GetUserDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@OperationId('getUserListByAdmin')
+	@Response<IResponse<GetUserByAdminDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/user-list')
+	@Get('/admin/user-list')
 	@Security('jwt', ['SA'])
 	public async getUserList(
 		@Query() isActive: boolean,
 		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
 		@Query() id: number,
 		@Query() limit: number,
-	): Promise<IPaginatedResponse<GetUserDto>> {
+	): Promise<IPaginatedResponse<GetUserByAdminDto>> {
 		try {
-			const { data, count } = await this.userService.getUserListService(isActive, direction, id, limit)
+			const { data, count } = await this.userService.getUserListByAdminService(isActive, direction, id, limit)
 			const response = {
 				message: 'User list retrieve successfully',
 				status: '200',

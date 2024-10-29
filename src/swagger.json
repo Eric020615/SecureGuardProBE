@@ -53,17 +53,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"DocumentStatus": {
-				"enum": [
-					1,
-					0,
-					-1,
-					2,
-					3,
-					4
-				],
-				"type": "number"
-			},
 			"GetVisitorDto": {
 				"properties": {
 					"visitorId": {
@@ -86,18 +75,6 @@
 						"type": "string"
 					},
 					"status": {
-						"$ref": "#/components/schemas/DocumentStatus"
-					},
-					"createdBy": {
-						"type": "string"
-					},
-					"updatedBy": {
-						"type": "string"
-					},
-					"createdDateTime": {
-						"type": "string"
-					},
-					"updatedDateTime": {
 						"type": "string"
 					}
 				},
@@ -108,11 +85,7 @@
 					"visitorCategory",
 					"visitorContactNumber",
 					"visitDateTime",
-					"status",
-					"createdBy",
-					"updatedBy",
-					"createdDateTime",
-					"updatedDateTime"
+					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -184,7 +157,60 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IResponse_GetVisitorDto_": {
+			"GetVisitorDetailsDto": {
+				"properties": {
+					"visitorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"visitorGuid": {
+						"type": "string"
+					},
+					"visitorName": {
+						"type": "string"
+					},
+					"visitorCategory": {
+						"type": "string"
+					},
+					"visitorContactNumber": {
+						"type": "string"
+					},
+					"visitDateTime": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"visitorId",
+					"visitorGuid",
+					"visitorName",
+					"visitorCategory",
+					"visitorContactNumber",
+					"visitDateTime",
+					"status",
+					"createdBy",
+					"updatedBy",
+					"createdDateTime",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetVisitorDetailsDto_": {
 				"properties": {
 					"message": {
 						"type": "string"
@@ -192,11 +218,11 @@
 					"data": {
 						"anyOf": [
 							{
-								"$ref": "#/components/schemas/GetVisitorDto"
+								"$ref": "#/components/schemas/GetVisitorDetailsDto"
 							},
 							{
 								"items": {
-									"$ref": "#/components/schemas/GetVisitorDto"
+									"$ref": "#/components/schemas/GetVisitorDetailsDto"
 								},
 								"type": "array"
 							}
@@ -321,6 +347,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GenderEnum": {
+				"enum": [
+					"M",
+					"F"
+				],
+				"type": "string"
+			},
 			"RoleEnum": {
 				"enum": [
 					"SA",
@@ -330,7 +363,7 @@
 				],
 				"type": "string"
 			},
-			"GetUserDto": {
+			"GetUserByAdminDto": {
 				"properties": {
 					"userId": {
 						"type": "number",
@@ -352,24 +385,12 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"$ref": "#/components/schemas/GenderEnum"
 					},
 					"role": {
 						"$ref": "#/components/schemas/RoleEnum"
 					},
-					"dateOfBirth": {
-						"type": "string"
-					},
-					"createdBy": {
-						"type": "string"
-					},
-					"createdDateTime": {
-						"type": "string"
-					},
-					"updatedBy": {
-						"type": "string"
-					},
-					"updatedDateTime": {
+					"userStatus": {
 						"type": "string"
 					}
 				},
@@ -382,16 +403,12 @@
 					"contactNumber",
 					"gender",
 					"role",
-					"dateOfBirth",
-					"createdBy",
-					"createdDateTime",
-					"updatedBy",
-					"updatedDateTime"
+					"userStatus"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IPaginatedResponse_GetUserDto_": {
+			"IPaginatedResponse_GetUserByAdminDto_": {
 				"properties": {
 					"message": {
 						"type": "string"
@@ -407,7 +424,7 @@
 							},
 							"list": {
 								"items": {
-									"$ref": "#/components/schemas/GetUserDto"
+									"$ref": "#/components/schemas/GetUserByAdminDto"
 								},
 								"type": "array",
 								"nullable": true
@@ -426,7 +443,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IResponse_GetUserDto-Array_": {
+			"IResponse_GetUserByAdminDto-Array_": {
 				"properties": {
 					"message": {
 						"type": "string"
@@ -435,14 +452,14 @@
 						"anyOf": [
 							{
 								"items": {
-									"$ref": "#/components/schemas/GetUserDto"
+									"$ref": "#/components/schemas/GetUserByAdminDto"
 								},
 								"type": "array"
 							},
 							{
 								"items": {
 									"items": {
-										"$ref": "#/components/schemas/GetUserDto"
+										"$ref": "#/components/schemas/GetUserByAdminDto"
 									},
 									"type": "array"
 								},
@@ -729,6 +746,99 @@
 				"required": [
 					"data"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetUserDto": {
+				"properties": {
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"userGuid": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"contactNumber": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/RoleEnum"
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"userGuid",
+					"firstName",
+					"lastName",
+					"userName",
+					"contactNumber",
+					"gender",
+					"role",
+					"dateOfBirth",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetUserDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetUserDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetUserDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1106,16 +1216,7 @@
 					"endDate": {
 						"type": "string"
 					},
-					"createdBy": {
-						"type": "string"
-					},
-					"createdDateTime": {
-						"type": "string"
-					},
-					"updatedBy": {
-						"type": "string"
-					},
-					"updatedDateTime": {
+					"status": {
 						"type": "string"
 					}
 				},
@@ -1126,10 +1227,7 @@
 					"description",
 					"startDate",
 					"endDate",
-					"createdBy",
-					"createdDateTime",
-					"updatedBy",
-					"updatedDateTime"
+					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1201,7 +1299,60 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IResponse_GetNoticeDto_": {
+			"GetNoticeDetailsDto": {
+				"properties": {
+					"noticeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"noticeGuid": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"noticeId",
+					"noticeGuid",
+					"title",
+					"description",
+					"startDate",
+					"endDate",
+					"status",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetNoticeDetailsDto_": {
 				"properties": {
 					"message": {
 						"type": "string"
@@ -1209,11 +1360,11 @@
 					"data": {
 						"anyOf": [
 							{
-								"$ref": "#/components/schemas/GetNoticeDto"
+								"$ref": "#/components/schemas/GetNoticeDetailsDto"
 							},
 							{
 								"items": {
-									"$ref": "#/components/schemas/GetNoticeDto"
+									"$ref": "#/components/schemas/GetNoticeDetailsDto"
 								},
 								"type": "array"
 							}
@@ -1324,12 +1475,6 @@
 						"type": "boolean"
 					},
 					"status": {
-						"$ref": "#/components/schemas/DocumentStatus"
-					},
-					"createdDateTime": {
-						"type": "string"
-					},
-					"updatedDateTime": {
 						"type": "string"
 					}
 				},
@@ -1341,9 +1486,7 @@
 					"endDate",
 					"bookedBy",
 					"isCancelled",
-					"status",
-					"createdDateTime",
-					"updatedDateTime"
+					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1447,7 +1590,7 @@
 						"type": "string"
 					},
 					"status": {
-						"$ref": "#/components/schemas/DocumentStatus"
+						"type": "string"
 					},
 					"createdBy": {
 						"type": "string"
@@ -1930,7 +2073,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IResponse_GetVisitorDetailsDto_"
 								}
 							}
 						}
@@ -1940,7 +2083,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetVisitorDto_"
+									"$ref": "#/components/schemas/IResponse_GetVisitorDetailsDto_"
 								},
 								"examples": {
 									"Example 1": {}
@@ -1975,7 +2118,7 @@
 		},
 		"/visitor/admin": {
 			"get": {
-				"operationId": "getAllVisitor",
+				"operationId": "getVisitorByAdmin",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -2207,16 +2350,16 @@
 				}
 			}
 		},
-		"/user/user-list": {
+		"/user/admin/user-list": {
 			"get": {
-				"operationId": "getUserList",
+				"operationId": "getUserListByAdmin",
 				"responses": {
 					"200": {
 						"description": "OK",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IPaginatedResponse_GetUserDto_"
+									"$ref": "#/components/schemas/IPaginatedResponse_GetUserByAdminDto_"
 								}
 							}
 						}
@@ -2226,7 +2369,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetUserDto-Array_"
+									"$ref": "#/components/schemas/IResponse_GetUserByAdminDto-Array_"
 								},
 								"examples": {
 									"Example 1": {}
@@ -3074,7 +3217,7 @@
 		},
 		"/notice/admin": {
 			"get": {
-				"operationId": "getAllNotice",
+				"operationId": "getNoticeByAdmin",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -3201,7 +3344,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetNoticeDto_"
+									"$ref": "#/components/schemas/IResponse_GetNoticeDetailsDto_"
 								}
 							}
 						}
@@ -3211,7 +3354,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetNoticeDto_"
+									"$ref": "#/components/schemas/IResponse_GetNoticeDetailsDto_"
 								},
 								"examples": {
 									"Example 1": {}

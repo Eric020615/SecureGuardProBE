@@ -53,11 +53,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "DocumentStatus": {
-        "dataType": "refEnum",
-        "enums": [1,0,-1,2,3,4],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetVisitorDto": {
         "dataType": "refObject",
         "properties": {
@@ -67,11 +62,7 @@ const models: TsoaRoute.Models = {
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
-            "status": {"ref":"DocumentStatus","required":true},
-            "createdBy": {"dataType":"string","required":true},
-            "updatedBy": {"dataType":"string","required":true},
-            "createdDateTime": {"dataType":"string","required":true},
-            "updatedDateTime": {"dataType":"string","required":true},
+            "status": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -96,11 +87,29 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IResponse_GetVisitorDto_": {
+    "GetVisitorDetailsDto": {
+        "dataType": "refObject",
+        "properties": {
+            "visitorId": {"dataType":"double","required":true},
+            "visitorGuid": {"dataType":"string","required":true},
+            "visitorName": {"dataType":"string","required":true},
+            "visitorCategory": {"dataType":"string","required":true},
+            "visitorContactNumber": {"dataType":"string","required":true},
+            "visitDateTime": {"dataType":"string","required":true},
+            "status": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetVisitorDetailsDto_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"ref":"GetVisitorDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDto"}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetVisitorDetailsDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorDetailsDto"}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -156,12 +165,17 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GenderEnum": {
+        "dataType": "refEnum",
+        "enums": ["M","F"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoleEnum": {
         "dataType": "refEnum",
         "enums": ["SA","STF","RES","SUB"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "GetUserDto": {
+    "GetUserByAdminDto": {
         "dataType": "refObject",
         "properties": {
             "userId": {"dataType":"double","required":true},
@@ -170,32 +184,28 @@ const models: TsoaRoute.Models = {
             "lastName": {"dataType":"string","required":true},
             "userName": {"dataType":"string","required":true},
             "contactNumber": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
+            "gender": {"ref":"GenderEnum","required":true},
             "role": {"ref":"RoleEnum","required":true},
-            "dateOfBirth": {"dataType":"string","required":true},
-            "createdBy": {"dataType":"string","required":true},
-            "createdDateTime": {"dataType":"string","required":true},
-            "updatedBy": {"dataType":"string","required":true},
-            "updatedDateTime": {"dataType":"string","required":true},
+            "userStatus": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IPaginatedResponse_GetUserDto_": {
+    "IPaginatedResponse_GetUserByAdminDto_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
             "status": {"dataType":"string"},
-            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"list":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}},{"dataType":"enum","enums":[null]}],"required":true}},"required":true},
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"list":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserByAdminDto"}},{"dataType":"enum","enums":[null]}],"required":true}},"required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IResponse_GetUserDto-Array_": {
+    "IResponse_GetUserByAdminDto-Array_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserByAdminDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserByAdminDto"}}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -297,6 +307,36 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string"},
             "status": {"dataType":"string"},
             "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"list":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetSubUserByResidentDto"}},{"dataType":"enum","enums":[null]}],"required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "userId": {"dataType":"double","required":true},
+            "userGuid": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "userName": {"dataType":"string","required":true},
+            "contactNumber": {"dataType":"string","required":true},
+            "gender": {"dataType":"string","required":true},
+            "role": {"ref":"RoleEnum","required":true},
+            "dateOfBirth": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetUserDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetUserDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -432,10 +472,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
-            "createdBy": {"dataType":"string","required":true},
-            "createdDateTime": {"dataType":"string","required":true},
-            "updatedBy": {"dataType":"string","required":true},
-            "updatedDateTime": {"dataType":"string","required":true},
+            "status": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -460,11 +497,29 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IResponse_GetNoticeDto_": {
+    "GetNoticeDetailsDto": {
+        "dataType": "refObject",
+        "properties": {
+            "noticeId": {"dataType":"double","required":true},
+            "noticeGuid": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "startDate": {"dataType":"string","required":true},
+            "endDate": {"dataType":"string","required":true},
+            "status": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetNoticeDetailsDto_": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string"},
-            "data": {"dataType":"union","subSchemas":[{"ref":"GetNoticeDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDto"}},{"dataType":"enum","enums":[null]}]},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetNoticeDetailsDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetNoticeDetailsDto"}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -513,9 +568,7 @@ const models: TsoaRoute.Models = {
             "endDate": {"dataType":"string","required":true},
             "bookedBy": {"dataType":"string","required":true},
             "isCancelled": {"dataType":"boolean","required":true},
-            "status": {"ref":"DocumentStatus","required":true},
-            "createdDateTime": {"dataType":"string","required":true},
-            "updatedDateTime": {"dataType":"string","required":true},
+            "status": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -552,7 +605,7 @@ const models: TsoaRoute.Models = {
             "numOfGuest": {"dataType":"double","required":true},
             "isCancelled": {"dataType":"boolean","required":true},
             "cancelRemark": {"dataType":"string","required":true},
-            "status": {"ref":"DocumentStatus","required":true},
+            "status": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
             "updatedBy": {"dataType":"string","required":true},
@@ -829,9 +882,9 @@ export function RegisterRoutes(app: Router) {
         app.get('/visitor/admin',
             authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
-            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getAllVisitors)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorByAdmin)),
 
-            async function VisitorController_getAllVisitors(request: ExRequest, response: ExResponse, next: any) {
+            async function VisitorController_getVisitorByAdmin(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
@@ -853,7 +906,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'getAllVisitors',
+                methodName: 'getVisitorByAdmin',
                 controller,
                 response,
                 next,
@@ -978,7 +1031,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/user/user-list',
+        app.get('/user/admin/user-list',
             authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getUserList)),
@@ -1576,9 +1629,9 @@ export function RegisterRoutes(app: Router) {
         app.get('/notice/admin',
             authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
-            ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.getAllNotice)),
+            ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.getNoticeByAdmin)),
 
-            async function NoticeController_getAllNotice(request: ExRequest, response: ExResponse, next: any) {
+            async function NoticeController_getNoticeByAdmin(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
                     id: {"in":"query","name":"id","required":true,"dataType":"double"},
@@ -1599,7 +1652,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'getAllNotice',
+                methodName: 'getNoticeByAdmin',
                 controller,
                 response,
                 next,
