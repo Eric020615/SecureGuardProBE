@@ -138,7 +138,8 @@ export class NoticeController extends Controller {
 	@OperationId('getNoticeById')
 	@Response<IResponse<GetNoticeDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/detail')
+	@Get('/details')
+	@Security('jwt', ['RES', 'SUB', 'SA', 'STF'])
 	public async getNoticeById(@Query() noticeGuid: string): Promise<IResponse<GetNoticeDto>> {
 		try {
 			let data = await this.noticeService.getNoticeByIdService(noticeGuid)
@@ -196,6 +197,7 @@ export class NoticeController extends Controller {
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Delete('/delete')
+	@Security('jwt', ['RES', 'SUB', 'SA', 'STF'])
 	public async deleteNoticeById(@Body() deleteNoticeDto: DeleteNoticeDto): Promise<IResponse<any>> {
 		try {
 			await this.noticeService.deleteNoticeByIdService(deleteNoticeDto.noticeGuid)

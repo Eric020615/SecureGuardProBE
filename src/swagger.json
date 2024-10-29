@@ -1308,13 +1308,10 @@
 					"bookingGuid": {
 						"type": "string"
 					},
-					"startDate": {
-						"type": "string"
-					},
-					"facilityId": {
-						"type": "string"
-					},
 					"facilityName": {
+						"type": "string"
+					},
+					"startDate": {
 						"type": "string"
 					},
 					"endDate": {
@@ -1323,23 +1320,13 @@
 					"bookedBy": {
 						"type": "string"
 					},
-					"numOfGuest": {
-						"type": "number",
-						"format": "double"
-					},
 					"isCancelled": {
 						"type": "boolean"
 					},
-					"cancelRemark": {
-						"type": "string"
-					},
-					"createdBy": {
-						"type": "string"
+					"status": {
+						"$ref": "#/components/schemas/DocumentStatus"
 					},
 					"createdDateTime": {
-						"type": "string"
-					},
-					"updatedBy": {
 						"type": "string"
 					},
 					"updatedDateTime": {
@@ -1349,17 +1336,13 @@
 				"required": [
 					"bookingId",
 					"bookingGuid",
-					"startDate",
-					"facilityId",
 					"facilityName",
+					"startDate",
 					"endDate",
 					"bookedBy",
-					"numOfGuest",
 					"isCancelled",
-					"cancelRemark",
-					"createdBy",
+					"status",
 					"createdDateTime",
-					"updatedBy",
 					"updatedDateTime"
 				],
 				"type": "object",
@@ -1419,6 +1402,124 @@
 										"$ref": "#/components/schemas/GetFacilityBookingHistoryDto"
 									},
 									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetFacilityBookingDetailsDto": {
+				"properties": {
+					"bookingId": {
+						"type": "number",
+						"format": "double"
+					},
+					"bookingGuid": {
+						"type": "string"
+					},
+					"facilityName": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"bookedBy": {
+						"type": "string"
+					},
+					"numOfGuest": {
+						"type": "number",
+						"format": "double"
+					},
+					"isCancelled": {
+						"type": "boolean"
+					},
+					"cancelRemark": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/DocumentStatus"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdDateTime": {
+						"type": "string"
+					},
+					"updatedBy": {
+						"type": "string"
+					},
+					"updatedDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"bookingId",
+					"bookingGuid",
+					"facilityName",
+					"startDate",
+					"endDate",
+					"bookedBy",
+					"numOfGuest",
+					"isCancelled",
+					"cancelRemark",
+					"status",
+					"createdBy",
+					"createdDateTime",
+					"updatedBy",
+					"updatedDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetFacilityBookingDetailsDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetFacilityBookingDetailsDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetFacilityBookingDetailsDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetFacilityBookingHistoryDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetFacilityBookingHistoryDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetFacilityBookingHistoryDto"
 								},
 								"type": "array"
 							}
@@ -3091,7 +3192,7 @@
 				]
 			}
 		},
-		"/notice/detail": {
+		"/notice/details": {
 			"get": {
 				"operationId": "getNoticeById",
 				"responses": {
@@ -3122,7 +3223,16 @@
 				"tags": [
 					"Notice"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SUB",
+							"SA",
+							"STF"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -3217,7 +3327,16 @@
 				"tags": [
 					"Notice"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SUB",
+							"SA",
+							"STF"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -3356,7 +3475,7 @@
 		},
 		"/facility/admin": {
 			"get": {
-				"operationId": "getAllFacilityBooking",
+				"operationId": "getFacilityBookingHistoryByAdmin",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -3415,6 +3534,58 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/facility/details": {
+			"get": {
+				"operationId": "getFacilityBookingDetails",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetFacilityBookingDetailsDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetFacilityBookingHistoryDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Facility"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SUB",
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "facilityBookingGuid",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]

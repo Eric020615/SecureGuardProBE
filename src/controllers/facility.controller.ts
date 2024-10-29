@@ -1,6 +1,7 @@
 import {
 	CancelFacilityBookingDto,
 	CreateFacilityBookingDto,
+	GetFacilityBookingDetailsDto,
 	GetFacilityBookingHistoryDto,
 	SpaceAvailabilityDto,
 } from '../dtos/facility.dto'
@@ -56,10 +57,7 @@ export class FacilityController extends Controller {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
-			await this.facilityService.createFacilityBookingService(
-				createFacilityBookingDto,
-				userGuid,
-			)
+			await this.facilityService.createFacilityBookingService(createFacilityBookingDto, userGuid)
 			const response = {
 				message: 'Facility booking created successfully',
 				status: '200',
@@ -102,12 +100,7 @@ export class FacilityController extends Controller {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
-			const { data, count } = await this.facilityService.getFacilityBookingService(
-				userGuid,
-				isPast,
-				id,
-				limit,
-			)
+			const { data, count } = await this.facilityService.getFacilityBookingService(userGuid, isPast, id, limit)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
@@ -132,18 +125,18 @@ export class FacilityController extends Controller {
 	}
 
 	@Tags('Facility')
-	@OperationId('getAllFacilityBooking')
+	@OperationId('getFacilityBookingHistoryByAdmin')
 	@Response<IResponse<GetFacilityBookingHistoryDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/admin')
 	@Security('jwt', ['SA'])
-	public async getAllFacilityBooking(
+	public async getFacilityBookingHistoryByAdmin (
 		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
 		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetFacilityBookingHistoryDto>> {
 		try {
-			const { data, count } = await this.facilityService.getAllFacilityBookingService(direction, id, limit)
+			const { data, count } = await this.facilityService.getFacilityBookingHistoryByAdminService(direction, id, limit)
 			const response = {
 				message: 'Facility booking retrieve successfully',
 				status: '200',
@@ -162,6 +155,34 @@ export class FacilityController extends Controller {
 					list: null,
 					count: 0,
 				},
+			}
+			return response
+		}
+	}
+
+	@Tags('Facility')
+	@OperationId('getFacilityBookingDetails')
+	@Response<IResponse<GetFacilityBookingHistoryDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Get('/details')
+	@Security('jwt', ['RES', 'SUB', 'SA'])
+	public async getFacilityBookingDetailsByFacilityGuid (
+		@Query() facilityBookingGuid: string,
+	): Promise<IResponse<GetFacilityBookingDetailsDto>> {
+		try {
+			const data = await this.facilityService.getFacilityBookingDetailsByFacilityBookingGuidService(facilityBookingGuid)
+			const response = {
+				message: 'Facility booking details retrieve successfully',
+				status: '200',
+				data: data
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to retrieve facility booking details',
+				status: '500',
+				data: null
 			}
 			return response
 		}
@@ -182,10 +203,7 @@ export class FacilityController extends Controller {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
-			await this.facilityService.cancelFacilityBookingService(
-				userGuid,
-				cancelFacilityBookingDto,
-			)
+			await this.facilityService.cancelFacilityBookingService(userGuid, cancelFacilityBookingDto)
 			const response = {
 				message: 'Facility booking cancel successfully',
 				status: '200',

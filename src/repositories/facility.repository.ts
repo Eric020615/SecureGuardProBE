@@ -84,7 +84,7 @@ export class FacilityBookingRepository {
 		return { rows, count }
 	}
 
-	async getAllFacilityBookingRepository(direction: PaginationDirection, id: number, pageSize: number) {
+	async getFacilityBookingHistoryByAdminRepository (direction: PaginationDirection, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
 		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
 			this.facilityBookingCollection,
@@ -94,6 +94,16 @@ export class FacilityBookingRepository {
 			direction,
 		)
 		return { rows, count }
+	}
+
+	async getFacilityBookingDetailsByFacilityBookingGuidRepository(
+		facilityBookingGuid: string,
+	) {
+		const facilityBookingDocRef = doc(this.facilityBookingCollection, facilityBookingGuid)
+		const facilityBookingDoc = await getDoc(facilityBookingDocRef)
+		let result: FacilityBooking = {} as FacilityBooking
+		result = facilityBookingDoc.data() as FacilityBooking
+		return result
 	}
 
 	async cancelFacilityBookingRepository(data: FacilityBooking, bookingGuid: string) {

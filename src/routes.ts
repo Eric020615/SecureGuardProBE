@@ -508,17 +508,13 @@ const models: TsoaRoute.Models = {
         "properties": {
             "bookingId": {"dataType":"double","required":true},
             "bookingGuid": {"dataType":"string","required":true},
-            "startDate": {"dataType":"string","required":true},
-            "facilityId": {"dataType":"string","required":true},
             "facilityName": {"dataType":"string","required":true},
+            "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
             "bookedBy": {"dataType":"string","required":true},
-            "numOfGuest": {"dataType":"double","required":true},
             "isCancelled": {"dataType":"boolean","required":true},
-            "cancelRemark": {"dataType":"string","required":true},
-            "createdBy": {"dataType":"string","required":true},
+            "status": {"ref":"DocumentStatus","required":true},
             "createdDateTime": {"dataType":"string","required":true},
-            "updatedBy": {"dataType":"string","required":true},
             "updatedDateTime": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
@@ -539,6 +535,47 @@ const models: TsoaRoute.Models = {
         "properties": {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetFacilityBookingDetailsDto": {
+        "dataType": "refObject",
+        "properties": {
+            "bookingId": {"dataType":"double","required":true},
+            "bookingGuid": {"dataType":"string","required":true},
+            "facilityName": {"dataType":"string","required":true},
+            "startDate": {"dataType":"string","required":true},
+            "endDate": {"dataType":"string","required":true},
+            "bookedBy": {"dataType":"string","required":true},
+            "numOfGuest": {"dataType":"double","required":true},
+            "isCancelled": {"dataType":"boolean","required":true},
+            "cancelRemark": {"dataType":"string","required":true},
+            "status": {"ref":"DocumentStatus","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetFacilityBookingDetailsDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetFacilityBookingDetailsDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingDetailsDto"}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetFacilityBookingHistoryDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetFacilityBookingHistoryDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingHistoryDto"}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -1610,7 +1647,8 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/notice/detail',
+        app.get('/notice/details',
+            authenticateMiddleware([{"jwt":["RES","SUB","SA","STF"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.getNoticeById)),
 
@@ -1683,6 +1721,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.delete('/notice/delete',
+            authenticateMiddleware([{"jwt":["RES","SUB","SA","STF"]}]),
             ...(fetchMiddlewares<RequestHandler>(NoticeController)),
             ...(fetchMiddlewares<RequestHandler>(NoticeController.prototype.deleteNoticeById)),
 
@@ -1796,9 +1835,9 @@ export function RegisterRoutes(app: Router) {
         app.get('/facility/admin',
             authenticateMiddleware([{"jwt":["SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(FacilityController)),
-            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getAllFacilityBooking)),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getFacilityBookingHistoryByAdmin)),
 
-            async function FacilityController_getAllFacilityBooking(request: ExRequest, response: ExResponse, next: any) {
+            async function FacilityController_getFacilityBookingHistoryByAdmin(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
                     id: {"in":"query","name":"id","required":true,"dataType":"double"},
@@ -1819,7 +1858,43 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'getAllFacilityBooking',
+                methodName: 'getFacilityBookingHistoryByAdmin',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/facility/details',
+            authenticateMiddleware([{"jwt":["RES","SUB","SA"]}]),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController)),
+            ...(fetchMiddlewares<RequestHandler>(FacilityController.prototype.getFacilityBookingDetailsByFacilityGuid)),
+
+            async function FacilityController_getFacilityBookingDetailsByFacilityGuid(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    facilityBookingGuid: {"in":"query","name":"facilityBookingGuid","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<FacilityController>(FacilityController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getFacilityBookingDetailsByFacilityGuid',
                 controller,
                 response,
                 next,
