@@ -211,12 +211,23 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GeneralFileResponseDto": {
+        "dataType": "refObject",
+        "properties": {
+            "fileName": {"dataType":"string","required":true},
+            "fileUrl": {"dataType":"string","required":true},
+            "contentType": {"dataType":"string","required":true},
+            "size": {"dataType":"double"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ResidentInformationDto": {
         "dataType": "refObject",
         "properties": {
             "floor": {"dataType":"string","required":true},
             "unit": {"dataType":"string","required":true},
-            "supportedFiles": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "supportedDocuments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileResponseDto"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -225,7 +236,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "staffId": {"dataType":"string","required":true},
-            "supportedFiles": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "supportedDocuments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileResponseDto"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -518,6 +529,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
+            "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileResponseDto"},"required":true},
             "status": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
@@ -545,7 +557,6 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
-            "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
         },
         "additionalProperties": false,
     },

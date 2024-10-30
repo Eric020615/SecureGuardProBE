@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import { FileModel } from '../models/file.model'
 import { provideSingleton } from '../helper/provideSingleton'
@@ -44,6 +44,25 @@ export class FileRepository {
 			return fileDoc.data() as FileModel
 		}
 		throw new Error('File not found')
+	}
+
+	async getFilesByGuidsRepository(fileGuids: string[]) {
+		if (fileGuids.length === 0) { 
+			return []
+		}
+		const constraints = [
+			where('__name__', 'in', fileGuids),
+			where('status', '==', DocumentStatus.Active)
+		]
+		const q = query(this.fileCollection, ...constraints)
+		const fileSnapshot = await getDocs(q)
+		let files: FileModel[] = []
+		fileSnapshot.forEach((doc) => {
+			let data = doc.data() as FileModel
+			data.guid = doc.id
+			files.push(data)
+		})
+		return files
 	}
 
 	async updateFileByIdRepository(fileGuid: string, file: Partial<FileModel>) {

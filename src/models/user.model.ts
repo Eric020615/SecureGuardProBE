@@ -85,7 +85,7 @@ export class Resident {
 	updatedBy: string
 	createdDateTime: Timestamp
 	updatedDateTime: Timestamp
-	supportedDocumentUrl: string[]
+	supportedDocuments: string[]
 
 	constructor(
 		unit: string,
@@ -94,7 +94,7 @@ export class Resident {
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
-		supprtedDocumentUrl: string[],
+		supportedDocuments: string[],
 	) {
 		this.unit = unit
 		this.floor = floor
@@ -102,7 +102,7 @@ export class Resident {
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime
 		this.updatedDateTime = updatedDateTime
-		this.supportedDocumentUrl = supprtedDocumentUrl
+		this.supportedDocuments = supportedDocuments
 	}
 }
 
@@ -114,7 +114,7 @@ export class Staff {
 	updatedBy: string
 	createdDateTime: Timestamp
 	updatedDateTime: Timestamp
-	supportedDocumentUrl: string[]
+	supportedDocuments: string[]
 
 	constructor(
 		staffId: string,
@@ -123,7 +123,7 @@ export class Staff {
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
-		supprtedDocumentUrl: string[],
+		supportedDocuments: string[],
 	) {
 		this.staffId = staffId
 		this.isAdmin = isAdmin
@@ -131,6 +131,6 @@ export class Staff {
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime
 		this.updatedDateTime = updatedDateTime
-		this.supportedDocumentUrl = supprtedDocumentUrl
+		this.supportedDocuments = supportedDocuments
 	}
 }

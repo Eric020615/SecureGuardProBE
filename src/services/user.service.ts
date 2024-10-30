@@ -15,11 +15,7 @@ import {
 } from '../dtos/user.dto'
 import { Resident, SubUser, Staff, User } from '../models/user.model'
 import { UserRepository } from '../repositories/user.repository'
-import {
-	convertDateStringToTimestamp,
-	convertTimestampToUserTimezone,
-	getCurrentTimestamp,
-} from '../helper/time'
+import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { RoleEnum } from '../common/role'
 import { UserRecord } from 'firebase-admin/auth'
@@ -58,9 +54,7 @@ export class UserService {
 				case RoleEnum.RESIDENT:
 					return userGuid
 				case RoleEnum.RESIDENT_SUBUSER:
-					const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(
-						userGuid,
-					)
+					const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(userGuid)
 					if (!subUser) {
 						throw new OperationError('Sub user not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 					}
@@ -88,11 +82,11 @@ export class UserService {
 			}
 
 			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
-				const fileUrl = await this.fileService.uploadMultipleFiles(
-					createUserDto.supportedFiles,
-					`supportedFiles/${userGuid}`,
+				const supportedDocuments = await this.fileService.uploadMultipleFiles(
+					createUserDto.supportedDocuments,
+					`supportedDocuments/${userGuid}`,
 					userGuid,
-					'supported files',
+					'supported documents',
 				)
 				await this.userRepository.createResidentRepository(
 					new User(
@@ -116,7 +110,7 @@ export class UserService {
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
-						fileUrl ? fileUrl : [],
+						supportedDocuments ? supportedDocuments : [],
 					),
 					userGuid,
 				)
@@ -143,23 +137,17 @@ export class UserService {
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 					),
-					new SubUser(
-						createUserDto.parentUserGuid,
-						userGuid,
-						userGuid,
-						getCurrentTimestamp(),
-						getCurrentTimestamp(),
-					),
+					new SubUser(createUserDto.parentUserGuid, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
 					userGuid,
 				)
 			}
 
 			if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateStaffDto(createUserDto)) {
-				const fileUrl = await this.fileService.uploadMultipleFiles(
-					createUserDto.supportedFiles,
-					`supportedFiles/${userGuid}`,
+				const supportedDocuments = await this.fileService.uploadMultipleFiles(
+					createUserDto.supportedDocuments,
+					`supportedDocuments/${userGuid}`,
 					userGuid,
-					'supported files',
+					'supported documents',
 				)
 				await this.userRepository.createStaffRepository(
 					new User(
@@ -183,16 +171,16 @@ export class UserService {
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
-						fileUrl ? fileUrl : [],
+						supportedDocuments ? supportedDocuments : [],
 					),
 					userGuid,
 				)
 			}
 
 			if (role === RoleEnum.STAFF && this.instanceOfCreateStaffDto(createUserDto)) {
-				const fileUrl = await this.fileService.uploadMultipleFiles(
-					createUserDto.supportedFiles,
-					`supportedFiles/${userGuid}`,
+				const supportedDocuments = await this.fileService.uploadMultipleFiles(
+					createUserDto.supportedDocuments,
+					`supportedDocuments/${userGuid}`,
 					userGuid,
 					'supported files',
 				)
@@ -218,20 +206,16 @@ export class UserService {
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
-						fileUrl ? fileUrl : [],
+						supportedDocuments ? supportedDocuments : [],
 					),
 					userGuid,
 				)
 			}
-
 			await this.authAdmin.updateUser(userGuid, { displayName: createUserDto.userName })
 		} catch (error: any) {
 			console.log(error)
 			if (error instanceof FirebaseError) {
-				throw new OperationError(
-					convertFirebaseAuthEnumMessage(error.code),
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -262,12 +246,7 @@ export class UserService {
 		}
 	}
 
-	getUserListByAdminService = async (
-		isActive: boolean,
-		direction: PaginationDirection,
-		id: number,
-		limit: number,
-	) => {
+	getUserListByAdminService = async (isActive: boolean, direction: PaginationDirection, id: number, limit: number) => {
 		try {
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
@@ -276,12 +255,7 @@ export class UserService {
 			} else {
 				userList = userResult.users.filter((user) => user.disabled)
 			}
-			let { rows, count } = await this.userRepository.getUserListByAdminRepository(
-				userList,
-				direction,
-				id,
-				limit,
-			)
+			let { rows, count } = await this.userRepository.getUserListByAdminRepository(userList, direction, id, limit)
 			let data: GetUserByAdminDto[] = []
 			data =
 				rows && rows.length > 0
@@ -335,18 +309,19 @@ export class UserService {
 				data.roleInformation = {
 					floor: residentDetails.floor,
 					unit: residentDetails.unit,
-					supportedFiles: residentDetails.supportedDocumentUrl,
+					supportedDocuments: await this.fileService.getFilesByGuidsService(residentDetails.supportedDocuments),
 				}
 				return data
 			}
 			if (data.role === RoleEnum.SYSTEM_ADMIN || data.role === RoleEnum.STAFF) {
 				const staffDetails = await this.userRepository.getStaffDetailsRepository(userGuid)
+				console.log(staffDetails)
 				if (!staffDetails) {
 					return data
 				}
 				data.roleInformation = {
 					staffId: staffDetails.staffId,
-					supportedFiles: staffDetails.supportedDocumentUrl,
+					supportedDocuments: await this.fileService.getFilesByGuidsService(staffDetails.supportedDocuments),
 				}
 				return data
 			}
@@ -356,10 +331,7 @@ export class UserService {
 		}
 	}
 
-	editUserDetailsByIdService = async (
-		editUserDetailsByIdDto: EditUserDetailsByIdDto,
-		userId: string,
-	) => {
+	editUserDetailsByIdService = async (editUserDetailsByIdDto: EditUserDetailsByIdDto, userId: string) => {
 		try {
 			let user: User = {
 				firstName: editUserDetailsByIdDto.firstName,
@@ -397,10 +369,7 @@ export class UserService {
 		try {
 			const userRecord = await this.authAdmin.getUser(userId)
 			if (userRecord.disabled) {
-				throw new OperationError(
-					'User was deactivated before.',
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError('User was deactivated before.', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.authAdmin.updateUser(userId, { disabled: true })
 			await this.userRepository.updateUserStatusByIdRepository(userId, {
@@ -412,19 +381,11 @@ export class UserService {
 		}
 	}
 
-	createSubUserRequestService = async (
-		createSubUserRequestDto: CreateSubUserRequestDto,
-		userId: string,
-	) => {
+	createSubUserRequestService = async (createSubUserRequestDto: CreateSubUserRequestDto, userId: string) => {
 		try {
-			const subUserRequest = await this.userRepository.getSubUserRequestByEmailRepository(
-				createSubUserRequestDto.email,
-			)
+			const subUserRequest = await this.userRepository.getSubUserRequestByEmailRepository(createSubUserRequestDto.email)
 			if (subUserRequest.length > 0) {
-				throw new OperationError(
-					'Sub user request already exists',
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError('Sub user request already exists', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const isEmailExist = await this.isEmailRegistered(createSubUserRequestDto.email)
 			if (isEmailExist) {
@@ -467,11 +428,7 @@ export class UserService {
 
 	getSubUserListByResidentService = async (userGuid: string, id: number, limit: number) => {
 		try {
-			let { rows, count } = await this.userRepository.getSubUserListByResidentRepository(
-				userGuid,
-				id,
-				limit,
-			)
+			let { rows, count } = await this.userRepository.getSubUserListByResidentRepository(userGuid, id, limit)
 			let data: GetSubUserByResidentDto[] = []
 			data =
 				rows && rows.length > 0
@@ -481,9 +438,7 @@ export class UserService {
 									userId: userInformation.id,
 									userGuid: userInformation.guid ? userInformation.guid : '',
 									userName: userInformation.guid
-										? await this.authAdmin
-												.getUser(userInformation.guid)
-												.then((user) => user.displayName)
+										? await this.authAdmin.getUser(userInformation.guid).then((user) => user.displayName)
 										: '',
 									firstName: userInformation.firstName,
 									lastName: userInformation.lastName,
@@ -491,9 +446,7 @@ export class UserService {
 									dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
 									contactNumber: userInformation.contactNumber,
 									status: userInformation.guid
-										? await this.authAdmin
-												.getUser(userInformation.guid)
-												.then((user) => !user.disabled)
+										? await this.authAdmin.getUser(userInformation.guid).then((user) => !user.disabled)
 										: false,
 								} as GetSubUserByResidentDto
 							}),
@@ -508,20 +461,14 @@ export class UserService {
 
 	getSubUserParentUserGuidByUserGuidService = async (userGuid: string) => {
 		try {
-			const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(
-				userGuid,
-			)
+			const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(userGuid)
 			return subUser ? subUser.parentUserGuid : ''
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
 
-	editSubUserStatusByIdService = async (
-		subUserGuid: string,
-		updatedBy: string,
-		status: boolean,
-	) => {
+	editSubUserStatusByIdService = async (subUserGuid: string, updatedBy: string, status: boolean) => {
 		try {
 			await this.authAdmin.updateUser(subUserGuid, { disabled: !status })
 			let subUser: SubUser = {

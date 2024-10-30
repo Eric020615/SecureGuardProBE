@@ -33,17 +33,17 @@ export class NoticeService {
 				),
 			)
 			if (!noticeGuid) {
-				throw new OperationError("Failed to create notice", HttpStatusCode.INTERNAL_SERVER_ERROR)
+				throw new OperationError('Failed to create notice', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const fileUrl = await this.fileService.uploadMultipleFiles(
+			const fileGuids = await this.fileService.uploadMultipleFiles(
 				createNoticeDto.attachments,
 				`notice/attachments/${noticeGuid}`,
 				userId,
-				'notice attachments'
+				'notice attachments',
 			)
-			if (fileUrl.length > 0) {
+			if (fileGuids.length > 0) {
 				await this.noticeRepository.editNoticeByIdRepository(noticeGuid, {
-					attachments: fileUrl,
+					attachments: fileGuids,
 				} as Notice)
 			}
 		} catch (error: any) {
@@ -101,6 +101,7 @@ export class NoticeService {
 		try {
 			const notice = await this.noticeRepository.getNoticeDetailsByIdRepository(noticeGuid)
 			let data: GetNoticeDetailsDto = {} as GetNoticeDetailsDto
+			const attachments = await this.fileService.getFilesByGuidsService(notice.attachments)
 			if (notice != null) {
 				data = {
 					noticeId: notice.id,
@@ -109,6 +110,7 @@ export class NoticeService {
 					description: notice.description,
 					startDate: convertTimestampToUserTimezone(notice.startDate),
 					endDate: convertTimestampToUserTimezone(notice.endDate),
+					attachments: attachments,
 					status: DocumentStatus[notice.status],
 					createdBy: notice.createdBy,
 					createdDateTime: convertTimestampToUserTimezone(notice.createdDateTime),

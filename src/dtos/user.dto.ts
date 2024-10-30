@@ -1,5 +1,5 @@
 import { GenderEnum, RoleEnum } from '../common/role'
-import { GeneralFileDto } from './index.dto'
+import { GeneralFileDto, GeneralFileResponseDto } from './index.dto'
 
 export interface CreateUserDto {
 	firstName: string
@@ -46,12 +46,12 @@ export interface CreateSubUserDto extends CreateUserDto {
 export interface CreateResidentDto extends CreateUserDto {
 	unit: string
 	floor: string
-	supportedFiles: GeneralFileDto[]
+	supportedDocuments: GeneralFileDto[]
 }
 
 export interface CreateStaffDto extends CreateUserDto {
 	staffId: string
-	supportedFiles: GeneralFileDto[]
+	supportedDocuments: GeneralFileDto[]
 }
 
 export interface GetUserDetailsByIdDto {
@@ -76,12 +76,12 @@ export interface GetUserDetailsByIdDto {
 export interface ResidentInformationDto {
 	floor: string
 	unit: string
-	supportedFiles: string[]
+	supportedDocuments: GeneralFileResponseDto[]
 }
 
 export interface SystemInformationDto {
 	staffId: string
-	supportedFiles: string[]
+	supportedDocuments: GeneralFileResponseDto[]
 }
 
 export interface EditUserDetailsByIdDto {

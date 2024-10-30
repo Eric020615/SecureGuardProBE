@@ -1,7 +1,7 @@
 import { ref, uploadString, getDownloadURL, getStorage } from 'firebase/storage'
 import { inject } from 'inversify'
 import { FirebaseClient } from '../config/initFirebase' // adjust the path as needed
-import { GeneralFileDto } from '../dtos/index.dto'
+import { GeneralFileDto, GeneralFileResponseDto } from '../dtos/index.dto'
 import { provideSingleton } from '../helper/provideSingleton'
 import { FileModel } from '../models/file.model'
 import { DocumentStatus } from '../common/constants'
@@ -16,7 +16,7 @@ export class FileService {
 		@inject(FirebaseClient)
 		private firebaseClient: FirebaseClient, // Inject and persist FirebaseClient
 		@inject(FileRepository)
-		private fileRepository: FileRepository
+		private fileRepository: FileRepository,
 	) {
 		this.storage = this.firebaseClient.storage // Store the storage instance
 	}
@@ -35,7 +35,12 @@ export class FileService {
 		}
 	}
 
-	public uploadMultipleFiles = async (fileDto: GeneralFileDto[], folderpath: string, userGuid: string, description?: string) => {
+	public uploadMultipleFiles = async (
+		fileDto: GeneralFileDto[],
+		folderpath: string,
+		userGuid: string,
+		description?: string,
+	) => {
 		try {
 			// Now use this.storage which persists across the method
 			const fileURLs = await Promise.all(
@@ -54,10 +59,10 @@ export class FileService {
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 						file.size,
-						description
+						description,
 					)
-					await this.fileRepository.createFileRepository(fileModel);
-					return fileURL
+					const fileGuid = await this.fileRepository.createFileRepository(fileModel)
+					return fileGuid
 				}),
 			)
 
@@ -65,6 +70,27 @@ export class FileService {
 		} catch (error) {
 			console.error(error)
 			throw new Error('File upload failed')
+		}
+	}
+
+	public getFilesByGuidsService = async (fileGuids: string[]) => {
+		try {
+			const files = await this.fileRepository.getFilesByGuidsRepository(fileGuids)
+			let data: GeneralFileResponseDto[] = []
+			data = files
+				? files.map((file) => {
+						return {
+							fileName: file.fileName,
+							fileUrl: file.fileURL,
+							contentType: file.contentType,
+							size: file.size,
+						} as GeneralFileResponseDto
+				  })
+				: []
+			return data
+		} catch (error) {
+			console.error(error)
+			throw new Error('Failed to get files')
 		}
 	}
 }

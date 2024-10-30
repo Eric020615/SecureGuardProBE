@@ -475,6 +475,30 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GeneralFileResponseDto": {
+				"properties": {
+					"fileName": {
+						"type": "string"
+					},
+					"fileUrl": {
+						"type": "string"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"fileName",
+					"fileUrl",
+					"contentType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ResidentInformationDto": {
 				"properties": {
 					"floor": {
@@ -483,9 +507,9 @@
 					"unit": {
 						"type": "string"
 					},
-					"supportedFiles": {
+					"supportedDocuments": {
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/GeneralFileResponseDto"
 						},
 						"type": "array"
 					}
@@ -493,7 +517,7 @@
 				"required": [
 					"floor",
 					"unit",
-					"supportedFiles"
+					"supportedDocuments"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -503,16 +527,16 @@
 					"staffId": {
 						"type": "string"
 					},
-					"supportedFiles": {
+					"supportedDocuments": {
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/GeneralFileResponseDto"
 						},
 						"type": "array"
 					}
 				},
 				"required": [
 					"staffId",
-					"supportedFiles"
+					"supportedDocuments"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1351,6 +1375,12 @@
 					"endDate": {
 						"type": "string"
 					},
+					"attachments": {
+						"items": {
+							"$ref": "#/components/schemas/GeneralFileResponseDto"
+						},
+						"type": "array"
+					},
 					"status": {
 						"type": "string"
 					},
@@ -1374,6 +1404,7 @@
 					"description",
 					"startDate",
 					"endDate",
+					"attachments",
 					"status",
 					"createdBy",
 					"createdDateTime",
@@ -1425,12 +1456,6 @@
 					},
 					"endDate": {
 						"type": "string"
-					},
-					"attachments": {
-						"items": {
-							"$ref": "#/components/schemas/GeneralFileDto"
-						},
-						"type": "array"
 					}
 				},
 				"required": [
@@ -1438,8 +1463,7 @@
 					"title",
 					"description",
 					"startDate",
-					"endDate",
-					"attachments"
+					"endDate"
 				],
 				"type": "object",
 				"additionalProperties": false

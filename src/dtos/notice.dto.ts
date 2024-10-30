@@ -1,4 +1,4 @@
-import { GeneralFileDto } from "./index.dto"
+import { GeneralFileDto, GeneralFileResponseDto } from "./index.dto"
 
 export interface CreateNoticeDto {
 	title: string
@@ -14,7 +14,6 @@ export interface EditNoticeDto {
 	description: string
 	startDate: string
 	endDate: string
-	attachments: GeneralFileDto[]
 }
 
 export interface DeleteNoticeDto {
@@ -38,6 +37,7 @@ export interface GetNoticeDetailsDto {
 	description: string
 	startDate: string
 	endDate: string
+	attachments: GeneralFileResponseDto[]
 	status: string
 	createdBy: string
 	createdDateTime: string

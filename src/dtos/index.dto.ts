@@ -5,6 +5,13 @@ export interface GeneralFileDto {
 	size?: number
 }
 
+export interface GeneralFileResponseDto {
+	fileName: string
+	fileUrl: string
+	contentType: string
+	size?: number
+}
+
 export interface IResponse<T> {
 	message?: string
 	data?: T | T[] | null
