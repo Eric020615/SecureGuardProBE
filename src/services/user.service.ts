@@ -91,6 +91,8 @@ export class UserService {
 				const fileUrl = await this.fileService.uploadMultipleFiles(
 					createUserDto.supportedFiles,
 					`supportedFiles/${userGuid}`,
+					userGuid,
+					'supported files',
 				)
 				await this.userRepository.createResidentRepository(
 					new User(
@@ -156,6 +158,8 @@ export class UserService {
 				const fileUrl = await this.fileService.uploadMultipleFiles(
 					createUserDto.supportedFiles,
 					`supportedFiles/${userGuid}`,
+					userGuid,
+					'supported files',
 				)
 				await this.userRepository.createStaffRepository(
 					new User(
@@ -189,6 +193,8 @@ export class UserService {
 				const fileUrl = await this.fileService.uploadMultipleFiles(
 					createUserDto.supportedFiles,
 					`supportedFiles/${userGuid}`,
+					userGuid,
+					'supported files',
 				)
 				await this.userRepository.createStaffRepository(
 					new User(

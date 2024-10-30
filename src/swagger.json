@@ -1171,6 +1171,30 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GeneralFileDto": {
+				"properties": {
+					"fileName": {
+						"type": "string"
+					},
+					"fileData": {
+						"type": "string"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"fileName",
+					"fileData",
+					"contentType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateNoticeDto": {
 				"properties": {
 					"title": {
@@ -1184,13 +1208,20 @@
 					},
 					"endDate": {
 						"type": "string"
+					},
+					"attachments": {
+						"items": {
+							"$ref": "#/components/schemas/GeneralFileDto"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"title",
 					"description",
 					"startDate",
-					"endDate"
+					"endDate",
+					"attachments"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1394,6 +1425,12 @@
 					},
 					"endDate": {
 						"type": "string"
+					},
+					"attachments": {
+						"items": {
+							"$ref": "#/components/schemas/GeneralFileDto"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -1401,7 +1438,8 @@
 					"title",
 					"description",
 					"startDate",
-					"endDate"
+					"endDate",
+					"attachments"
 				],
 				"type": "object",
 				"additionalProperties": false

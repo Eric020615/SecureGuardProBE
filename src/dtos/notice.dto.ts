@@ -1,8 +1,11 @@
+import { GeneralFileDto } from "./index.dto"
+
 export interface CreateNoticeDto {
 	title: string
 	description: string
 	startDate: string
 	endDate: string
+	attachments: GeneralFileDto[]
 }
 
 export interface EditNoticeDto {
@@ -11,6 +14,7 @@ export interface EditNoticeDto {
 	description: string
 	startDate: string
 	endDate: string
+	attachments: GeneralFileDto[]
 }
 
 export interface DeleteNoticeDto {

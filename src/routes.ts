@@ -452,6 +452,17 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GeneralFileDto": {
+        "dataType": "refObject",
+        "properties": {
+            "fileName": {"dataType":"string","required":true},
+            "fileData": {"dataType":"string","required":true},
+            "contentType": {"dataType":"string","required":true},
+            "size": {"dataType":"double"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateNoticeDto": {
         "dataType": "refObject",
         "properties": {
@@ -459,6 +470,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
+            "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -533,6 +545,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
+            "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"},"required":true},
         },
         "additionalProperties": false,
     },

@@ -3,27 +3,28 @@ import { NoticeRepository } from '../repositories/notice.repository'
 import { Notice } from '../models/notice.model'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
-import {
-	convertDateStringToTimestamp,
-	convertTimestampToUserTimezone,
-	getCurrentTimestamp,
-} from '../helper/time'
+import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { DocumentStatus, PaginationDirection } from '../common/constants'
+import { FileService } from './file.service'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
-	constructor(@inject(NoticeRepository) private noticeRepository: NoticeRepository) {}
+	constructor(
+		@inject(NoticeRepository) private noticeRepository: NoticeRepository,
+		@inject(FileService) private fileService: FileService,
+	) {}
 	createNoticeService = async (createNoticeDto: CreateNoticeDto, userId: string) => {
 		try {
-			await this.noticeRepository.createNoticeRepository(
+			const noticeGuid = await this.noticeRepository.createNoticeRepository(
 				new Notice(
 					0,
 					createNoticeDto.title,
 					createNoticeDto.description,
 					convertDateStringToTimestamp(createNoticeDto.startDate),
 					convertDateStringToTimestamp(createNoticeDto.endDate),
+					[],
 					DocumentStatus.Active,
 					userId,
 					userId,
@@ -31,6 +32,20 @@ export class NoticeService {
 					getCurrentTimestamp(),
 				),
 			)
+			if (!noticeGuid) {
+				throw new OperationError("Failed to create notice", HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const fileUrl = await this.fileService.uploadMultipleFiles(
+				createNoticeDto.attachments,
+				`notice/attachments/${noticeGuid}`,
+				userId,
+				'notice attachments'
+			)
+			if (fileUrl.length > 0) {
+				await this.noticeRepository.editNoticeByIdRepository(noticeGuid, {
+					attachments: fileUrl,
+				} as Notice)
+			}
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -49,7 +64,7 @@ export class NoticeService {
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
 							endDate: convertTimestampToUserTimezone(notice.endDate),
-							status: DocumentStatus[notice.status]
+							status: DocumentStatus[notice.status],
 						} as GetNoticeDto
 				  })
 				: []
@@ -72,7 +87,7 @@ export class NoticeService {
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
 							endDate: convertTimestampToUserTimezone(notice.endDate),
-							status: DocumentStatus[notice.status]
+							status: DocumentStatus[notice.status],
 						} as GetNoticeDto
 				  })
 				: []
@@ -85,7 +100,6 @@ export class NoticeService {
 	getNoticeDetailsByIdService = async (noticeGuid: string) => {
 		try {
 			const notice = await this.noticeRepository.getNoticeDetailsByIdRepository(noticeGuid)
-			console.log(notice)
 			let data: GetNoticeDetailsDto = {} as GetNoticeDetailsDto
 			if (notice != null) {
 				data = {

@@ -1,6 +1,8 @@
 export interface GeneralFileDto {
 	fileName: string
-	data: string
+	fileData: string
+	contentType: string
+	size?: number
 }
 
 export interface IResponse<T> {

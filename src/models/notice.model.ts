@@ -6,6 +6,7 @@ export class Notice extends BaseModel{
     description: string;
     startDate: Timestamp;
     endDate: Timestamp;
+    attachments: string[];
 
     constructor(
         id: number,
@@ -13,6 +14,7 @@ export class Notice extends BaseModel{
         description: string,
         startDate: Timestamp,
         endDate: Timestamp,
+        attachments: string[],
         status: number,
         createdBy: string,
         updatedBy: string,
@@ -24,5 +26,6 @@ export class Notice extends BaseModel{
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.attachments = attachments;
     }
 }

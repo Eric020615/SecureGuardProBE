@@ -38,6 +38,7 @@ export class NoticeRepository {
 			}
 			const docRef = await addDoc(this.noticeCollection, Object.assign({}, notice))
 			await updateDoc(docRef, { id: id })
+			return docRef.id
 		})
 	}
 
