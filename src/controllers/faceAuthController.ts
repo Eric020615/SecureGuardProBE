@@ -63,7 +63,7 @@ export class FaceAuthController extends Controller {
 				face_list: [
 					{
 						idx: 0,
-						data: createUserFaceAuthDto.faceData,
+						data: createUserFaceAuthDto.faceData.fileData,
 					},
 				],
 				person_code: userGuid,
@@ -116,7 +116,7 @@ export class FaceAuthController extends Controller {
 				face_list: [
 					{
 						idx: 0,
-						data: updateUserFaceAuthDto.faceData,
+						data: updateUserFaceAuthDto.faceData.fileData,
 					},
 				],
 				person_code: userData.userGuid,
