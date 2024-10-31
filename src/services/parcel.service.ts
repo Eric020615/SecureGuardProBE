@@ -1,10 +1,6 @@
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
-import {
-	convertTimestampToUserTimezone,
-	getCurrentDateString,
-	getCurrentTimestamp,
-} from '../helper/time'
+import { convertTimestampToUserTimezone, getCurrentDateString, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { DocumentStatus, ITimeFormat } from '../common/constants'
@@ -21,17 +17,17 @@ export class ParcelService {
 	) {}
 	createParcelService = async (createParcelDto: CreateParcelDto, userId: string) => {
 		try {
-			const fileUrl = await this.fileService.uploadFile(
+			const fileGuid = await this.fileService.uploadFile(
 				createParcelDto.parcelImage,
-				`parcelImage/${createParcelDto.floor}/${createParcelDto.unit}/${getCurrentDateString(
-					ITimeFormat.isoDateTime,
-				)}`,
-				'image/jpeg',
+				`parcel/${createParcelDto.floor}/${createParcelDto.unit}/${getCurrentDateString(ITimeFormat.isoDateTime)}`,
+				createParcelDto.parcelImage.contentType,
+				userId,
+				'parcel image',
 			)
 			await this.parcelRepository.createParcelRepository(
 				new Parcel(
 					0,
-					fileUrl,
+					fileGuid,
 					createParcelDto.floor,
 					createParcelDto.unit,
 					DocumentStatus.Active,
@@ -46,27 +42,29 @@ export class ParcelService {
 		}
 	}
 
-	
 	getParcelByResidentService = async (id: number, limit: number, floor: string, unit: string) => {
 		try {
 			let { rows, count } = await this.parcelRepository.getParcelByResidentRepository(id, limit, floor, unit)
 			let data: GetParcelDto[] = []
-			data = rows
-				? rows.map((parcel) => {
-						return {
-							parcelId: parcel.id,
-							parcelGuid: parcel.guid,
-							parcelImage: parcel.parcelImageUrl,
-							floor: parcel.floor,
-							unit: parcel.unit,
-							status: parcel.status,
-							createdBy: parcel.createdBy,
-							createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
-							updatedBy: parcel.updatedBy,
-							updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
-						} as GetParcelDto
-				  })
-				: []
+			data =
+				rows && rows.length > 0
+					? await Promise.all(
+							rows.map(async (parcel) => {
+								return {
+									parcelId: parcel.id,
+									parcelGuid: parcel.guid,
+									parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
+									floor: parcel.floor,
+									unit: parcel.unit,
+									status: parcel.status,
+									createdBy: parcel.createdBy,
+									createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
+									updatedBy: parcel.updatedBy,
+									updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
+								} as GetParcelDto
+							}),
+					  )
+					: []
 			return { data, count }
 		} catch (error: any) {
 			console.log(error)
@@ -76,28 +74,27 @@ export class ParcelService {
 
 	getParcelByStaffService = async (id: number, limit: number, userGuid: string) => {
 		try {
-			let { rows, count } = await this.parcelRepository.getParcelByStaffRepository(
-				id,
-				limit,
-				userGuid,
-			)
+			let { rows, count } = await this.parcelRepository.getParcelByStaffRepository(id, limit, userGuid)
 			let data: GetParcelDto[] = []
-			data = rows
-				? rows.map((parcel) => {
-						return {
-							parcelId: parcel.id,
-							parcelGuid: parcel.guid,
-							parcelImage: parcel.parcelImageUrl,
-							floor: parcel.floor,
-							unit: parcel.unit,
-							status: parcel.status,
-							createdBy: parcel.createdBy,
-							createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
-							updatedBy: parcel.updatedBy,
-							updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
-						} as GetParcelDto
-				  })
-				: []
+			data =
+				rows && rows.length > 0
+					? await Promise.all(
+							rows.map(async (parcel) => {
+								return {
+									parcelId: parcel.id,
+									parcelGuid: parcel.guid,
+									parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
+									floor: parcel.floor,
+									unit: parcel.unit,
+									status: parcel.status,
+									createdBy: parcel.createdBy,
+									createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
+									updatedBy: parcel.updatedBy,
+									updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
+								} as GetParcelDto
+							}),
+					  )
+					: []
 			return { data, count }
 		} catch (error: any) {
 			console.log(error)

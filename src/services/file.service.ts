@@ -21,14 +21,34 @@ export class FileService {
 		this.storage = this.firebaseClient.storage // Store the storage instance
 	}
 
-	public uploadFile = async (file: string, folderpath: string, contentType: string) => {
+	public uploadFile = async (
+		file: GeneralFileDto,
+		folderpath: string,
+		contentType: string,
+		userGuid: string,
+		description: string,
+	) => {
 		try {
 			const storageRef = ref(this.storage, `${folderpath}`)
-			const snapshot = await uploadString(storageRef, file, 'base64', {
+			const snapshot = await uploadString(storageRef, file.fileData, 'base64', {
 				contentType: contentType,
 			})
 			const fileURL = await getDownloadURL(snapshot.ref)
-			return fileURL
+			const fileModel = new FileModel(
+				0,
+				file.fileName,
+				fileURL,
+				file.contentType,
+				DocumentStatus.Active,
+				userGuid,
+				userGuid,
+				getCurrentTimestamp(),
+				getCurrentTimestamp(),
+				file.size,
+				description,
+			)
+			const fileGuid = await this.fileRepository.createFileRepository(fileModel)
+			return fileGuid
 		} catch (error) {
 			console.error(error)
 			throw new Error('File upload failed')
@@ -70,6 +90,25 @@ export class FileService {
 		} catch (error) {
 			console.error(error)
 			throw new Error('File upload failed')
+		}
+	}
+
+	public getFileByGuidService = async (fileGuid: string) => {
+		try {
+			const file = await this.fileRepository.getFileByGuidRepository(fileGuid)
+			let data: GeneralFileResponseDto = {} as GeneralFileResponseDto
+			if (file != null) {
+				data = {
+					fileName: file.fileName,
+					fileUrl: file.fileURL,
+					contentType: file.contentType,
+					size: file.size
+				} as GeneralFileResponseDto
+			}
+			return data
+		} catch (error) {
+			console.error(error)
+			throw new Error('Failed to get files')
 		}
 	}
 

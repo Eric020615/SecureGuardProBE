@@ -46,14 +46,19 @@ export class FileRepository {
 		throw new Error('File not found')
 	}
 
+	async getFileByGuidRepository(fileGuid: string) {
+		const fileDocRef = doc(this.fileCollection, fileGuid)
+		const fileDoc = await getDoc(fileDocRef)
+		let result: FileModel = {} as FileModel
+		result = fileDoc.data() as FileModel
+		return result
+	}
+
 	async getFilesByGuidsRepository(fileGuids: string[]) {
-		if (fileGuids.length === 0) { 
+		if (fileGuids.length === 0) {
 			return []
 		}
-		const constraints = [
-			where('__name__', 'in', fileGuids),
-			where('status', '==', DocumentStatus.Active)
-		]
+		const constraints = [where('__name__', 'in', fileGuids), where('status', '==', DocumentStatus.Active)]
 		const q = query(this.fileCollection, ...constraints)
 		const fileSnapshot = await getDocs(q)
 		let files: FileModel[] = []

@@ -315,7 +315,6 @@ export class UserService {
 			}
 			if (data.role === RoleEnum.SYSTEM_ADMIN || data.role === RoleEnum.STAFF) {
 				const staffDetails = await this.userRepository.getStaffDetailsRepository(userGuid)
-				console.log(staffDetails)
 				if (!staffDetails) {
 					return data
 				}

@@ -2,13 +2,13 @@ import { Timestamp } from 'firebase/firestore'
 import { BaseModel } from './base.model'
 
 export class Parcel extends BaseModel {
-	parcelImageUrl: string
+	parcelImage: string
 	floor: string
 	unit: string
 
 	constructor(
 		id: number,
-		parcelImageUrl: string,
+		parcelImage: string,
 		floor: string,
 		unit: string,
 		status: number,
@@ -18,7 +18,7 @@ export class Parcel extends BaseModel {
 		updatedDateTime: Timestamp,
 	) {
 		super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
-        this.parcelImageUrl = parcelImageUrl
+        this.parcelImage = parcelImage
         this.floor = floor
         this.unit = unit
 	}
