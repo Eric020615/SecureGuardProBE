@@ -8,6 +8,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { DocumentStatus, PaginationDirection } from '../common/constants'
 import { FileService } from './file.service'
+import { arrayRemove, arrayUnion } from 'firebase/firestore'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
@@ -134,7 +135,24 @@ export class NoticeService {
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
 			} as Notice
-			await this.noticeRepository.editNoticeByIdRepository(editNoticeDto.noticeGuid, notice)
+			const fileGuids = await this.fileService.editFilesService(
+				editNoticeDto.deletedAttachments,
+				editNoticeDto.newAttachments ?? [],
+				`notice/attachments/${editNoticeDto.noticeGuid}`,
+				userId,
+				'notice attachments',
+			)
+			const attachmentUpdates: Record<string, any> = {}
+			if (fileGuids.length > 0) {
+				attachmentUpdates.attachments = arrayUnion(...fileGuids)
+			}
+			if (editNoticeDto.deletedAttachments?.length) {
+				attachmentUpdates.attachments = arrayRemove(...editNoticeDto.deletedAttachments)
+			}
+			await this.noticeRepository.editNoticeByIdRepository(editNoticeDto.noticeGuid, {
+				...notice,
+				...attachmentUpdates,
+			})
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

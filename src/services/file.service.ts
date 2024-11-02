@@ -1,4 +1,4 @@
-import { ref, uploadString, getDownloadURL, getStorage } from 'firebase/storage'
+import { ref, uploadString, getDownloadURL, getStorage, deleteObject } from 'firebase/storage'
 import { inject } from 'inversify'
 import { FirebaseClient } from '../config/initFirebase' // adjust the path as needed
 import { GeneralFileDto, GeneralFileResponseDto } from '../dtos/index.dto'
@@ -99,10 +99,11 @@ export class FileService {
 			let data: GeneralFileResponseDto = {} as GeneralFileResponseDto
 			if (file != null) {
 				data = {
+					fileGuid: file.guid,
 					fileName: file.fileName,
 					fileUrl: file.fileURL,
 					contentType: file.contentType,
-					size: file.size
+					size: file.size,
 				} as GeneralFileResponseDto
 			}
 			return data
@@ -119,6 +120,7 @@ export class FileService {
 			data = files
 				? files.map((file) => {
 						return {
+							fileGuid: file.guid,
 							fileName: file.fileName,
 							fileUrl: file.fileURL,
 							contentType: file.contentType,
@@ -130,6 +132,58 @@ export class FileService {
 		} catch (error) {
 			console.error(error)
 			throw new Error('Failed to get files')
+		}
+	}
+
+	public editFilesService = async (
+		oldFileGuids: string[] | undefined,
+		newFiles: GeneralFileDto[],
+		folderpath: string,
+		userGuid: string,
+		description?: string,
+	) => {
+		try {
+			if (oldFileGuids && oldFileGuids.length > 0) {
+				await Promise.all(
+					oldFileGuids.map(async (fileGuid) => {
+						const file = await this.fileRepository.getFileByGuidRepository(fileGuid)
+						if (file) {
+							const storageRef = ref(this.storage, file.fileURL)
+							await deleteObject(storageRef)
+							await this.fileRepository.deleteFileByIdRepository(fileGuid)
+						}
+					}),
+				)
+			}
+
+			const fileGuids = await Promise.all(
+				newFiles.map(async (file) => {
+					const storageRef = ref(this.storage, `${folderpath}/${file.fileName}`)
+					const snapshot = await uploadString(storageRef, file.fileData, 'base64', {
+						contentType: file.contentType,
+					})
+					const fileURL = await getDownloadURL(snapshot.ref)
+
+					const fileModel = new FileModel(
+						0,
+						file.fileName,
+						fileURL,
+						file.contentType,
+						DocumentStatus.Active,
+						userGuid,
+						userGuid,
+						getCurrentTimestamp(),
+						getCurrentTimestamp(),
+						file.size,
+						description,
+					)
+					return await this.fileRepository.createFileRepository(fileModel)
+				}),
+			)
+			return fileGuids
+		} catch (error) {
+			console.error(error)
+			throw new Error('Failed to edit files')
 		}
 	}
 }

@@ -6,6 +6,7 @@ export interface GeneralFileDto {
 }
 
 export interface GeneralFileResponseDto {
+	fileGuid: string
 	fileName: string
 	fileUrl: string
 	contentType: string

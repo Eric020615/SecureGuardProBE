@@ -14,6 +14,8 @@ export interface EditNoticeDto {
 	description: string
 	startDate: string
 	endDate: string
+	deletedAttachments?: string[]
+	newAttachments?: GeneralFileDto[]
 }
 
 export interface DeleteNoticeDto {

@@ -477,6 +477,9 @@
 			},
 			"GeneralFileResponseDto": {
 				"properties": {
+					"fileGuid": {
+						"type": "string"
+					},
 					"fileName": {
 						"type": "string"
 					},
@@ -492,6 +495,7 @@
 					}
 				},
 				"required": [
+					"fileGuid",
 					"fileName",
 					"fileUrl",
 					"contentType"
@@ -945,10 +949,34 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GeneralFileDto": {
+				"properties": {
+					"fileName": {
+						"type": "string"
+					},
+					"fileData": {
+						"type": "string"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"fileName",
+					"fileData",
+					"contentType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateParcelDto": {
 				"properties": {
 					"parcelImage": {
-						"type": "string"
+						"$ref": "#/components/schemas/GeneralFileDto"
 					},
 					"floor": {
 						"type": "string"
@@ -975,7 +1003,7 @@
 						"type": "string"
 					},
 					"parcelImage": {
-						"type": "string"
+						"$ref": "#/components/schemas/GeneralFileResponseDto"
 					},
 					"floor": {
 						"type": "string"
@@ -1192,30 +1220,6 @@
 						"type": "string"
 					}
 				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"GeneralFileDto": {
-				"properties": {
-					"fileName": {
-						"type": "string"
-					},
-					"fileData": {
-						"type": "string"
-					},
-					"contentType": {
-						"type": "string"
-					},
-					"size": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"fileName",
-					"fileData",
-					"contentType"
-				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1456,6 +1460,18 @@
 					},
 					"endDate": {
 						"type": "string"
+					},
+					"deletedAttachments": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"newAttachments": {
+						"items": {
+							"$ref": "#/components/schemas/GeneralFileDto"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -1813,7 +1829,7 @@
 			"CreateUserFaceAuthDto": {
 				"properties": {
 					"faceData": {
-						"type": "string"
+						"$ref": "#/components/schemas/GeneralFileDto"
 					}
 				},
 				"required": [

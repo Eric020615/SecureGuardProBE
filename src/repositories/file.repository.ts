@@ -51,6 +51,7 @@ export class FileRepository {
 		const fileDoc = await getDoc(fileDocRef)
 		let result: FileModel = {} as FileModel
 		result = fileDoc.data() as FileModel
+		result.guid = fileDoc.id
 		return result
 	}
 

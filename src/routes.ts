@@ -214,6 +214,7 @@ const models: TsoaRoute.Models = {
     "GeneralFileResponseDto": {
         "dataType": "refObject",
         "properties": {
+            "fileGuid": {"dataType":"string","required":true},
             "fileName": {"dataType":"string","required":true},
             "fileUrl": {"dataType":"string","required":true},
             "contentType": {"dataType":"string","required":true},
@@ -379,10 +380,21 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GeneralFileDto": {
+        "dataType": "refObject",
+        "properties": {
+            "fileName": {"dataType":"string","required":true},
+            "fileData": {"dataType":"string","required":true},
+            "contentType": {"dataType":"string","required":true},
+            "size": {"dataType":"double"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateParcelDto": {
         "dataType": "refObject",
         "properties": {
-            "parcelImage": {"dataType":"string","required":true},
+            "parcelImage": {"ref":"GeneralFileDto","required":true},
             "floor": {"dataType":"string","required":true},
             "unit": {"dataType":"string","required":true},
         },
@@ -394,7 +406,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "parcelId": {"dataType":"double","required":true},
             "parcelGuid": {"dataType":"string","required":true},
-            "parcelImage": {"dataType":"string","required":true},
+            "parcelImage": {"ref":"GeneralFileResponseDto","required":true},
             "floor": {"dataType":"string","required":true},
             "unit": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
@@ -459,17 +471,6 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetNotificationDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetNotificationDto"}}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "GeneralFileDto": {
-        "dataType": "refObject",
-        "properties": {
-            "fileName": {"dataType":"string","required":true},
-            "fileData": {"dataType":"string","required":true},
-            "contentType": {"dataType":"string","required":true},
-            "size": {"dataType":"double"},
         },
         "additionalProperties": false,
     },
@@ -557,6 +558,8 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
+            "deletedAttachments": {"dataType":"array","array":{"dataType":"string"}},
+            "newAttachments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileDto"}},
         },
         "additionalProperties": false,
     },
@@ -691,7 +694,7 @@ const models: TsoaRoute.Models = {
     "CreateUserFaceAuthDto": {
         "dataType": "refObject",
         "properties": {
-            "faceData": {"dataType":"string","required":true},
+            "faceData": {"ref":"GeneralFileDto","required":true},
         },
         "additionalProperties": false,
     },
