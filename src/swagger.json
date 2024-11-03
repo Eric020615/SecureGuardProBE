@@ -392,6 +392,9 @@
 					},
 					"userStatus": {
 						"type": "string"
+					},
+					"status": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -403,7 +406,8 @@
 					"contactNumber",
 					"gender",
 					"role",
-					"userStatus"
+					"userStatus",
+					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -591,6 +595,9 @@
 					"isActive": {
 						"type": "boolean"
 					},
+					"status": {
+						"type": "string"
+					},
 					"createdBy": {
 						"type": "string"
 					},
@@ -615,6 +622,7 @@
 					"gender",
 					"role",
 					"dateOfBirth",
+					"status",
 					"createdBy",
 					"createdDateTime",
 					"updatedBy",
@@ -2502,102 +2510,6 @@
 				]
 			}
 		},
-		"/user/profile": {
-			"get": {
-				"operationId": "getUserProfileById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA",
-							"RES",
-							"SUB",
-							"STF"
-						]
-					}
-				],
-				"parameters": []
-			},
-			"put": {
-				"operationId": "editUserProfileById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA",
-							"RES",
-							"SUB",
-							"STF"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/EditUserDetailsByIdDto"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/user/details": {
 			"get": {
 				"operationId": "getUserDetailsById",
@@ -2746,6 +2658,152 @@
 						}
 					}
 				]
+			}
+		},
+		"/user/admin/delete": {
+			"delete": {
+				"operationId": "deleteUserById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "userGuid",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/profile": {
+			"get": {
+				"operationId": "getUserProfileById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"RES",
+							"SUB",
+							"STF"
+						]
+					}
+				],
+				"parameters": []
+			},
+			"put": {
+				"operationId": "editUserProfileById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"RES",
+							"SUB",
+							"STF"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EditUserDetailsByIdDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/user/sub-user/create": {

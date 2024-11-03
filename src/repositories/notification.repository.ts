@@ -10,6 +10,7 @@ import {
 	arrayUnion,
 	setDoc,
 	addDoc,
+	deleteDoc,
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import { provideSingleton } from '../helper/provideSingleton'
@@ -56,6 +57,11 @@ export class NotificationRepository {
 		const querySnapshot = await getDoc(docRef)
 		const data = querySnapshot.data() as NotificationToken
 		return data
+	}
+
+	async deleteNotificationTokenRepository(userGuid: string) {
+		const docRef = doc(this.notificationTokenCollection, userGuid)
+		await deleteDoc(docRef)
 	}
 
 	async createNotificationRepository(data: Notification) {

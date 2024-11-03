@@ -30,6 +30,7 @@ import { FileService } from './file.service'
 import { EmailService } from './email.service'
 import { RefDataRepository } from '../repositories/refData.repository'
 import { Unit } from '../models/refData.model'
+import { NotificationRepository } from '../repositories/notification.repository'
 
 dotenv.config()
 
@@ -39,6 +40,7 @@ export class UserService {
 	constructor(
 		@inject(UserRepository) private userRepository: UserRepository,
 		@inject(RefDataRepository) private refDataRepository: RefDataRepository,
+		@inject(NotificationRepository) private notificationRepository: NotificationRepository,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
 		@inject(FileService) private fileService: FileService,
 		@inject(EmailService) private emailService: EmailService,
@@ -270,6 +272,7 @@ export class UserService {
 								role: userInformation.role,
 								contactNumber: userInformation.contactNumber,
 								userStatus: userList[index].disabled ? 'Inactive' : 'Active',
+								status: DocumentStatus[userInformation.status],
 							} as GetUserByAdminDto
 					  })
 					: []
@@ -296,6 +299,7 @@ export class UserService {
 				dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
 				isActive: !userRecord.disabled,
 				contactNumber: userDetails.contactNumber,
+				status: DocumentStatus[userDetails.status],
 				createdBy: userDetails.createdBy,
 				createdDateTime: convertTimestampToUserTimezone(userDetails.createdDateTime),
 				updatedBy: userDetails.updatedBy,
@@ -376,6 +380,32 @@ export class UserService {
 				updatedDateTime: getCurrentTimestamp(),
 			} as User)
 		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	deleteUserByIdService = async (userId: string, updatedBy: string) => {
+		try {
+			const userRecord = await this.authAdmin.getUser(userId)
+			this.authAdmin.deleteUser(userId)
+			await this.userRepository.updateUserStatusByIdRepository(userId, {
+				status: DocumentStatus.SoftDeleted,
+				updatedBy: updatedBy,
+				updatedDateTime: getCurrentTimestamp(),
+			} as User)
+			await this.notificationRepository.deleteNotificationTokenRepository(userId)
+			if (userRecord.customClaims?.role === RoleEnum.RESIDENT) {
+				const residentDetails = await this.userRepository.getResidentDetailsRepository(userId)
+				if (residentDetails) {
+					await this.refDataRepository.updatePropertyByResidentRepository(
+						residentDetails.floor,
+						residentDetails.unit,
+						new Unit(false, null),
+					)
+				}
+			}
+		} catch (error: any) {
+			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

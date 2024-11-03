@@ -36,6 +36,7 @@ export interface GetUserByAdminDto {
     gender: GenderEnum
     role: RoleEnum
     userStatus: string
+	status: string
 }
 
 export interface CreateSubUserDto extends CreateUserDto {
@@ -67,6 +68,7 @@ export interface GetUserDetailsByIdDto {
 	roleInformation?: ResidentInformationDto | SystemInformationDto
 	dateOfBirth: string
 	isActive?: boolean
+	status: string
 	createdBy: string
 	createdDateTime: string
 	updatedBy: string
