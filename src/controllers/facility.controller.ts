@@ -20,6 +20,7 @@ import {
 	Security,
 	Request,
 	Query,
+	Path,
 } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
@@ -30,7 +31,7 @@ import { FacilityService } from '../services/facility.service'
 import { UserService } from '../services/user.service'
 import { PaginationDirection } from '../common/constants'
 
-@Route('facility')
+@Route('facilities')
 @provideSingleton(FacilityController)
 export class FacilityController extends Controller {
 	constructor(
@@ -46,7 +47,7 @@ export class FacilityController extends Controller {
 	@OperationId('createFacilityBooking')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Post('/create')
+	@Post('/')
 	@Security('jwt', ['RES', 'SUB', 'SA'])
 	public async createFacilityBooking(
 		@Body() createFacilityBookingDto: CreateFacilityBookingDto,
@@ -88,7 +89,7 @@ export class FacilityController extends Controller {
 	@Response<IResponse<GetFacilityBookingHistoryDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/')
-	@Security('jwt', ['RES', 'SA', 'SUB'])
+	@Security('jwt', ['RES', 'SUB'])
 	public async getFacilityBookingHistory(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Query() isPast: boolean,
@@ -125,56 +126,20 @@ export class FacilityController extends Controller {
 	}
 
 	@Tags('Facility')
-	@OperationId('getFacilityBookingHistoryByAdmin')
-	@Response<IResponse<GetFacilityBookingHistoryDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/admin')
-	@Security('jwt', ['SA'])
-	public async getFacilityBookingHistoryByAdmin (
-		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
-		@Query() id: number,
-		@Query() limit: number,
-	): Promise<IPaginatedResponse<GetFacilityBookingHistoryDto>> {
-		try {
-			const { data, count } = await this.facilityService.getFacilityBookingHistoryByAdminService(direction, id, limit)
-			const response = {
-				message: 'Facility booking retrieve successfully',
-				status: '200',
-				data: {
-					list: data,
-					count: count,
-				},
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			const response = {
-				message: 'Failed to retrieve facility booking',
-				status: '500',
-				data: {
-					list: null,
-					count: 0,
-				},
-			}
-			return response
-		}
-	}
-
-	@Tags('Facility')
 	@OperationId('getFacilityBookingDetails')
 	@Response<IResponse<GetFacilityBookingHistoryDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/details')
+	@Get('/{id}/details')
 	@Security('jwt', ['RES', 'SUB', 'SA'])
-	public async getFacilityBookingDetailsByFacilityGuid (
-		@Query() facilityBookingGuid: string,
+	public async getFacilityBookingDetailsByFacilityGuid(
+		@Path() id: string,
 	): Promise<IResponse<GetFacilityBookingDetailsDto>> {
 		try {
-			const data = await this.facilityService.getFacilityBookingDetailsByFacilityBookingGuidService(facilityBookingGuid)
+			const data = await this.facilityService.getFacilityBookingDetailsByFacilityBookingGuidService(id)
 			const response = {
 				message: 'Facility booking details retrieve successfully',
 				status: '200',
-				data: data
+				data: data,
 			}
 			return response
 		} catch (err) {
@@ -182,7 +147,7 @@ export class FacilityController extends Controller {
 			const response = {
 				message: 'Failed to retrieve facility booking details',
 				status: '500',
-				data: null
+				data: null,
 			}
 			return response
 		}
@@ -192,18 +157,19 @@ export class FacilityController extends Controller {
 	@OperationId('cancelFacilityBooking')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Put('/cancel')
+	@Put('/{id}/cancel')
 	@Security('jwt', ['SA', 'RES', 'SUB'])
 	public async cancelFacilityBooking(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Body() cancelFacilityBookingDto: CancelFacilityBookingDto,
+		@Path() id: string,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
-			await this.facilityService.cancelFacilityBookingService(userGuid, cancelFacilityBookingDto)
+			await this.facilityService.cancelFacilityBookingService(userGuid, id, cancelFacilityBookingDto)
 			const response = {
 				message: 'Facility booking cancel successfully',
 				status: '200',
@@ -225,7 +191,7 @@ export class FacilityController extends Controller {
 	@OperationId('cancelFacilityBooking')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/available-slot/check')
+	@Get('/availability')
 	@Security('jwt', ['SA', 'RES', 'SUB'])
 	public async checkFacilitySlot(
 		@Request() request: ISecurityMiddlewareRequest,

@@ -31,7 +31,7 @@ export class RefDataController extends Controller {
 	@OperationId('getPropertyList')
 	@Response<IResponse<GetPropertyListDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/property')
+	@Get('/properties')
 	public async getPropertyList(
 		@Query() checkOccupied: boolean,
 	): Promise<IResponse<GetPropertyListDto[]>> {

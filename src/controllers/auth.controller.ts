@@ -40,7 +40,7 @@ export class AuthController extends Controller {
 	@OperationId('registerUser')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
-	@Post('/sign-up')
+	@Post('/signup')
 	public async signUp(
 		@Body() registerUserDto: RegisterUserDto,
 		@Query() role: RoleEnum,
@@ -76,7 +76,7 @@ export class AuthController extends Controller {
 	@OperationId('login')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
-	@Post('/log-in')
+	@Post('/login')
 	public async login(@Body() loginDto: LoginDto): Promise<IResponse<any>> {
 		try {
 			const { token, userGuid } = await this.authService.loginService(loginDto)
@@ -187,7 +187,7 @@ export class AuthController extends Controller {
 	@OperationId('checkAuth')
 	@Response<IResponse<AuthTokenPayloadDto>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
-	@Get('/check-auth')
+	@Get('/check')
 	@Security('jwt', ['RES', 'SA', 'STF', 'SUB'])
 	public async checkAuth(
 		@Request() request: ISecurityMiddlewareRequest,
@@ -218,7 +218,7 @@ export class AuthController extends Controller {
 	@OperationId('checkSubUserAuth')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
-	@Get('/check-auth/sub-user')
+	@Get('/check/sub-user')
 	@Security('subUserAuth', [])
 	public async checkSubUserAuth(
 		@Request() request: ISecurityMiddlewareRequest,

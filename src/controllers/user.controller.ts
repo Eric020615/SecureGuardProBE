@@ -13,6 +13,7 @@ import {
 	Query,
 	Put,
 	Delete,
+	Path,
 } from 'tsoa'
 import { IPaginatedResponse, IResponse } from '../dtos/index.dto'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -24,15 +25,13 @@ import {
 	DeleteSubUserByIdDto,
 	EditUserDetailsByIdDto,
 	GetSubUserByResidentDto,
-	GetUserByAdminDto,
 	GetUserDetailsByIdDto,
 	GetUserDto,
 } from '../dtos/user.dto'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { PaginationDirection } from '../common/constants'
 
-@Route('user')
+@Route('users')
 @provideSingleton(UserController)
 export class UserController extends Controller {
 	constructor(@inject(UserService) private userService: UserService) {
@@ -43,7 +42,7 @@ export class UserController extends Controller {
 	@OperationId('createUser')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
-	@Post('/create')
+	@Post('/')
 	@Security('newUser', ['RES', 'SA', 'SUB', 'STF'])
 	public async createUser(
 		@Request() request: ISecurityMiddlewareRequest,
@@ -72,170 +71,10 @@ export class UserController extends Controller {
 	}
 
 	@Tags('User')
-	@OperationId('getUserListByAdmin')
-	@Response<IResponse<GetUserByAdminDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/admin/user-list')
-	@Security('jwt', ['SA'])
-	public async getUserList(
-		@Query() isActive: boolean,
-		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
-		@Query() id: number,
-		@Query() limit: number,
-	): Promise<IPaginatedResponse<GetUserByAdminDto>> {
-		try {
-			const { data, count } = await this.userService.getUserListByAdminService(isActive, direction, id, limit)
-			const response = {
-				message: 'User list retrieve successfully',
-				status: '200',
-				data: {
-					list: data,
-					count: count,
-				},
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			console.log(err)
-			const response = {
-				message: 'Failed to retrieve user list',
-				status: '500',
-				data: {
-					list: null,
-					count: 0,
-				},
-			}
-			return response
-		}
-	}
-
-	@Tags('User')
-	@OperationId('getUserDetailsById')
-	@Response<IResponse<GetUserDetailsByIdDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/details')
-	@Security('jwt', ['SA'])
-	public async getUserDetailsById(@Query() userGuid: string): Promise<IResponse<any>> {
-		try {
-			const data = await this.userService.getUserDetailsByIdService(userGuid)
-			const response = {
-				message: 'User details retrieve successfully',
-				status: '200',
-				data: data,
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			const response = {
-				message: 'Failed to retrieve user details',
-				status: '500',
-				data: null,
-			}
-			return response
-		}
-	}
-
-	@Tags('User')
-	@OperationId('activateUserById')
-	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Put('/activate')
-	@Security('jwt', ['SA'])
-	public async activateUserById(
-		@Request() request: ISecurityMiddlewareRequest,
-		@Query() userGuid: string,
-	): Promise<IResponse<any>> {
-		try {
-			if (!request.userGuid) {
-				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
-			await this.userService.activateUserByIdService(userGuid, request.userGuid)
-			const response = {
-				message: 'User activated successfully',
-				status: '200',
-				data: null,
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			const response = {
-				message: 'Failed to activate user',
-				status: '500',
-				data: null,
-			}
-			return response
-		}
-	}
-
-	@Tags('User')
-	@OperationId('deactivateUserById')
-	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Put('/deactivate')
-	@Security('jwt', ['SA'])
-	public async deactivateUserById(
-		@Request() request: ISecurityMiddlewareRequest,
-		@Query() userGuid: string,
-	): Promise<IResponse<any>> {
-		try {
-			if (!request.userGuid) {
-				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
-			await this.userService.deactivateUserByIdService(userGuid, request.userGuid)
-			const response = {
-				message: 'User was deactivated successfully',
-				status: '200',
-				data: null,
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			const response = {
-				message: 'Failed to deactivate user',
-				status: '500',
-				data: null,
-			}
-			return response
-		}
-	}
-
-	@Tags('User')
-	@OperationId('deleteUserById')
-	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Delete('/admin/delete')
-	@Security('jwt', ['SA'])
-	public async deleteUserById(
-		@Request() request: ISecurityMiddlewareRequest,
-		@Query() userGuid: string,
-	): Promise<IResponse<any>> {
-		try {
-			if (!request.userGuid) {
-				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
-			await this.userService.deleteUserByIdService(userGuid, request.userGuid)
-			const response = {
-				message: 'User was deleted successfully',
-				status: '200',
-				data: null,
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			const response = {
-				message: 'Failed to delete user',
-				status: '500',
-				data: null,
-			}
-			return response
-		}
-	}
-
-	@Tags('User')
 	@OperationId('getUserProfileById')
 	@Response<IResponse<GetUserDetailsByIdDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/profile')
+	@Get('/details')
 	@Security('jwt', ['SA', 'RES', 'SUB', 'STF'])
 	public async getUserProfileById(@Request() request: ISecurityMiddlewareRequest): Promise<IResponse<any>> {
 		try {
@@ -265,7 +104,7 @@ export class UserController extends Controller {
 	@OperationId('editUserProfileById')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Put('/profile')
+	@Put('/')
 	@Security('jwt', ['SA', 'RES', 'SUB', 'STF'])
 	public async editUserProfileById(
 		@Body() editUserDetailsByIdDto: EditUserDetailsByIdDto,
@@ -297,7 +136,7 @@ export class UserController extends Controller {
 	@OperationId('createSubUserRequest')
 	@Response<IResponse<any>>('400', 'Bad Request')
 	@SuccessResponse('200', 'OK')
-	@Post('/sub-user/create')
+	@Post('/sub')
 	@Security('jwt', ['RES'])
 	public async createSubUserRequest(
 		@Request() request: ISecurityMiddlewareRequest,
@@ -329,7 +168,7 @@ export class UserController extends Controller {
 	@OperationId('getSubUserListByResident')
 	@Response<IResponse<GetUserDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/sub-user/list')
+	@Get('/sub')
 	@Security('jwt', ['RES'])
 	public async getSubUserList(
 		@Query() id: number,
@@ -369,10 +208,10 @@ export class UserController extends Controller {
 	@OperationId('editSubUserStatusById')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Put('/sub-user')
+	@Put('/sub/{id}')
 	@Security('jwt', ['RES'])
 	public async editSubUserStatusById(
-		@Query() subUserGuid: string,
+		@Path() id: string,
 		@Query() status: boolean,
 		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
@@ -380,7 +219,7 @@ export class UserController extends Controller {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.editSubUserStatusByIdService(subUserGuid, request.userGuid, status)
+			await this.userService.editSubUserStatusByIdService(id, request.userGuid, status)
 			const response = {
 				message: 'Sub user status updated successfully',
 				status: '200',
@@ -402,17 +241,17 @@ export class UserController extends Controller {
 	@OperationId('deleteSubUserById')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Delete('/sub-user')
+	@Delete('/sub/{id}')
 	@Security('jwt', ['RES'])
 	public async deleteSubUserById(
-		@Body() deleteSubUserByIdDto: DeleteSubUserByIdDto,
+		@Path() id: string,
 		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			await this.userService.deleteSubUserByIdService(deleteSubUserByIdDto.subUserGuid, request.userGuid)
+			await this.userService.deleteSubUserByIdService(id, request.userGuid)
 			const response = {
 				message: 'Sub user deleted successfully',
 				status: '200',

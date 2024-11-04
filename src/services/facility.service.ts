@@ -151,7 +151,7 @@ export class FacilityService {
 		}
 	}
 
-	cancelFacilityBookingService = async (userId: string, cancelFacilityBookingDto: CancelFacilityBookingDto) => {
+	cancelFacilityBookingService = async (userId: string, facilityBookingGuid: string, cancelFacilityBookingDto: CancelFacilityBookingDto) => {
 		try {
 			let facilityBooking: FacilityBooking = {
 				isCancelled: true,
@@ -161,7 +161,7 @@ export class FacilityService {
 			} as FacilityBooking
 			await this.facilityRepository.cancelFacilityBookingRepository(
 				facilityBooking,
-				cancelFacilityBookingDto.bookingGuid,
+				facilityBookingGuid,
 			)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)

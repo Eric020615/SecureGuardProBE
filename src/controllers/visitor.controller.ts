@@ -22,9 +22,8 @@ import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { UserService } from '../services/user.service'
-import { PaginationDirection } from '../common/constants'
 
-@Route('visitor')
+@Route('visitors')
 @provideSingleton(VisitorController)
 export class VisitorController extends Controller {
 	constructor(
@@ -39,7 +38,7 @@ export class VisitorController extends Controller {
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Post('/create')
-	@Security('jwt', ['RES', 'SUB', 'SA'])
+	@Security('jwt', ['RES', 'SUB'])
 	public async createVisitor(
 		@Body() createVisitorDto: CreateVisitorDto,
 		@Request() request: ISecurityMiddlewareRequest,
@@ -147,79 +146,6 @@ export class VisitorController extends Controller {
 				message: 'Failed to retrieve visitors',
 				status: '500',
 				data: null,
-			}
-			return response
-		}
-	}
-
-	@Tags('Visitor')
-	@OperationId('getVisitorByAdmin')
-	@Response<IResponse<GetVisitorDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/admin')
-	@Security('jwt', ['SA'])
-	public async getVisitorByAdmin(
-		@Request() request: ISecurityMiddlewareRequest,
-		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
-		@Query() id: number,
-		@Query() limit: number,
-	): Promise<IPaginatedResponse<GetVisitorDto>> {
-		try {
-			if (!request.userGuid || !request.role) {
-				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
-			const { data, count } = await this.visitorService.getVisitorByAdminService(direction, id, limit)
-			const response = {
-				message: 'Visitors retrieve successfully',
-				status: '200',
-				data: {
-					list: data,
-					count: count,
-				},
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			const response = {
-				message: 'Failed to retrieve visitors',
-				status: '500',
-				data: {
-					list: null,
-					count: 0,
-				},
-			}
-			return response
-		}
-	}
-
-	@Tags('Visitor')
-	@OperationId('getVisitorCountsByDay')
-	@Response<IResponse<GetVisitorByDateDto[]>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
-	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/admin/analytics')
-	@Security('jwt', ['SA'])
-	public async getVisitorCountsByDay(
-		@Request() request: ISecurityMiddlewareRequest,
-		@Query() startDate: string,
-		@Query() endDate: string
-	): Promise<IResponse<GetVisitorByDateDto>> {
-		try {
-			if (!request.userGuid || !request.role) {
-				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
-			const data = await this.visitorService.getVisitorCountsByDayService(startDate, endDate)
-			const response = {
-				message: 'Visitors retrieve successfully',
-				status: '200',
-				data: data
-			}
-			return response
-		} catch (err) {
-			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			const response = {
-				message: 'Failed to retrieve visitors',
-				status: '500',
-				data: null
 			}
 			return response
 		}

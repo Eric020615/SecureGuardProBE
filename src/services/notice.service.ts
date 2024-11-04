@@ -125,7 +125,7 @@ export class NoticeService {
 		}
 	}
 
-	editNoticeByIdService = async (editNoticeDto: EditNoticeDto, userId: string) => {
+	editNoticeByIdService = async (noticeGuid: string, editNoticeDto: EditNoticeDto, userId: string) => {
 		try {
 			let notice: Notice = {
 				title: editNoticeDto.title,
@@ -138,7 +138,7 @@ export class NoticeService {
 			const fileGuids = await this.fileService.editFilesService(
 				editNoticeDto.deletedAttachments,
 				editNoticeDto.newAttachments ?? [],
-				`notice/attachments/${editNoticeDto.noticeGuid}`,
+				`notice/attachments/${noticeGuid}`,
 				userId,
 				'notice attachments',
 			)
@@ -149,7 +149,7 @@ export class NoticeService {
 			if (editNoticeDto.deletedAttachments?.length) {
 				attachmentUpdates.attachments = arrayRemove(...editNoticeDto.deletedAttachments)
 			}
-			await this.noticeRepository.editNoticeByIdRepository(editNoticeDto.noticeGuid, {
+			await this.noticeRepository.editNoticeByIdRepository(noticeGuid, {
 				...notice,
 				...attachmentUpdates,
 			})

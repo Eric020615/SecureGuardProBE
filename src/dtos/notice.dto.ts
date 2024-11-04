@@ -9,7 +9,6 @@ export interface CreateNoticeDto {
 }
 
 export interface EditNoticeDto {
-	noticeGuid: string
 	title: string
 	description: string
 	startDate: string

@@ -7,52 +7,6 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"IResponse_any_": {
-				"properties": {
-					"message": {
-						"type": "string"
-					},
-					"data": {
-						"anyOf": [
-							{},
-							{
-								"items": {},
-								"type": "array"
-							}
-						],
-						"nullable": true
-					},
-					"status": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateVisitorDto": {
-				"properties": {
-					"visitorName": {
-						"type": "string"
-					},
-					"visitorCategory": {
-						"type": "string"
-					},
-					"visitorContactNumber": {
-						"type": "string"
-					},
-					"visitDateTime": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"visitorName",
-					"visitorCategory",
-					"visitorContactNumber",
-					"visitDateTime"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"GetVisitorDto": {
 				"properties": {
 					"visitorId": {
@@ -157,6 +111,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PaginationDirection.Next": {
+				"enum": [
+					"next"
+				],
+				"type": "string"
+			},
+			"PaginationDirection.Previous": {
+				"enum": [
+					"prev"
+				],
+				"type": "string"
+			},
 			"GetVisitorDetailsDto": {
 				"properties": {
 					"visitorId": {
@@ -236,18 +202,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PaginationDirection.Next": {
-				"enum": [
-					"next"
-				],
-				"type": "string"
-			},
-			"PaginationDirection.Previous": {
-				"enum": [
-					"prev"
-				],
-				"type": "string"
-			},
 			"GetVisitorByDateDto": {
 				"properties": {
 					"date": {
@@ -320,6 +274,52 @@
 						"type": "string"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_any_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{},
+							{
+								"items": {},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateVisitorDto": {
+				"properties": {
+					"visitorName": {
+						"type": "string"
+					},
+					"visitorCategory": {
+						"type": "string"
+					},
+					"visitorContactNumber": {
+						"type": "string"
+					},
+					"visitDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"visitorName",
+					"visitorCategory",
+					"visitorContactNumber",
+					"visitDateTime"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -875,18 +875,6 @@
 						"type": "string"
 					}
 				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"DeleteSubUserByIdDto": {
-				"properties": {
-					"subUserGuid": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"subUserGuid"
-				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1454,9 +1442,6 @@
 			},
 			"EditNoticeDto": {
 				"properties": {
-					"noticeGuid": {
-						"type": "string"
-					},
 					"title": {
 						"type": "string"
 					},
@@ -1483,55 +1468,10 @@
 					}
 				},
 				"required": [
-					"noticeGuid",
 					"title",
 					"description",
 					"startDate",
 					"endDate"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"DeleteNoticeDto": {
-				"properties": {
-					"noticeGuid": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"noticeGuid"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateFacilityBookingDto": {
-				"properties": {
-					"bookedBy": {
-						"type": "string"
-					},
-					"facilityId": {
-						"type": "string"
-					},
-					"startDate": {
-						"type": "string"
-					},
-					"endDate": {
-						"type": "string"
-					},
-					"numOfGuest": {
-						"type": "number",
-						"format": "double"
-					},
-					"spaceId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"facilityId",
-					"startDate",
-					"endDate",
-					"numOfGuest",
-					"spaceId"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1641,6 +1581,38 @@
 						"type": "string"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateFacilityBookingDto": {
+				"properties": {
+					"bookedBy": {
+						"type": "string"
+					},
+					"facilityId": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"numOfGuest": {
+						"type": "number",
+						"format": "double"
+					},
+					"spaceId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"facilityId",
+					"startDate",
+					"endDate",
+					"numOfGuest",
+					"spaceId"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1764,16 +1736,10 @@
 			},
 			"CancelFacilityBookingDto": {
 				"properties": {
-					"bookingGuid": {
-						"type": "string"
-					},
 					"cancelRemark": {
 						"type": "string"
 					}
 				},
-				"required": [
-					"bookingGuid"
-				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -2027,7 +1993,183 @@
 		"contact": {}
 	},
 	"paths": {
-		"/visitor/create": {
+		"/visitors/admin": {
+			"get": {
+				"operationId": "getVisitorByAdmin",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IPaginatedResponse_GetVisitorDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "direction",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/visitors/admin/{id}/details": {
+			"get": {
+				"operationId": "getVisitorDetails",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDetailsDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDetailsDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SUB",
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/visitors/admin/analytics": {
+			"get": {
+				"operationId": "getVisitorCountsByDay",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorByDateDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorByDateDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "startDate",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "endDate",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/visitors/create": {
 			"post": {
 				"operationId": "createVisitor",
 				"responses": {
@@ -2062,8 +2204,7 @@
 					{
 						"jwt": [
 							"RES",
-							"SUB",
-							"SA"
+							"SUB"
 						]
 					}
 				],
@@ -2080,7 +2221,7 @@
 				}
 			}
 		},
-		"/visitor": {
+		"/visitors": {
 			"get": {
 				"operationId": "getVisitorByResident",
 				"responses": {
@@ -2150,7 +2291,7 @@
 				]
 			}
 		},
-		"/visitor/details": {
+		"/visitors/details": {
 			"get": {
 				"operationId": "getVisitorDetails",
 				"responses": {
@@ -2202,131 +2343,7 @@
 				]
 			}
 		},
-		"/visitor/admin": {
-			"get": {
-				"operationId": "getVisitorByAdmin",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IPaginatedResponse_GetVisitorDto_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetVisitorDto-Array_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Visitor"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "direction",
-						"required": true,
-						"schema": {}
-					},
-					{
-						"in": "query",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/visitor/admin/analytics": {
-			"get": {
-				"operationId": "getVisitorCountsByDay",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetVisitorByDateDto_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetVisitorByDateDto-Array_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Visitor"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "startDate",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "endDate",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/visitor/edit": {
+		"/visitors/edit": {
 			"put": {
 				"operationId": "editVisitorById",
 				"responses": {
@@ -2384,7 +2401,281 @@
 				}
 			}
 		},
-		"/user/create": {
+		"/users/admin": {
+			"get": {
+				"operationId": "getUserListByAdmin",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IPaginatedResponse_GetUserByAdminDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserByAdminDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "direction",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/users/admin/{id}/details": {
+			"get": {
+				"operationId": "getUserDetailsById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/admin/{id}/activate": {
+			"put": {
+				"operationId": "activateUserById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/admin/{id}/deactivate": {
+			"put": {
+				"operationId": "deactivateUserById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/admin/{id}": {
+			"delete": {
+				"operationId": "deleteUserById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users": {
 			"post": {
 				"operationId": "createUser",
 				"responses": {
@@ -2434,324 +2725,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/user/admin/user-list": {
-			"get": {
-				"operationId": "getUserListByAdmin",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IPaginatedResponse_GetUserByAdminDto_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetUserByAdminDto-Array_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "isActive",
-						"required": true,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "direction",
-						"required": true,
-						"schema": {}
-					},
-					{
-						"in": "query",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/user/details": {
-			"get": {
-				"operationId": "getUserDetailsById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "userGuid",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/user/activate": {
-			"put": {
-				"operationId": "activateUserById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "userGuid",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/user/deactivate": {
-			"put": {
-				"operationId": "deactivateUserById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "userGuid",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/user/admin/delete": {
-			"delete": {
-				"operationId": "deleteUserById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "userGuid",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/user/profile": {
-			"get": {
-				"operationId": "getUserProfileById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA",
-							"RES",
-							"SUB",
-							"STF"
-						]
-					}
-				],
-				"parameters": []
 			},
 			"put": {
 				"operationId": "editUserProfileById",
@@ -2806,7 +2779,51 @@
 				}
 			}
 		},
-		"/user/sub-user/create": {
+		"/users/details": {
+			"get": {
+				"operationId": "getUserProfileById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetUserDetailsByIdDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"RES",
+							"SUB",
+							"STF"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/users/sub": {
 			"post": {
 				"operationId": "createSubUserRequest",
 				"responses": {
@@ -2855,9 +2872,7 @@
 						}
 					}
 				}
-			}
-		},
-		"/user/sub-user/list": {
+			},
 			"get": {
 				"operationId": "getSubUserListByResident",
 				"responses": {
@@ -2917,7 +2932,7 @@
 				]
 			}
 		},
-		"/user/sub-user": {
+		"/users/sub/{id}": {
 			"put": {
 				"operationId": "editSubUserStatusById",
 				"responses": {
@@ -2957,8 +2972,8 @@
 				],
 				"parameters": [
 					{
-						"in": "query",
-						"name": "subUserGuid",
+						"in": "path",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -3011,20 +3026,19 @@
 						]
 					}
 				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/DeleteSubUserByIdDto"
-							}
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
-				}
+				]
 			}
 		},
-		"/ref-data/property": {
+		"/ref-data/properties": {
 			"get": {
 				"operationId": "getPropertyList",
 				"responses": {
@@ -3068,7 +3082,7 @@
 				]
 			}
 		},
-		"/parcel/staff": {
+		"/parcels/staff": {
 			"post": {
 				"operationId": "createParcel",
 				"responses": {
@@ -3177,7 +3191,7 @@
 				]
 			}
 		},
-		"/parcel": {
+		"/parcels": {
 			"get": {
 				"operationId": "getParcelByResident",
 				"responses": {
@@ -3238,7 +3252,7 @@
 				]
 			}
 		},
-		"/notification": {
+		"/notifications": {
 			"get": {
 				"operationId": "getNotification",
 				"responses": {
@@ -3300,7 +3314,7 @@
 				]
 			}
 		},
-		"/notice/create": {
+		"/notices/admin": {
 			"post": {
 				"operationId": "createNotice",
 				"responses": {
@@ -3329,7 +3343,7 @@
 					}
 				},
 				"tags": [
-					"Notice"
+					"Notice Management"
 				],
 				"security": [
 					{
@@ -3349,9 +3363,7 @@
 						}
 					}
 				}
-			}
-		},
-		"/notice/admin": {
+			},
 			"get": {
 				"operationId": "getNoticeByAdmin",
 				"responses": {
@@ -3380,7 +3392,7 @@
 					}
 				},
 				"tags": [
-					"Notice"
+					"Notice Management"
 				],
 				"security": [
 					{
@@ -3417,7 +3429,168 @@
 				]
 			}
 		},
-		"/notice": {
+		"/notices/admin/{id}/details": {
+			"get": {
+				"operationId": "getNoticeById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetNoticeDetailsDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetNoticeDetailsDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notice Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/notices/admin/{id}": {
+			"put": {
+				"operationId": "editNoticeById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notice Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EditNoticeDto"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteNoticeById",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notice Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"RES",
+							"SUB",
+							"SA",
+							"STF"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/notices": {
 			"get": {
 				"operationId": "getNotice",
 				"responses": {
@@ -3471,7 +3644,7 @@
 				]
 			}
 		},
-		"/notice/details": {
+		"/notices/{id}/details": {
 			"get": {
 				"operationId": "getNoticeById",
 				"responses": {
@@ -3514,8 +3687,8 @@
 				],
 				"parameters": [
 					{
-						"in": "query",
-						"name": "noticeGuid",
+						"in": "path",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -3524,16 +3697,16 @@
 				]
 			}
 		},
-		"/notice/edit": {
-			"put": {
-				"operationId": "editNoticeById",
+		"/facilities/admin/bookings": {
+			"get": {
+				"operationId": "getFacilityBookingHistoryByAdmin",
 				"responses": {
 					"200": {
 						"description": "OK",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IPaginatedResponse_GetFacilityBookingHistoryDto_"
 								}
 							}
 						}
@@ -3543,7 +3716,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IResponse_GetFacilityBookingHistoryDto-Array_"
 								},
 								"examples": {
 									"Example 1": {}
@@ -3553,7 +3726,7 @@
 					}
 				},
 				"tags": [
-					"Notice"
+					"Facility Management"
 				],
 				"security": [
 					{
@@ -3562,74 +3735,35 @@
 						]
 					}
 				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/EditNoticeDto"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/notice/delete": {
-			"delete": {
-				"operationId": "deleteNoticeById",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
+				"parameters": [
+					{
+						"in": "query",
+						"name": "direction",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Notice"
-				],
-				"security": [
 					{
-						"jwt": [
-							"RES",
-							"SUB",
-							"SA",
-							"STF"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/DeleteNoticeDto"
-							}
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
-				}
+				]
 			}
 		},
-		"/facility/create": {
+		"/facilities": {
 			"post": {
 				"operationId": "createFacilityBooking",
 				"responses": {
@@ -3680,9 +3814,7 @@
 						}
 					}
 				}
-			}
-		},
-		"/facility": {
+			},
 			"get": {
 				"operationId": "getFacilityBooking",
 				"responses": {
@@ -3717,7 +3849,6 @@
 					{
 						"jwt": [
 							"RES",
-							"SA",
 							"SUB"
 						]
 					}
@@ -3752,73 +3883,7 @@
 				]
 			}
 		},
-		"/facility/admin": {
-			"get": {
-				"operationId": "getFacilityBookingHistoryByAdmin",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IPaginatedResponse_GetFacilityBookingHistoryDto_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_GetFacilityBookingHistoryDto-Array_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Facility"
-				],
-				"security": [
-					{
-						"jwt": [
-							"SA"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "direction",
-						"required": true,
-						"schema": {}
-					},
-					{
-						"in": "query",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/facility/details": {
+		"/facilities/{id}/details": {
 			"get": {
 				"operationId": "getFacilityBookingDetails",
 				"responses": {
@@ -3860,8 +3925,8 @@
 				],
 				"parameters": [
 					{
-						"in": "query",
-						"name": "facilityBookingGuid",
+						"in": "path",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -3870,7 +3935,7 @@
 				]
 			}
 		},
-		"/facility/cancel": {
+		"/facilities/{id}/cancel": {
 			"put": {
 				"operationId": "cancelFacilityBooking",
 				"responses": {
@@ -3910,7 +3975,16 @@
 						]
 					}
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3923,7 +3997,7 @@
 				}
 			}
 		},
-		"/facility/available-slot/check": {
+		"/facilities/availability": {
 			"get": {
 				"operationId": "cancelFacilityBooking",
 				"responses": {
@@ -4095,7 +4169,7 @@
 				}
 			}
 		},
-		"/auth/sign-up": {
+		"/auth/signup": {
 			"post": {
 				"operationId": "registerUser",
 				"responses": {
@@ -4149,7 +4223,7 @@
 				}
 			}
 		},
-		"/auth/log-in": {
+		"/auth/login": {
 			"post": {
 				"operationId": "login",
 				"responses": {
@@ -4293,7 +4367,7 @@
 				}
 			}
 		},
-		"/auth/check-auth": {
+		"/auth/check": {
 			"get": {
 				"operationId": "checkAuth",
 				"responses": {
@@ -4346,7 +4420,7 @@
 				]
 			}
 		},
-		"/auth/check-auth/sub-user": {
+		"/auth/check/sub-user": {
 			"get": {
 				"operationId": "checkSubUserAuth",
 				"responses": {

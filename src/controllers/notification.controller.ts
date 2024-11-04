@@ -8,7 +8,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { GetNotificationDto } from '../dtos/notification.dto'
 
-@Route('notification')
+@Route('notifications')
 @provideSingleton(NotificationController)
 export class NotificationController extends Controller {
 	constructor(@inject(NotificationService) private notificationService: NotificationService) {
