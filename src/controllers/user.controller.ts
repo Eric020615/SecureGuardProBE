@@ -22,7 +22,6 @@ import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { UserService } from '../services/user.service'
 import {
 	CreateSubUserRequestDto,
-	DeleteSubUserByIdDto,
 	EditUserDetailsByIdDto,
 	GetSubUserByResidentDto,
 	GetUserDetailsByIdDto,

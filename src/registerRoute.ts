@@ -72,6 +72,7 @@ export const registerRoutes = (app: express.Express) => {
 				})
 			}
 			if (err instanceof Error) {
+				console.error(`Caught Error for ${req.path}:`, err)
 				return res.status(500).json({
 					message: 'Internal Server Error',
 					status: 500,

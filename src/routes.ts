@@ -685,6 +685,44 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CardDto": {
+        "dataType": "refObject",
+        "properties": {
+            "BadgeCategory": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["MifareSector"]},{"dataType":"enum","enums":["QRCode"]}],"required":true},
+            "Token": {"dataType":"enum","enums":["Card"],"required":true},
+            "QRCodeType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Dynamic"]},{"dataType":"enum","enums":["Static"]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AccessControlDataDto": {
+        "dataType": "refObject",
+        "properties": {
+            "AccessEntryDate": {"dataType":"string","required":true},
+            "AccessExitDate": {"dataType":"string","required":true},
+            "IsActive": {"dataType":"boolean","required":true},
+            "LockedOutEnabled": {"dataType":"boolean","required":true},
+            "AntipassbackEnabled": {"dataType":"boolean","required":true},
+            "IsSuperCard": {"dataType":"boolean","required":true},
+            "CanPerformGuardTour": {"dataType":"boolean","required":true},
+            "AllowFPIdentification": {"dataType":"boolean","required":true},
+            "DoorAccessRightId": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["0000"]},{"dataType":"enum","enums":["0001"]}],"required":true},
+            "FloorAccessRightId": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["000"]},{"dataType":"enum","enums":["001"]}],"required":true},
+            "DefaultFloorGroupId": {"dataType":"enum","enums":["N/Available"],"required":true},
+            "PinNo": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateFaceAuthStaffDto": {
+        "dataType": "refObject",
+        "properties": {
+            "Card": {"ref":"CardDto","required":true},
+            "AccessControlData": {"ref":"AccessControlDataDto","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateUserFaceAuthDto": {
         "dataType": "refObject",
         "properties": {
@@ -901,7 +939,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/visitors/create',
+        app.post('/visitors',
             authenticateMiddleware([{"jwt":["RES","SUB"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
             ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.createVisitor)),
@@ -977,7 +1015,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/visitors/details',
+        app.get('/visitors/:id/details',
             authenticateMiddleware([{"jwt":["RES","SUB","SA"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
             ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorDetails)),
@@ -985,7 +1023,7 @@ export function RegisterRoutes(app: Router) {
             async function VisitorController_getVisitorDetails(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    visitorGuid: {"in":"query","name":"visitorGuid","required":true,"dataType":"string"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1014,15 +1052,15 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/visitors/edit',
-            authenticateMiddleware([{"jwt":[]}]),
+        app.put('/visitors/:id',
+            authenticateMiddleware([{"jwt":["RES"]}]),
             ...(fetchMiddlewares<RequestHandler>(VisitorController)),
             ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.editVisitorById)),
 
             async function VisitorController_editVisitorById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     editVisitorByIdDto: {"in":"body","name":"editVisitorByIdDto","required":true,"ref":"EditVisitorByIdDto"},
-                    visitorGuid: {"in":"query","name":"visitorGuid","required":true,"dataType":"string"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -2157,6 +2195,43 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'checkFacilitySlot',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/face-auth',
+            authenticateMiddleware([{"jwt":["RES","SA"]}]),
+            ...(fetchMiddlewares<RequestHandler>(FaceAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(FaceAuthController.prototype.createFaceAuth)),
+
+            async function FaceAuthController_createFaceAuth(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    createFaceAuthStaffDto: {"in":"body","name":"createFaceAuthStaffDto","required":true,"ref":"CreateFaceAuthStaffDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<FaceAuthController>(FaceAuthController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'createFaceAuth',
                 controller,
                 response,
                 next,

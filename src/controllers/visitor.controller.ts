@@ -13,14 +13,15 @@ import {
 	Security,
 	Request,
 	Query,
+	Path,
 } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
-import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto, GetVisitorByDateDto, GetVisitorDetailsDto } from '../dtos/visitor.dto'
+import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto, GetVisitorDetailsDto } from '../dtos/visitor.dto'
 import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
-import { inject } from 'inversify'
+import { id, inject } from 'inversify'
 import { UserService } from '../services/user.service'
 
 @Route('visitors')
@@ -37,7 +38,7 @@ export class VisitorController extends Controller {
 	@OperationId('createVisitor')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Post('/create')
+	@Post('/')
 	@Security('jwt', ['RES', 'SUB'])
 	public async createVisitor(
 		@Body() createVisitorDto: CreateVisitorDto,
@@ -123,17 +124,17 @@ export class VisitorController extends Controller {
 	@OperationId('getVisitorDetails')
 	@Response<IResponse<GetVisitorDetailsDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/details')
+	@Get('/{id}/details')
 	@Security('jwt', ['RES', 'SUB', 'SA'])
 	public async getVisitorDetails (
 		@Request() request: ISecurityMiddlewareRequest,
-		@Query() visitorGuid: string,
+		@Path() id: string,
 	): Promise<IResponse<GetVisitorDetailsDto>> {
 		try {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const data = await this.visitorService.getVisitorDetailsService(visitorGuid)
+			const data = await this.visitorService.getVisitorDetailsService(id)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
@@ -155,11 +156,11 @@ export class VisitorController extends Controller {
 	@OperationId('editVisitorById')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Put('/edit')
-	@Security('jwt', [])
+	@Put('/{id}')
+	@Security('jwt', ["RES"])
 	public async editVisitorById(
 		@Body() editVisitorByIdDto: EditVisitorByIdDto,
-		@Query() visitorGuid: string,
+		@Path() id: string,
 		@Request() request: ISecurityMiddlewareRequest,
 	): Promise<IResponse<any>> {
 		try {
@@ -170,7 +171,7 @@ export class VisitorController extends Controller {
 				request.userGuid,
 				request.role,
 			)
-			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, visitorGuid, userGuid)
+			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, id, userGuid)
 			const response = {
 				message: 'Visitor updated successfully',
 				status: '200',
