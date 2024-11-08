@@ -1800,123 +1800,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CardDto": {
-				"properties": {
-					"BadgeCategory": {
-						"type": "string",
-						"enum": [
-							"MifareSector",
-							"QRCode"
-						]
-					},
-					"Token": {
-						"type": "string",
-						"enum": [
-							"Card"
-						],
-						"nullable": false
-					},
-					"QRCodeType": {
-						"type": "string",
-						"enum": [
-							"Dynamic",
-							"Static"
-						]
-					}
-				},
-				"required": [
-					"BadgeCategory",
-					"Token",
-					"QRCodeType"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"AccessControlDataDto": {
-				"properties": {
-					"AccessEntryDate": {
-						"type": "string"
-					},
-					"AccessExitDate": {
-						"type": "string"
-					},
-					"IsActive": {
-						"type": "boolean"
-					},
-					"LockedOutEnabled": {
-						"type": "boolean"
-					},
-					"AntipassbackEnabled": {
-						"type": "boolean"
-					},
-					"IsSuperCard": {
-						"type": "boolean"
-					},
-					"CanPerformGuardTour": {
-						"type": "boolean"
-					},
-					"AllowFPIdentification": {
-						"type": "boolean"
-					},
-					"DoorAccessRightId": {
-						"type": "string",
-						"enum": [
-							"0000",
-							"0001"
-						]
-					},
-					"FloorAccessRightId": {
-						"type": "string",
-						"enum": [
-							"000",
-							"001"
-						]
-					},
-					"DefaultFloorGroupId": {
-						"type": "string",
-						"enum": [
-							"N/Available"
-						],
-						"nullable": false
-					},
-					"PinNo": {
-						"type": "string",
-						"nullable": true
-					}
-				},
-				"required": [
-					"AccessEntryDate",
-					"AccessExitDate",
-					"IsActive",
-					"LockedOutEnabled",
-					"AntipassbackEnabled",
-					"IsSuperCard",
-					"CanPerformGuardTour",
-					"AllowFPIdentification",
-					"DoorAccessRightId",
-					"FloorAccessRightId",
-					"DefaultFloorGroupId",
-					"PinNo"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateFaceAuthStaffDto": {
-				"properties": {
-					"Card": {
-						"$ref": "#/components/schemas/CardDto"
-					},
-					"AccessControlData": {
-						"$ref": "#/components/schemas/AccessControlDataDto"
-					}
-				},
-				"required": [
-					"Card",
-					"AccessControlData"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"CreateUserFaceAuthDto": {
 				"properties": {
 					"faceData": {
@@ -4216,60 +4099,10 @@
 				"security": [
 					{
 						"jwt": [
+							"SA",
+							"STF",
 							"RES",
-							"SA"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateFaceAuthStaffDto"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/face-auth/user/upload": {
-			"post": {
-				"operationId": "uploadUserFaceAuth",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"FaceAuth"
-				],
-				"security": [
-					{
-						"jwt": [
-							"RES",
-							"SA"
+							"SUB"
 						]
 					}
 				],
@@ -4284,9 +4117,7 @@
 						}
 					}
 				}
-			}
-		},
-		"/face-auth/user/update": {
+			},
 			"put": {
 				"operationId": "updateUserFaceAuth",
 				"responses": {

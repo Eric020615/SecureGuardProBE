@@ -19,6 +19,7 @@ import { CardRepository } from '../repositories/card.repository'
 import { Card } from '../models/card.model'
 import { DocumentStatus } from '../common/constants'
 import { stringify } from 'query-string/base'
+import { OperationError } from '../common/operation-error'
 
 @provideSingleton(MicroEngineService)
 export class MicroEngineService {
@@ -36,8 +37,8 @@ export class MicroEngineService {
 	}
 
 	private async apiRequest<T>(url: string, method: IType, data?: any, params?: any): Promise<T> {
-		await this.validateOrRefreshToken()
 		try {
+			await this.validateOrRefreshToken()
 			const response = await axios({
 				method: method,
 				url,
@@ -53,8 +54,8 @@ export class MicroEngineService {
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				const errorMessage = error.response?.data?.Message || error.message
-				console.warn(errorMessage)
-				throw new Error(`Request failed: ${errorMessage}`)
+				console.log(errorMessage)
+				throw new OperationError(errorMessage, HttpStatusCode.INTERNAL_SERVER_ERROR)
 			} else {
 				throw new Error('An unexpected error occurred')
 			}
@@ -85,7 +86,7 @@ export class MicroEngineService {
 			if (axios.isAxiosError(error)) {
 				const errorMessage = error.response?.data?.Message || error.message
 				console.warn(errorMessage)
-				throw new Error(errorMessage)
+				throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 			} else {
 				throw new Error('An unexpected error occurred')
 			}
@@ -171,9 +172,9 @@ export class MicroEngineService {
 		const badgeNumber = await this.cardRepository.createCardRepository(
 			new Card(0, 0, DocumentStatus.Active, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
 		)
-		const odataQuery = `$filter=UserId eq '${data.UserId}' and Cards/any(c: c/BadgeNo eq '${badgeNumber}'`
+		const odataQuery = `$filter=UserId eq '${data.UserId}' and Cards/any(c: c/BadgeNo eq '${badgeNumber}')`
 		const response = await this.getUserOdata(odataQuery)
-		if (response.value.length > 0) {
+		if (response && response.value.length > 0) {
 			throw new Error(`User with UserId ${data.UserId} and BadgeNo ${badgeNumber} already exists.`)
 		}
 		data = {
@@ -183,11 +184,12 @@ export class MicroEngineService {
 				BadgeNo: badgeNumber.toString(),
 			},
 		}
-		return this.apiRequest(
+		await this.apiRequest(
 			listUrl.cardDbManagementApi.users.add.path,
 			listUrl.cardDbManagementApi.users.add.type,
 			JSON.stringify(data),
 		)
+		return badgeNumber
 	}
 
 	async updateUser(userId: string, data: any) {
@@ -211,8 +213,21 @@ export class MicroEngineService {
 	}
 
 	async getUserOdata(odataQueryString: string) {
-		const url = listUrl.cardDbManagementApi.users.getOdata.path.replace('{odataQueryString}', odataQueryString)
-		return this.apiRequest<IODataQueryStringResponse<GetStaffDto>>(url, listUrl.cardDbManagementApi.users.getOdata.type)
+		try {
+			const url = listUrl.cardDbManagementApi.users.getOdata.path.replace('{odataQueryString}', odataQueryString)
+			const response = await this.apiRequest<IODataQueryStringResponse<GetStaffDto>>(
+				url,
+				listUrl.cardDbManagementApi.users.getOdata.type,
+			)
+			return response
+		} catch (error: any) {
+			if (error.response && error.response.status === 500) {
+				return {
+					'@odata.context': '',
+					value: [],
+				} as IODataQueryStringResponse<GetStaffDto>
+			}
+		}
 	}
 
 	// Card Device Comm API - Commands Endpoints

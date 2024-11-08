@@ -1,3 +1,5 @@
+import { AccessControlDataDto, CardDto, CreateStaffDto, StaffProfileDto } from '../dtos/microengine.dto'
+
 export enum DocumentStatus {
 	Active = 1,
 	SoftDeleted = 0,
@@ -47,17 +49,93 @@ export enum PaginationDirection {
 }
 
 interface map {
-    [key: string] : string
+	[key: string]: string
 }
 
-export const FacilityName : map = {
-    "BC": "Badminton Court",
-    "BBC": "Basketball Court",
-    "GR": "Gym Room"    
+export const FacilityName: map = {
+	BC: 'Badminton Court',
+	BBC: 'Basketball Court',
+	GR: 'Gym Room',
 }
 
 export const FacilityEnum = {
 	BC: 'Badminton Court',
 	BBC: 'Basketball Court',
 	GR: 'Gym Room',
+}
+
+export enum RoleRecognitionTypeEnum {
+	'SA' = 'staff',
+	'STF' = 'staff',
+	'RES' = 'staff',
+	'SUB' = 'staff',
+	'VI' = 'visitor',
+}
+
+export enum DepartmentEnum {
+	'SA' = 'Admin',
+	'STF' = 'Security',
+	'RES' = 'Tenant',
+	'SUB' = 'Tenant',
+}
+
+export enum JobTitleEnum {
+	'SA' = 'Manager',
+	'STF' = 'Staff',
+	'RES' = 'Resident',
+	'SUB' = 'Resident',
+}
+
+export const StaffConst: CreateStaffDto = {
+	Profile: {
+		NRIC: '',
+		Branch: 'HQ',
+		Department: DepartmentEnum.SA,
+		Division: 'N/Available',
+		JobTitle: JobTitleEnum.SA,
+		Company: 'Microengine',
+		EmailAddress: '',
+		ContactNo: '',
+		AttendanceDoorGroup: 'All Doors',
+		HolidaySet: 'Default',
+		Shift: 'Default',
+		VehicleNo: '',
+		ParkingLot: '',
+		Remark1: '',
+		Remark2: '',
+		Remark3: '',
+		UserDefinedField1: '',
+		UserDefinedField2: '',
+		UserDefinedField3: '',
+		UserDefinedField4: '',
+		UserDefinedField5: '',
+		UserDefinedField6: '',
+		UserDefinedField7: '',
+		UserDefinedField8: '',
+	} as StaffProfileDto,
+	Card: {
+		BadgeCategory: 'MifareSector',
+		Token: 'Card',
+		BadgeNo: '',
+		CardSerialNo: '',
+		CardGuid: 0,
+		QRCodeType: 'Static',
+	} as CardDto,
+	AccessControlData: {
+		AccessEntryDate: '',
+		AccessExitDate: '',
+		IsActive: true,
+		LockedOutEnabled: false,
+		AntipassbackEnabled: false,
+		IsSuperCard: false,
+		CanPerformGuardTour: false,
+		AllowFPIdentification: false,
+		DoorAccessRightId: '0000',
+		FloorAccessRightId: '000',
+		DefaultFloorGroupId: 'N/Available',
+		PinNo: null,
+	} as AccessControlDataDto,
+	UserId: '',
+	UserName: '',
+	UserType: '',
 }
