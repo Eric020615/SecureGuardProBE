@@ -1,4 +1,4 @@
-import { collection, doc, setDoc } from 'firebase/firestore'
+import { collection, doc, setDoc, updateDoc } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -15,8 +15,13 @@ export class FaceAuthRepository {
 		this.faceAuthCollection = collection(this.firebaseClient.firestore, 'faceAuth')
 	}
 
-	async createFaceAuthRepository(id: string, data: FaceAuth) {
-		const faceAuthDocRef = doc(this.faceAuthCollection, id)
+	async createFaceAuthRepository(userGuid: string, data: FaceAuth) {
+		const faceAuthDocRef = doc(this.faceAuthCollection, userGuid)
 		await setDoc(faceAuthDocRef, { ...data })
+	}
+
+	async editFaceAuthRepository(userGuid: string, data: FaceAuth) {
+		const faceAuthDocRef = doc(this.faceAuthCollection, userGuid)
+		await updateDoc(faceAuthDocRef, { ...data })
 	}
 }

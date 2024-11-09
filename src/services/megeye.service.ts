@@ -32,13 +32,12 @@ export class MegeyeService {
 		}
 	}
 
-	public async editPerson(editPersonDto: EditPersonDto) {
+	public async editPerson(editPersonDto: EditPersonDto, userGuid: string) {
 		try {
 			const [success, response] = await this.megeyeManager.MegeyeGlobalHandler({
-				path: listUrl.personnelManagement.edit.path,
+				path: listUrl.personnelManagement.edit.path.replace('{id}', userGuid),
 				type: listUrl.personnelManagement.edit.type,
 				data: editPersonDto,
-				_token: ""
 			})
 			if (!success) {
 				throw new OperationError(
@@ -55,16 +54,9 @@ export class MegeyeService {
 	public async queryPersonDetailsById(personId: string) {
 		try {
 			const [success, response] = await this.megeyeManager.MegeyeGlobalHandler({
-				path: listUrl.personnelManagement.queryPersonDetailsById.path,
+				path: listUrl.personnelManagement.queryPersonDetailsById.path.replace('{id}', personId),
 				type: listUrl.personnelManagement.queryPersonDetailsById.type,
-				_token: personId
 			})
-			if (!success) {
-				throw new OperationError(
-					'User face auth does not exists',
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
-			}
 			return response
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)

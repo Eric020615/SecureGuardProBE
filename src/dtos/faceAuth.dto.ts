@@ -1,6 +1,6 @@
 import { GeneralFileDto } from "./index.dto";
 
-export interface CreateUserFaceAuthDto {
+export interface CreateUpdateFaceAuthDto {
     faceData: GeneralFileDto
 }
 

@@ -301,11 +301,11 @@ export const listUrl = {
 			type: IType.post,
 		},
 		edit: {
-			path: '/api/persons/item',
+			path: '/api/persons/item/{id}',
 			type: IType.put,
 		},
     queryPersonDetailsById: {
-			path: '/api/persons/item',
+			path: '/api/persons/item/{id}',
 			type: IType.get,
 		},
 		query: {

@@ -1800,7 +1800,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CreateUserFaceAuthDto": {
+			"CreateUpdateFaceAuthDto": {
 				"properties": {
 					"faceData": {
 						"$ref": "#/components/schemas/GeneralFileDto"
@@ -4112,57 +4112,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateUserFaceAuthDto"
-							}
-						}
-					}
-				}
-			},
-			"put": {
-				"operationId": "updateUserFaceAuth",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"FaceAuth"
-				],
-				"security": [
-					{
-						"jwt": [
-							"RES",
-							"SA"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateUserFaceAuthDto"
+								"$ref": "#/components/schemas/CreateUpdateFaceAuthDto"
 							}
 						}
 					}

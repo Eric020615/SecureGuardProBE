@@ -685,7 +685,7 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateUserFaceAuthDto": {
+    "CreateUpdateFaceAuthDto": {
         "dataType": "refObject",
         "properties": {
             "faceData": {"ref":"GeneralFileDto","required":true},
@@ -2175,7 +2175,7 @@ export function RegisterRoutes(app: Router) {
 
             async function FaceAuthController_createFaceAuth(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    createUserFaceAuthDto: {"in":"body","name":"createUserFaceAuthDto","required":true,"ref":"CreateUserFaceAuthDto"},
+                    createUpdateFaceAuthDto: {"in":"body","name":"createUpdateFaceAuthDto","required":true,"ref":"CreateUpdateFaceAuthDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -2194,43 +2194,6 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'createFaceAuth',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: 200,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/face-auth',
-            authenticateMiddleware([{"jwt":["RES","SA"]}]),
-            ...(fetchMiddlewares<RequestHandler>(FaceAuthController)),
-            ...(fetchMiddlewares<RequestHandler>(FaceAuthController.prototype.updateUserFaceAuth)),
-
-            async function FaceAuthController_updateUserFaceAuth(request: ExRequest, response: ExResponse, next: any) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    updateUserFaceAuthDto: {"in":"body","name":"updateUserFaceAuthDto","required":true,"ref":"CreateUserFaceAuthDto"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<FaceAuthController>(FaceAuthController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'updateUserFaceAuth',
                 controller,
                 response,
                 next,
