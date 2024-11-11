@@ -29,6 +29,8 @@ import { FacilityController } from './controllers/facility.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FaceAuthController } from './controllers/faceAuthController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { CardController } from './controllers/card.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './controllers/auth.controller';
 import { expressAuthentication } from './middleware/security.middleware';
 // @ts-ignore - no great way to install types from subpackage
@@ -48,6 +50,7 @@ const models: TsoaRoute.Models = {
             "visitorId": {"dataType":"double","required":true},
             "visitorGuid": {"dataType":"string","required":true},
             "visitorName": {"dataType":"string","required":true},
+            "visitorEmail": {"dataType":"string","required":true},
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
@@ -92,6 +95,7 @@ const models: TsoaRoute.Models = {
             "visitorId": {"dataType":"double","required":true},
             "visitorGuid": {"dataType":"string","required":true},
             "visitorName": {"dataType":"string","required":true},
+            "visitorEmail": {"dataType":"string","required":true},
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
@@ -157,6 +161,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "visitorName": {"dataType":"string","required":true},
+            "visitorEmail": {"dataType":"string","required":true},
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
@@ -168,6 +173,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "visitorName": {"dataType":"string","required":true},
+            "visitorEmail": {"dataType":"string","required":true},
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
@@ -268,6 +274,7 @@ const models: TsoaRoute.Models = {
             "roleInformation": {"dataType":"union","subSchemas":[{"ref":"ResidentInformationDto"},{"ref":"SystemInformationDto"}]},
             "dateOfBirth": {"dataType":"string","required":true},
             "isActive": {"dataType":"boolean"},
+            "badgeNumber": {"dataType":"string","required":true},
             "status": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
@@ -689,6 +696,25 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "faceData": {"ref":"GeneralFileDto","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetQrCodeByUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "badgeNumber": {"dataType":"string","required":true},
+            "data": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetQrCodeByUserDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetQrCodeByUserDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetQrCodeByUserDto"}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -2194,6 +2220,42 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'createFaceAuth',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/card',
+            authenticateMiddleware([{"jwt":["SA","STF","RES","SUB"]}]),
+            ...(fetchMiddlewares<RequestHandler>(CardController)),
+            ...(fetchMiddlewares<RequestHandler>(CardController.prototype.getQrCodeByUser)),
+
+            async function CardController_getQrCodeByUser(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<CardController>(CardController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getQrCodeByUser',
                 controller,
                 response,
                 next,

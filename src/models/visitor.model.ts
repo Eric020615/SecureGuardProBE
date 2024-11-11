@@ -3,6 +3,7 @@ import { BaseModel } from "./base.model";
 
 export class Visitor extends BaseModel{ 
     visitorName: string;
+    visitorEmail: string;
     visitorCategory: string;
     visitorContactNumber: string;
     visitDateTime: Timestamp;
@@ -10,6 +11,7 @@ export class Visitor extends BaseModel{
     constructor(
         id: number,
         visitorName: string,
+        visitorEmail: string,
         visitorCategory: string,
         visitorContactNumber: string,
         visitDateTime: Timestamp,
@@ -21,6 +23,7 @@ export class Visitor extends BaseModel{
     ){
         super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
         this.visitorName = visitorName;
+        this.visitorEmail = visitorEmail;
         this.visitorCategory = visitorCategory,
         this.visitorContactNumber = visitorContactNumber,
         this.visitDateTime = visitDateTime

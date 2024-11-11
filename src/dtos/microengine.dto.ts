@@ -1,3 +1,5 @@
+import { DepartmentEnum, JobTitleEnum } from "../common/constants"
+
 export interface IResponse<T> {
 	Message?: string
 	Result?: T
@@ -38,9 +40,9 @@ export interface SoftwareInfoResponse {
 export interface StaffProfileDto {
 	NRIC: string
 	Branch: 'HQ'
-	Department: 'Admin' | 'Security' | 'Tenant'
+	Department: DepartmentEnum
 	Division: 'N/Available'
-	JobTitle: 'Manager' | 'Staff' | 'Resident'
+	JobTitle: JobTitleEnum
 	Company: 'Microengine'
 	EmailAddress: string
 	ContactNo: string
@@ -103,4 +105,9 @@ export interface GetStaffDto {
 	UserId: string
 	UserName: string
 	UserType: string
+}
+
+export interface GetStaticQrCodeDto { 
+	BadgeNo: string
+	Data: string
 }

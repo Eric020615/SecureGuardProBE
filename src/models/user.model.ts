@@ -9,6 +9,7 @@ export class User extends BaseModel {
 	gender: string
 	dateOfBirth: Timestamp | null
 	role: RoleEnum
+	badgeNumber: string
 
 	constructor(
 		id: number,
@@ -18,6 +19,7 @@ export class User extends BaseModel {
 		gender: string,
 		dateOfBirth: Timestamp | null,
 		role: RoleEnum,
+		badgeNumber: string,
 		status: number,
 		createdBy: string,
 		updatedBy: string,
@@ -31,6 +33,7 @@ export class User extends BaseModel {
 		this.gender = gender
 		this.dateOfBirth = dateOfBirth
 		this.role = role
+		this.badgeNumber = badgeNumber
 	}
 }
 

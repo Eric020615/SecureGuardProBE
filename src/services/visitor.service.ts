@@ -9,24 +9,27 @@ import {
 } from '../dtos/visitor.dto'
 import { VisitorRepository } from '../repositories/visitor.repository'
 import { Visitor } from '../models/visitor.model'
-import {
-	convertDateStringToTimestamp,
-	convertTimestampToUserTimezone,
-	getCurrentTimestamp,
-} from '../helper/time'
+import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus, PaginationDirection } from '../common/constants'
+import { DepartmentEnum, DocumentStatus, JobTitleEnum, PaginationDirection, StaffConst } from '../common/constants'
+import { MicroEngineService } from './microEngine.service'
+import { CreateStaffDto } from '../dtos/microengine.dto'
 
 @provideSingleton(VisitorService)
 export class VisitorService {
-	constructor(@inject(VisitorRepository) private visitorRepository: VisitorRepository) {}
+	constructor(
+		@inject(VisitorRepository) private visitorRepository: VisitorRepository,
+		@inject(MicroEngineService) private microEngineService: MicroEngineService,
+	) {}
+
 	createVisitorService = async (createVisitorDto: CreateVisitorDto, userId: string) => {
 		try {
 			await this.visitorRepository.createVisitorRepository(
 				new Visitor(
 					0,
 					createVisitorDto.visitorName,
+					createVisitorDto.visitorEmail,
 					createVisitorDto.visitorCategory,
 					createVisitorDto.visitorContactNumber,
 					convertDateStringToTimestamp(createVisitorDto.visitDateTime),
@@ -37,7 +40,34 @@ export class VisitorService {
 					getCurrentTimestamp(),
 				),
 			)
+			// // if not exists create new card and person
+			// let staffInfo = {
+			// 	...StaffConst,
+			// 	Profile: {
+			// 		Branch: 'HQ',
+			// 		Department: DepartmentEnum.VI,
+			// 		JobTitle: JobTitleEnum.VI,
+			// 		EmailAddress: createVisitorDto.visitorEmail,
+			// 		ContactNo: createVisitorDto.visitorContactNumber,
+			// 		Remark1: userId,
+			// 	},
+			// 	AccessControlData: {
+			// 		AccessEntryDate: createVisitorDto.visitDateTime,
+			// 		AccessExitDate: '2025-12-31',
+			// 		DoorAccessRightId: '0001',
+			// 		FloorAccessRightId: '001',
+			// 		DefaultFloorGroupId: 'N/Available',
+			// 	},
+			// 	Card: {
+			// 		BadgeCategory: 'QRCode',
+			// 	},
+			// 	UserId: `${JobTitleEnum.VI} ${visitorId.toString()}`,
+			// 	UserName: createVisitorDto.visitorName,
+			// 	UserType: 'Normal',
+			// } as CreateStaffDto
+			// const badgeNumber = await this.microEngineService.addUser(staffInfo, userId)
 		} catch (error: any) {
+			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
@@ -90,6 +120,7 @@ export class VisitorService {
 				visitorId: visitors.id,
 				visitorGuid: visitors.guid ? visitors.guid : '',
 				visitorName: visitors.visitorName,
+				visitorEmail: visitors.visitorEmail,
 				visitorCategory: visitors.visitorCategory,
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),

@@ -19,6 +19,9 @@
 					"visitorName": {
 						"type": "string"
 					},
+					"visitorEmail": {
+						"type": "string"
+					},
 					"visitorCategory": {
 						"type": "string"
 					},
@@ -36,6 +39,7 @@
 					"visitorId",
 					"visitorGuid",
 					"visitorName",
+					"visitorEmail",
 					"visitorCategory",
 					"visitorContactNumber",
 					"visitDateTime",
@@ -135,6 +139,9 @@
 					"visitorName": {
 						"type": "string"
 					},
+					"visitorEmail": {
+						"type": "string"
+					},
 					"visitorCategory": {
 						"type": "string"
 					},
@@ -164,6 +171,7 @@
 					"visitorId",
 					"visitorGuid",
 					"visitorName",
+					"visitorEmail",
 					"visitorCategory",
 					"visitorContactNumber",
 					"visitDateTime",
@@ -304,6 +312,9 @@
 					"visitorName": {
 						"type": "string"
 					},
+					"visitorEmail": {
+						"type": "string"
+					},
 					"visitorCategory": {
 						"type": "string"
 					},
@@ -316,6 +327,7 @@
 				},
 				"required": [
 					"visitorName",
+					"visitorEmail",
 					"visitorCategory",
 					"visitorContactNumber",
 					"visitDateTime"
@@ -328,6 +340,9 @@
 					"visitorName": {
 						"type": "string"
 					},
+					"visitorEmail": {
+						"type": "string"
+					},
 					"visitorCategory": {
 						"type": "string"
 					},
@@ -340,6 +355,7 @@
 				},
 				"required": [
 					"visitorName",
+					"visitorEmail",
 					"visitorCategory",
 					"visitorContactNumber",
 					"visitDateTime"
@@ -595,6 +611,9 @@
 					"isActive": {
 						"type": "boolean"
 					},
+					"badgeNumber": {
+						"type": "string"
+					},
 					"status": {
 						"type": "string"
 					},
@@ -622,6 +641,7 @@
 					"gender",
 					"role",
 					"dateOfBirth",
+					"badgeNumber",
 					"status",
 					"createdBy",
 					"createdDateTime",
@@ -1809,6 +1829,48 @@
 				"required": [
 					"faceData"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetQrCodeByUserDto": {
+				"properties": {
+					"badgeNumber": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"badgeNumber",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetQrCodeByUserDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetQrCodeByUserDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetQrCodeByUserDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -4117,6 +4179,50 @@
 						}
 					}
 				}
+			}
+		},
+		"/card": {
+			"get": {
+				"operationId": "retrieveQrCode",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetQrCodeByUserDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Card"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"STF",
+							"RES",
+							"SUB"
+						]
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/auth/signup": {

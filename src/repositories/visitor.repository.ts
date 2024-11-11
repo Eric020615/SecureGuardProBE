@@ -52,6 +52,7 @@ export class VisitorRepository {
 			}
 			const docRef = await addDoc(this.visitorCollection, Object.assign({}, visitor))
 			await updateDoc(docRef, { id: id })
+			return id;
 		})
 	}
 

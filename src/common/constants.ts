@@ -77,6 +77,7 @@ export enum DepartmentEnum {
 	'STF' = 'Security',
 	'RES' = 'Tenant',
 	'SUB' = 'Tenant',
+	'VI' = 'Visitor',
 }
 
 export enum JobTitleEnum {
@@ -84,6 +85,7 @@ export enum JobTitleEnum {
 	'STF' = 'Staff',
 	'RES' = 'Resident',
 	'SUB' = 'Resident',
+	'VI' = 'Visitor',
 }
 
 export const StaffConst: CreateStaffDto = {

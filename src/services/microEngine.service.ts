@@ -5,6 +5,7 @@ import { IType, listUrl, microEngineConfig } from '../config/microengine'
 import {
 	CreateStaffDto,
 	GetStaffDto,
+	GetStaticQrCodeDto,
 	IODataQueryStringResponse,
 	IResponse,
 	LoginResponse,
@@ -18,7 +19,6 @@ import { inject } from 'inversify'
 import { CardRepository } from '../repositories/card.repository'
 import { Card } from '../models/card.model'
 import { DocumentStatus } from '../common/constants'
-import { stringify } from 'query-string/base'
 import { OperationError } from '../common/operation-error'
 
 @provideSingleton(MicroEngineService)
@@ -94,7 +94,13 @@ export class MicroEngineService {
 	}
 
 	private parseParams(params: any): string {
-		return new URLSearchParams(params).toString()
+		const data = Object.keys(params)
+			.filter((key) => params[key] !== undefined && params[key] !== null && params[key] !== '')
+			.map((key) => {
+				return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+			})
+			.join('&')
+		return data
 	}
 
 	private async loginWithBasicAuth(): Promise<void> {
@@ -207,9 +213,22 @@ export class MicroEngineService {
 		return this.apiRequest(url, listUrl.cardDbManagementApi.users.updateBadge.type, data)
 	}
 
-	async getUserQrCode(userId: string) {
-		const url = listUrl.cardDbManagementApi.users.getQrCode.path.replace('{userId}', userId)
-		return this.apiRequest(url, listUrl.cardDbManagementApi.users.getQrCode.type)
+	async getUserQrCode(userId: string, badgeNumber?: string, cardGuid?: string) {
+		try {
+			const url = listUrl.cardDbManagementApi.users.getQrCode.path.replace('{userId}', userId)
+			const data = await this.apiRequest<IResponse<GetStaticQrCodeDto>>(
+				url,
+				listUrl.cardDbManagementApi.users.getQrCode.type,
+				undefined,
+				{
+					BadgeNo: badgeNumber,
+					CardGuid: cardGuid,
+				},
+			)
+			return data
+		} catch (error) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
 	}
 
 	async getUserOdata(odataQueryString: string) {
