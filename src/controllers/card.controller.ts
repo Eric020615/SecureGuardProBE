@@ -1,23 +1,17 @@
 import { IResponse } from '../dtos/index.dto'
 import { Controller, OperationId, Response, Route, SuccessResponse, Tags, Security, Request, Get } from 'tsoa'
 import { HttpStatusCode } from '../common/http-status-code'
-import { MegeyeService } from '../services/megeye.service'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { UserService } from '../services/user.service'
-import { MicroEngineService } from '../services/microEngine.service'
 import { CardService } from '../services/card.service'
 import { GetQrCodeByUserDto } from '../dtos/card.dto'
 
-@Route('card')
+@Route('cards')
 @provideSingleton(CardController)
 export class CardController extends Controller {
 	constructor(
-		@inject(UserService) private userService: UserService,
-		@inject(MegeyeService) private megeyeService: MegeyeService,
-		@inject(MicroEngineService) private microEngineService: MicroEngineService,
 		@inject(CardService) private cardService: CardService,
 	) {
 		super()
@@ -27,7 +21,7 @@ export class CardController extends Controller {
 	@OperationId('retrieveQrCode')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
-	@Get('/')
+	@Get('/qr-code')
 	@Security('jwt', ['SA', 'STF', 'RES', 'SUB'])
 	public async getQrCodeByUser(@Request() request: ISecurityMiddlewareRequest): Promise<IResponse<GetQrCodeByUserDto>> {
 		try {

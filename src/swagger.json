@@ -4181,7 +4181,7 @@
 				}
 			}
 		},
-		"/card": {
+		"/cards/qr-code": {
 			"get": {
 				"operationId": "retrieveQrCode",
 				"responses": {

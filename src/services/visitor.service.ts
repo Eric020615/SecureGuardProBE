@@ -147,6 +147,7 @@ export class VisitorService {
 							visitorId: visitor.id,
 							visitorGuid: visitor.guid ? visitor.guid : '',
 							visitorName: visitor.visitorName,
+							visitorEmail: visitor.visitorEmail,
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
