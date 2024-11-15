@@ -574,6 +574,35 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetFacilityBookingUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "userGuid": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetFacilityBookingUserDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetFacilityBookingUserDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingUserDto"}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetFacilityBookingUserDto-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingUserDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetFacilityBookingUserDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetFacilityBookingHistoryDto": {
         "dataType": "refObject",
         "properties": {
@@ -1956,6 +1985,41 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getNoticeById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/facilities/admin/bookings/users',
+            authenticateMiddleware([{"jwt":["SA"]}]),
+            ...(fetchMiddlewares<RequestHandler>(FacilityManagementController)),
+            ...(fetchMiddlewares<RequestHandler>(FacilityManagementController.prototype.getFacilityBookingUser)),
+
+            async function FacilityManagementController_getFacilityBookingUser(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<FacilityManagementController>(FacilityManagementController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getFacilityBookingUser',
                 controller,
                 response,
                 next,

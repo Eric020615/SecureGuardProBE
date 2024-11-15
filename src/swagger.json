@@ -1496,6 +1496,80 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GetFacilityBookingUserDto": {
+				"properties": {
+					"userGuid": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userGuid",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetFacilityBookingUserDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetFacilityBookingUserDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetFacilityBookingUserDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetFacilityBookingUserDto-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetFacilityBookingUserDto"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/GetFacilityBookingUserDto"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GetFacilityBookingHistoryDto": {
 				"properties": {
 					"bookingId": {
@@ -3757,6 +3831,47 @@
 						}
 					}
 				]
+			}
+		},
+		"/facilities/admin/bookings/users": {
+			"get": {
+				"operationId": "getFacilityBookingUser",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetFacilityBookingUserDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetFacilityBookingUserDto-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Facility Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA"
+						]
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/facilities/admin/bookings": {

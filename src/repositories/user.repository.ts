@@ -125,6 +125,26 @@ export class UserRepository {
 		return { rows, count }
 	}
 
+	getFacilityBookingUserRepository = async (userList: UserRecord[]) => {
+		const userGuid = userList.map((user) => user.uid)
+		if (userGuid.length === 0) {
+			return []
+		}
+		const constraints = [
+			where('__name__', 'in', userGuid),
+			orderBy('id', 'asc'),
+		]
+		const q = query(this.userCollection, ...constraints)
+		const querySnapshot = await getDocs(q)
+		let result: User[] = []
+		querySnapshot.forEach((doc) => {
+			let data = doc.data() as User
+			data.guid = doc.id
+			result.push(data)
+		})
+		return result
+	}
+
 	getResidentDetailsRepository = async (userId: string) => {
 		const docRef = doc(this.residentCollection, userId)
 		const resDoc = await getDoc(docRef)

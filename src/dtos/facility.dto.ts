@@ -51,3 +51,8 @@ export interface SpaceAvailabilityDto {
 	isBooked: boolean // Change to isBooked or any other name if required
 	capacity: number
 }
+
+export interface GetFacilityBookingUserDto {
+    userGuid: string
+	email: string
+}

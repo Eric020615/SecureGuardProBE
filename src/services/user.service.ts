@@ -31,6 +31,7 @@ import { EmailService } from './email.service'
 import { RefDataRepository } from '../repositories/refData.repository'
 import { Unit } from '../models/refData.model'
 import { NotificationRepository } from '../repositories/notification.repository'
+import { GetFacilityBookingUserDto } from '../dtos/facility.dto'
 
 dotenv.config()
 
@@ -281,6 +282,30 @@ export class UserService {
 					  })
 					: []
 			return { data, count }
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	getFacilityBookingUserService = async () => {
+		try {
+			const userResult = await this.authAdmin.listUsers()
+			let userList: UserRecord[] = []
+			userList = userResult.users
+				.filter((user) => !user.disabled)
+				.filter((user) => user.customClaims?.role === RoleEnum.RESIDENT)
+			let users: User[] = await this.userRepository.getFacilityBookingUserRepository(userList)
+			let data: GetFacilityBookingUserDto[] = []
+			data =
+				users && users.length > 0
+					? users.map((userInformation, index) => {
+							return {
+								userGuid: userInformation.guid ? userInformation.guid : '',
+								email: userList[index].email ? userList[index].email : '',
+							} as GetFacilityBookingUserDto
+					  })
+					: []
+			return data
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
