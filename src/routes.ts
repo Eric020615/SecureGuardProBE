@@ -420,10 +420,7 @@ const models: TsoaRoute.Models = {
             "parcelImage": {"ref":"GeneralFileResponseDto","required":true},
             "floor": {"dataType":"string","required":true},
             "unit": {"dataType":"string","required":true},
-            "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
-            "updatedBy": {"dataType":"string","required":true},
-            "updatedDateTime": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -443,6 +440,32 @@ const models: TsoaRoute.Models = {
         "properties": {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDto"}},{"dataType":"array","array":{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDto"}}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetParcelDetailsDto": {
+        "dataType": "refObject",
+        "properties": {
+            "parcelId": {"dataType":"double","required":true},
+            "parcelGuid": {"dataType":"string","required":true},
+            "parcelImage": {"ref":"GeneralFileResponseDto","required":true},
+            "floor": {"dataType":"string","required":true},
+            "unit": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "createdDateTime": {"dataType":"string","required":true},
+            "updatedBy": {"dataType":"string","required":true},
+            "updatedDateTime": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetParcelDetailsDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetParcelDetailsDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetParcelDetailsDto"}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -1690,6 +1713,42 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getParcelByResident',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/parcels/:id/details',
+            authenticateMiddleware([{"jwt":["RES","SUB","SA","STF"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController)),
+            ...(fetchMiddlewares<RequestHandler>(ParcelController.prototype.getParcelDetailsById)),
+
+            async function ParcelController_getParcelDetailsById(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<ParcelController>(ParcelController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getParcelDetailsById',
                 controller,
                 response,
                 next,

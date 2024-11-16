@@ -5,7 +5,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { DocumentStatus, ITimeFormat } from '../common/constants'
 import { ParcelRepository } from '../repositories/parcel.repository'
-import { CreateParcelDto, GetParcelDto } from '../dtos/parcel.dto'
+import { CreateParcelDto, GetParcelDetailsDto, GetParcelDto } from '../dtos/parcel.dto'
 import { Parcel } from '../models/parcel.model'
 import { FileService } from './file.service'
 
@@ -56,11 +56,7 @@ export class ParcelService {
 									parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
 									floor: parcel.floor,
 									unit: parcel.unit,
-									status: parcel.status,
-									createdBy: parcel.createdBy,
 									createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
-									updatedBy: parcel.updatedBy,
-									updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
 								} as GetParcelDto
 							}),
 					  )
@@ -68,6 +64,30 @@ export class ParcelService {
 			return { data, count }
 		} catch (error: any) {
 			console.log(error)
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	getParcelDetailsByIdService = async (parcelGuid: string) => {
+		try {
+			const parcel = await this.parcelRepository.getParcelDetailsByIdRepository(parcelGuid)
+			let data: GetParcelDetailsDto = {} as GetParcelDetailsDto
+			if (parcel != null) {
+				data = {
+					parcelId: parcel.id,
+					parcelGuid: parcel.guid,
+					parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
+					floor: parcel.floor,
+					unit: parcel.unit,
+					status: parcel.status,
+					createdBy: parcel.createdBy,
+					createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
+					updatedBy: parcel.updatedBy,
+					updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
+				} as GetParcelDetailsDto
+			}
+			return data
+		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

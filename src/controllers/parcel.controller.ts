@@ -1,7 +1,19 @@
 import { IPaginatedResponse, IResponse } from '../dtos/index.dto'
 import { ParcelService } from '../services/parcel.service'
-import { Controller, OperationId, Response, Route, SuccessResponse, Tags, Security, Request, Get, Query } from 'tsoa'
-import { GetParcelDto } from '../dtos/parcel.dto'
+import {
+	Controller,
+	OperationId,
+	Response,
+	Route,
+	SuccessResponse,
+	Tags,
+	Security,
+	Request,
+	Get,
+	Query,
+	Path,
+} from 'tsoa'
+import { GetParcelDetailsDto, GetParcelDto } from '../dtos/parcel.dto'
 import { HttpStatusCode } from '../common/http-status-code'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
@@ -16,7 +28,7 @@ import { ResidentInformationDto } from '../dtos/user.dto'
 export class ParcelController extends Controller {
 	constructor(
 		@inject(ParcelService) private parcelService: ParcelService,
-		@inject(UserService) private userService: UserService
+		@inject(UserService) private userService: UserService,
 	) {
 		super()
 	}
@@ -65,6 +77,32 @@ export class ParcelController extends Controller {
 					list: null,
 					count: 0,
 				},
+			}
+			return response
+		}
+	}
+
+	@Tags('Parcel')
+	@OperationId('getParcelById')
+	@Response<IResponse<GetParcelDetailsDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Get('/{id}/details')
+	@Security('jwt', ['RES', 'SUB', 'SA', 'STF'])
+	public async getParcelDetailsById(@Path() id: string): Promise<IResponse<GetParcelDetailsDto>> {
+		try {
+			let data = await this.parcelService.getParcelDetailsByIdService(id)
+			const response = {
+				message: 'Parcel retrieved successfully',
+				status: '200',
+				data: data,
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to retrieve parcel',
+				status: '500',
+				data: null,
 			}
 			return response
 		}

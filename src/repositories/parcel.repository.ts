@@ -1,4 +1,4 @@
-import { addDoc, collection, orderBy, updateDoc, where } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, orderBy, updateDoc, where } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -68,5 +68,14 @@ export class ParcelRepository {
 			constraints,
 		)
 		return { rows, count }
+	}
+
+	async getParcelDetailsByIdRepository(parcelGuid: string) {
+		const parcelDocRef = doc(this.parcelCollection, parcelGuid)
+		const parcelDoc = await getDoc(parcelDocRef)
+		let result: Parcel = {} as Parcel
+		result = parcelDoc.data() as Parcel
+		result.guid = parcelDoc.id
+		return result
 	}
 }

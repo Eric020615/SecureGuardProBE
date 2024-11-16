@@ -12,6 +12,15 @@ export interface GetParcelDto {
 	parcelImage: GeneralFileResponseDto
 	floor: string
 	unit: string
+	createdDateTime: string
+}
+
+export interface GetParcelDetailsDto {
+	parcelId: number
+	parcelGuid: string
+	parcelImage: GeneralFileResponseDto
+	floor: string
+	unit: string
 	createdBy: string
 	createdDateTime: string
 	updatedBy: string
