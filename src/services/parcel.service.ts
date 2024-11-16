@@ -92,6 +92,14 @@ export class ParcelService {
 		}
 	}
 
+	deleteParcelByIdService = async (parcelGuid: string) => {
+		try {
+			await this.parcelRepository.deleteParcelByResidentRepository(parcelGuid)
+		} catch (error: any) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
 	getParcelByStaffService = async (id: number, limit: number, userGuid: string) => {
 		try {
 			let { rows, count } = await this.parcelRepository.getParcelByStaffRepository(id, limit, userGuid)

@@ -7,6 +7,7 @@ import { SequenceRepository } from './sequence.repository'
 import { RepositoryService } from './repository'
 import { Parcel } from '../models/parcel.model'
 import { DocumentStatus } from '../common/constants'
+import { getCurrentTimestamp } from '../helper/time'
 
 @provideSingleton(ParcelRepository)
 export class ParcelRepository {
@@ -77,5 +78,10 @@ export class ParcelRepository {
 		result = parcelDoc.data() as Parcel
 		result.guid = parcelDoc.id
 		return result
+	}
+
+	async deleteParcelByResidentRepository(parcelGuid: string) {
+		const docRef = doc(this.parcelCollection, parcelGuid)
+		await updateDoc(docRef, { status: DocumentStatus.SoftDeleted, updatedDateTime: getCurrentTimestamp() })
 	}
 }

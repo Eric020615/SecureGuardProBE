@@ -12,6 +12,7 @@ import {
 	Get,
 	Query,
 	Path,
+	Delete,
 } from 'tsoa'
 import { GetParcelDetailsDto, GetParcelDto } from '../dtos/parcel.dto'
 import { HttpStatusCode } from '../common/http-status-code'
@@ -101,6 +102,32 @@ export class ParcelController extends Controller {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
 			const response = {
 				message: 'Failed to retrieve parcel',
+				status: '500',
+				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('Parcel')
+	@OperationId('deleteParcelById')
+	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Delete('/{id}')
+	@Security('jwt', ['RES'])
+	public async deleteParcelById(@Path() id: string): Promise<IResponse<any>> {
+		try {
+			let data = await this.parcelService.deleteParcelByIdService(id)
+			const response = {
+				message: 'Parcel deleted successfully',
+				status: '200',
+				data: data,
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to delete parcel',
 				status: '500',
 				data: null,
 			}
