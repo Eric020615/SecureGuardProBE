@@ -39,40 +39,50 @@ export const getCurrentDate = () => {
 }
 
 export const getCurrentDateString = (dateFormat: string) => {
-    return moment().utc().format(dateFormat);
-};
+	return moment().utc().format(dateFormat)
+}
 
 // Convert a DateTimeOffset string to a Date object
 export const convertDateStringToDate = (dateString: string) => {
-    if (!dateString) return null;
-    return moment(dateString).utc().toDate();
-};
+	if (!dateString) return null
+	return moment(dateString).utc().toDate()
+}
 
 // Convert a Date object to a formatted DateTimeOffset string
 export const convertDateToDateString = (date: Date, dateFormat: string) => {
-    if (!date) return '';
-    return moment(date).format(dateFormat);
-};
+	if (!date) return ''
+	return moment(date).format(dateFormat)
+}
 
 // Convert a DateTimeOffset string to a formatted DateTimeOffset string
 export const convertDateStringToFormattedString = (dateString: string, dateFormat: string) => {
-    if (!dateString) return '';
-    return moment(dateString).format(dateFormat);
-};
+	if (!dateString) return ''
+	return moment(dateString).utc().format(dateFormat)
+}
 
 // Get a formatted DateTimeOffset string from a Date object
 export const getFormattedDateStringFromDate = (date: Date, dateFormat: string) => {
-    if (!date) return '';
-    return moment(date).format(dateFormat);
-};
+	if (!date) return ''
+	return moment(date).format(dateFormat)
+}
 
 // Get relative time from now for a given date
 export const getRelativeTimeFromNow = (date: Date) => {
-    if (!date) return '';
-    return moment.tz(date, "Asia/Kuala_Lumpur").fromNow();
-};
+	if (!date) return ''
+	return moment.tz(date, 'Asia/Kuala_Lumpur').fromNow()
+}
 
 export const initializeDate = (date: Date) => {
-	if(!date) return null
-	return moment(date).startOf("day").toDate()
+	if (!date) return null
+	return moment(date).startOf('day').toDate()
+}
+
+export const addTimeToDateString = (
+	dateString: string,
+	timeUnit: moment.unitOfTime.DurationConstructor,
+	amount: number,
+	dateFormat: string = ITimeFormat.isoDateTime,
+): string => {
+	if (!dateString) return ''
+	return moment(dateString).utc().add(amount, timeUnit).format(dateFormat)
 }

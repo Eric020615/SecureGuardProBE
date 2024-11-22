@@ -37,19 +37,22 @@ export class FaceAuthService {
 
 			// if exists update the access control details
 			if (userCard && personDetails) {
-				await this.megeyeService.editPerson({
-					recognition_type: RoleRecognitionTypeEnum[userData.role],
-					is_admin: userData.role === RoleEnum.SYSTEM_ADMIN ? true : false,
-					person_name: userData.firstName + ' ' + userData.lastName,
-					group_list: ['1'],
-					face_list: [
-						{
-							idx: 0,
-							data: createUpdateFaceAuthDto.faceData.fileData,
-						},
-					],
-					phone_num: userData.contactNumber,
-				}, effectiveUserGuid)
+				await this.megeyeService.editPerson(
+					{
+						recognition_type: RoleRecognitionTypeEnum[userData.role],
+						is_admin: userData.role === RoleEnum.SYSTEM_ADMIN ? true : false,
+						person_name: userData.firstName + ' ' + userData.lastName,
+						group_list: ['1'],
+						face_list: [
+							{
+								idx: 0,
+								data: createUpdateFaceAuthDto.faceData.fileData,
+							},
+						],
+						phone_num: userData.contactNumber,
+					},
+					effectiveUserGuid,
+				)
 				await this.faceAuthRepository.editFaceAuthRepository(userGuid, {
 					updatedBy: userGuid,
 					updatedDateTime: getCurrentTimestamp(),
@@ -79,6 +82,10 @@ export class FaceAuthService {
 				UserType: 'Normal',
 			} as CreateStaffDto
 			const badgeNumber = await this.microEngineService.addUser(staffInfo, userGuid)
+			if (!badgeNumber) {
+				throw new OperationError('Failed to create user card', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			await this.microEngineService.sendByCardGuid()
 			await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[userData.role],
 				id: effectiveUserGuid,

@@ -1,4 +1,4 @@
-import { DepartmentEnum, JobTitleEnum } from "../common/constants"
+import { DepartmentEnum, JobTitleEnum } from '../common/constants'
 
 export interface IResponse<T> {
 	Message?: string
@@ -7,7 +7,7 @@ export interface IResponse<T> {
 }
 
 export interface IODataQueryStringResponse<T> {
-	"@odata.context": string
+	'@odata.context': string
 	value: T[]
 }
 
@@ -65,7 +65,7 @@ export interface StaffProfileDto {
 }
 
 export interface CardDto {
-	BadgeCategory: 'MifareSector' | 'QRCode'
+	BadgeCategory: 'MifareSector' | 'QRCode' | 'ISO14443ACSN'
 	Token: 'Card'
 	BadgeNo: string
 	CardSerialNo: string
@@ -107,7 +107,16 @@ export interface GetStaffDto {
 	UserType: string
 }
 
-export interface GetStaticQrCodeDto { 
+export interface GetStaticQrCodeDto {
 	BadgeNo: string
 	Data: string
+}
+
+export interface SendByCardGuidDto {
+	StartCardGuid: number
+	EndCardGuid: number
+	Action: 'InstallCard'
+	ControllerId: 'Demo'
+	IsAllCard: true
+	SelectiveDownload: true
 }

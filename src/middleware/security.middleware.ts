@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { AuthTokenPayloadDto, SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
+import { AuthTokenPayloadDto, SubUserAuthTokenPayloadDto, VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
 import { AuthService } from '../services/auth.service'
 import { RoleEnum } from '../common/role'
 import { iocContainer } from '../ioc'
@@ -13,6 +13,7 @@ export interface ISecurityMiddlewareRequest extends Request {
 	subUserEmail: string
 	parentUserGuid: string
 	subUserRequestGuid: string
+	visitorGuid: string
 }
 
 export const checkUserPermission = (jwtConfig: JwtConfig, token: string, scopes?: string[]) => {
@@ -60,6 +61,11 @@ export const expressAuthentication = async (
 			await authService.checkUserStatus(subUserData.parentUserGuid)
 			request.subUserEmail = subUserData.subUserEmail
 			request.parentUserGuid = subUserData.parentUserGuid
+			return Promise.resolve({})
+		}
+		if (securityName === 'visitor') {
+			const visitorData = jwtConfig.decryptToken<VisitorPassTokenPayloadDto>(token)
+			request.visitorGuid = visitorData.visitorGuid
 			return Promise.resolve({})
 		}
 	} catch (error: any) {

@@ -169,6 +169,40 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetQrCodeByVisitorDto": {
+        "dataType": "refObject",
+        "properties": {
+            "badgeNumber": {"dataType":"string","required":true},
+            "data": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetVisitorPassDetailsDto": {
+        "dataType": "refObject",
+        "properties": {
+            "visitorId": {"dataType":"double","required":true},
+            "visitorGuid": {"dataType":"string","required":true},
+            "visitorName": {"dataType":"string","required":true},
+            "visitorEmail": {"dataType":"string","required":true},
+            "visitorCategory": {"dataType":"string","required":true},
+            "visitorContactNumber": {"dataType":"string","required":true},
+            "visitDateTime": {"dataType":"string","required":true},
+            "qrCode": {"ref":"GetQrCodeByVisitorDto","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponse_GetVisitorPassDetailsDto_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetVisitorPassDetailsDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetVisitorPassDetailsDto"}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EditVisitorByIdDto": {
         "dataType": "refObject",
         "properties": {
@@ -188,7 +222,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoleEnum": {
         "dataType": "refEnum",
-        "enums": ["SA","STF","RES","SUB"],
+        "enums": ["SA","STF","RES","SUB","VI"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetUserByAdminDto": {
@@ -1081,6 +1115,42 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getVisitorDetails',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/visitors/pass',
+            authenticateMiddleware([{"visitor":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController)),
+            ...(fetchMiddlewares<RequestHandler>(VisitorController.prototype.getVisitorPassDetails)),
+
+            async function VisitorController_getVisitorPassDetails(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<VisitorController>(VisitorController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getVisitorPassDetails',
                 controller,
                 response,
                 next,

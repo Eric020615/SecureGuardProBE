@@ -36,7 +36,7 @@ export class EmailService {
 		}
 
 		try {
-			const response = await sgMail.send(msg)
+			await sgMail.send(msg)
 			// console.log('Email sent: ' + response[0].statusCode)
 			return [ true, 'Email sent successfully' ]
 		} catch (error: any) {

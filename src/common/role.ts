@@ -2,7 +2,8 @@ export enum RoleEnum {
     'SYSTEM_ADMIN' = 'SA',
     'STAFF' = 'STF',
     'RESIDENT' = 'RES',
-    'RESIDENT_SUBUSER' = 'SUB'
+    'RESIDENT_SUBUSER' = 'SUB',
+    'VISITOR' = 'VI'
 }  
 
 export enum GenderEnum {
@@ -14,7 +15,8 @@ export type RoleParam =
   | "SA"
   | "STF"
   | "RES"
-  | "SUB";
+  | "SUB"
+  | "VI";
 
 export const convertRoleEnumMessage = (code: string) => {
     if (code in RoleEnum) {

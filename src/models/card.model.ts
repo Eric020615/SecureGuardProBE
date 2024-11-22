@@ -1,19 +1,26 @@
-import { Timestamp } from "firebase/firestore";
-import { BaseModel } from "./base.model"
+import { Timestamp } from 'firebase/firestore'
 
-export class Card extends BaseModel { 
-    badgeNumber: number
+export class Card {
+	badgeNumber: number
+	status: number
+	createdBy: string
+	updatedBy: string
+	createdDateTime: Timestamp
+	updatedDateTime: Timestamp
 
-    constructor(
-        id: number,
-        badgeNumber: number,
-        status: number,
-        createdBy: string,
-        updatedBy: string,
-        createdDateTime: Timestamp,
-        updatedDateTime: Timestamp,
-    ){
-        super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
-        this.badgeNumber = badgeNumber
-    }
+	constructor(
+		badgeNumber: number,
+		status: number,
+		createdBy: string,
+		updatedBy: string,
+		createdDateTime: Timestamp,
+		updatedDateTime: Timestamp,
+	) {
+		this.badgeNumber = badgeNumber
+		this.status = status
+		this.createdBy = createdBy
+		this.updatedBy = updatedBy
+		this.createdDateTime = createdDateTime
+		this.updatedDateTime = updatedDateTime
+	}
 }

@@ -1,22 +1,8 @@
-import {
-	addDoc,
-	collection,
-	doc,
-	getDoc,
-	getDocs,
-	query,
-	where,
-	updateDoc,
-	orderBy,
-} from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getDocs, query, where, updateDoc, orderBy } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
 import { Visitor } from '../models/visitor.model'
-import {
-	convertDateStringToTimestamp,
-	convertTimestampToUserTimezone,
-	generateAllDatesInRange,
-} from '../helper/time'
+import { convertDateStringToTimestamp, convertTimestampToUserTimezone, generateAllDatesInRange } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
@@ -52,7 +38,7 @@ export class VisitorRepository {
 			}
 			const docRef = await addDoc(this.visitorCollection, Object.assign({}, visitor))
 			await updateDoc(docRef, { id: id })
-			return id;
+			return { id, guid: docRef.id }
 		})
 	}
 
@@ -73,12 +59,7 @@ export class VisitorRepository {
 		return result
 	}
 
-	async getVisitorByResidentRepository(
-		userId: string,
-		isPast: boolean,
-		id: number,
-		pageSize: number,
-	) {
+	async getVisitorByResidentRepository(userId: string, isPast: boolean, id: number, pageSize: number) {
 		const constraints = [
 			where('createdBy', '==', userId),
 			where(
@@ -118,7 +99,7 @@ export class VisitorRepository {
 		)
 		return { rows, count }
 	}
-
+	
 	async getVisitorCountsByDayRepository(startDate: string, endDate: string) {
 		const startTimestamp = convertDateStringToTimestamp(startDate)
 		const endTimestamp = convertDateStringToTimestamp(endDate)
@@ -137,10 +118,7 @@ export class VisitorRepository {
 		})
 		snapshot.forEach((doc) => {
 			const data = doc.data() as Visitor
-			const visitDateString = convertTimestampToUserTimezone(
-				data.visitDateTime,
-				ITimeFormat.isoDateTime,
-			)
+			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime, ITimeFormat.isoDateTime)
 			let index = 0
 			while (index < dateRange.length) {
 				let visitDate = moment.utc(visitDateString)

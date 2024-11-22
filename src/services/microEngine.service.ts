@@ -10,6 +10,7 @@ import {
 	IResponse,
 	LoginResponse,
 	RefreshTokenResponse,
+	SendByCardGuidDto,
 	TerminateUserRequest,
 } from '../dtos/microengine.dto'
 import moment from 'moment'
@@ -176,7 +177,7 @@ export class MicroEngineService {
 
 	async addUser(data: CreateStaffDto, userGuid: string) {
 		const badgeNumber = await this.cardRepository.createCardRepository(
-			new Card(0, 0, DocumentStatus.Active, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
+			new Card(0, DocumentStatus.Active, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
 		)
 		const odataQuery = `$filter=UserId eq '${data.UserId}' and Cards/any(c: c/BadgeNo eq '${badgeNumber}')`
 		const response = await this.getUserOdata(odataQuery)
@@ -273,7 +274,15 @@ export class MicroEngineService {
 		)
 	}
 
-	async sendByCardGuid(data: any) {
+	async sendByCardGuid() {
+		let data = {
+			StartCardGuid: 0,
+			EndCardGuid: 0,
+			Action: 'InstallCard',
+			ControllerId: 'Demo',
+			IsAllCard: true,
+			SelectiveDownload: true,
+		} as SendByCardGuidDto
 		return this.apiRequest(
 			listUrl.cardDeviceCommApi.commands.sendByCardGuid.path,
 			listUrl.cardDeviceCommApi.commands.sendByCardGuid.type,

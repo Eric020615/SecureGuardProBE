@@ -18,7 +18,13 @@ import {
 import { HttpStatusCode } from '../common/http-status-code'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
-import { CreateVisitorDto, GetVisitorDto, EditVisitorByIdDto, GetVisitorDetailsDto } from '../dtos/visitor.dto'
+import {
+	CreateVisitorDto,
+	GetVisitorDto,
+	EditVisitorByIdDto,
+	GetVisitorDetailsDto,
+	GetVisitorPassDetailsDto,
+} from '../dtos/visitor.dto'
 import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
 import { id, inject } from 'inversify'
@@ -48,10 +54,7 @@ export class VisitorController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userGuid = await this.userService.getEffectiveUserGuidService(
-				request.userGuid,
-				request.role,
-			)
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
 			await this.visitorService.createVisitorService(createVisitorDto, userGuid)
 			this.setStatus(HttpStatusCode.OK)
 			const response = {
@@ -87,16 +90,8 @@ export class VisitorController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userGuid = await this.userService.getEffectiveUserGuidService(
-				request.userGuid,
-				request.role,
-			)
-			const { data, count } = await this.visitorService.getVisitorByResidentService(
-				userGuid,
-				isPast,
-				id,
-				limit,
-			)
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
+			const { data, count } = await this.visitorService.getVisitorByResidentService(userGuid, isPast, id, limit)
 			const response = {
 				message: 'Visitors retrieve successfully',
 				status: '200',
@@ -126,7 +121,7 @@ export class VisitorController extends Controller {
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Get('/{id}/details')
 	@Security('jwt', ['RES', 'SUB', 'SA'])
-	public async getVisitorDetails (
+	public async getVisitorDetails(
 		@Request() request: ISecurityMiddlewareRequest,
 		@Path() id: string,
 	): Promise<IResponse<GetVisitorDetailsDto>> {
@@ -153,11 +148,42 @@ export class VisitorController extends Controller {
 	}
 
 	@Tags('Visitor')
+	@OperationId('getVisitorPassDetails')
+	@Response<IResponse<GetVisitorPassDetailsDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Get('/pass')
+	@Security('visitor', [])
+	public async getVisitorPassDetails(
+		@Request() request: ISecurityMiddlewareRequest,
+	): Promise<IResponse<GetVisitorPassDetailsDto>> {
+		try {
+			if (!request.visitorGuid) {
+				throw new OperationError('Visitor not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const data = await this.visitorService.getVisitorPassDetailsService(request.visitorGuid)
+			const response = {
+				message: 'Visitors pass details retrieve successfully',
+				status: '200',
+				data: data,
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to retrieve visitors pass details',
+				status: '500',
+				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('Visitor')
 	@OperationId('editVisitorById')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
 	@Put('/{id}')
-	@Security('jwt', ["RES"])
+	@Security('jwt', ['RES'])
 	public async editVisitorById(
 		@Body() editVisitorByIdDto: EditVisitorByIdDto,
 		@Path() id: string,
@@ -167,10 +193,7 @@ export class VisitorController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userGuid = await this.userService.getEffectiveUserGuidService(
-				request.userGuid,
-				request.role,
-			)
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
 			await this.visitorService.editVisitorByIdService(editVisitorByIdDto, id, userGuid)
 			const response = {
 				message: 'Visitor updated successfully',

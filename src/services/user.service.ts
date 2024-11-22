@@ -582,10 +582,9 @@ export class UserService {
 			return true // Email exists
 		} catch (error: any) {
 			if (error.code === 'auth/user-not-found') {
-				return false // Email does not exist, proceed
+				return false // Email does not exist
 			}
-			// Handle other errors that might occur
-			throw error // Rethrow unexpected errors
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
 }

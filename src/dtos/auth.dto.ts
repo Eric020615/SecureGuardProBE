@@ -11,6 +11,10 @@ export interface SubUserAuthTokenPayloadDto {
     parentUserGuid: string
 }
 
+export interface VisitorPassTokenPayloadDto {
+	visitorGuid: string
+}
+
 export interface LoginDto {
 	email: string
 	password: string

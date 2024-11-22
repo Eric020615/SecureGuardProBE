@@ -335,6 +335,89 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GetQrCodeByVisitorDto": {
+				"properties": {
+					"badgeNumber": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"badgeNumber",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetVisitorPassDetailsDto": {
+				"properties": {
+					"visitorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"visitorGuid": {
+						"type": "string"
+					},
+					"visitorName": {
+						"type": "string"
+					},
+					"visitorEmail": {
+						"type": "string"
+					},
+					"visitorCategory": {
+						"type": "string"
+					},
+					"visitorContactNumber": {
+						"type": "string"
+					},
+					"visitDateTime": {
+						"type": "string"
+					},
+					"qrCode": {
+						"$ref": "#/components/schemas/GetQrCodeByVisitorDto"
+					}
+				},
+				"required": [
+					"visitorId",
+					"visitorGuid",
+					"visitorName",
+					"visitorEmail",
+					"visitorCategory",
+					"visitorContactNumber",
+					"visitDateTime",
+					"qrCode"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetVisitorPassDetailsDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetVisitorPassDetailsDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetVisitorPassDetailsDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"EditVisitorByIdDto": {
 				"properties": {
 					"visitorName": {
@@ -375,7 +458,8 @@
 					"SA",
 					"STF",
 					"RES",
-					"SUB"
+					"SUB",
+					"VI"
 				],
 				"type": "string"
 			},
@@ -2534,6 +2618,45 @@
 						}
 					}
 				]
+			}
+		},
+		"/visitors/pass": {
+			"get": {
+				"operationId": "getVisitorPassDetails",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorPassDetailsDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorPassDetailsDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"visitor": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/visitors/{id}": {

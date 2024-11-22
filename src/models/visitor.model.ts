@@ -7,6 +7,8 @@ export class Visitor extends BaseModel{
     visitorCategory: string;
     visitorContactNumber: string;
     visitDateTime: Timestamp;
+    badgeNumber: string;
+    token: string;
 
     constructor(
         id: number,
@@ -15,6 +17,8 @@ export class Visitor extends BaseModel{
         visitorCategory: string,
         visitorContactNumber: string,
         visitDateTime: Timestamp,
+        badgeNumber: string,
+        token: string,
         status: number,
         createdBy: string,
         updatedBy: string,
@@ -26,6 +30,8 @@ export class Visitor extends BaseModel{
         this.visitorEmail = visitorEmail;
         this.visitorCategory = visitorCategory,
         this.visitorContactNumber = visitorContactNumber,
-        this.visitDateTime = visitDateTime
+        this.visitDateTime = visitDateTime,
+        this.badgeNumber = badgeNumber,
+        this.token = token
     }
 }
