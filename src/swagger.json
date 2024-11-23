@@ -151,6 +151,9 @@
 					"visitDateTime": {
 						"type": "string"
 					},
+					"token": {
+						"type": "string"
+					},
 					"status": {
 						"type": "string"
 					},
@@ -175,6 +178,7 @@
 					"visitorCategory",
 					"visitorContactNumber",
 					"visitDateTime",
+					"token",
 					"status",
 					"createdBy",
 					"updatedBy",

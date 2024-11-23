@@ -165,6 +165,7 @@ export class VisitorService {
 				visitorCategory: visitors.visitorCategory,
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
+				token: visitors.token,
 				status: DocumentStatus[visitors.status],
 				createdBy: visitors.createdBy,
 				updatedBy: visitors.updatedBy,

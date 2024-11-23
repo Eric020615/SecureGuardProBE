@@ -35,6 +35,7 @@ export interface GetVisitorDetailsDto {
 	visitorCategory: string
 	visitorContactNumber: string
 	visitDateTime: string
+	token: string
 	status: string
 	createdBy: string
 	updatedBy: string

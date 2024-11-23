@@ -99,6 +99,7 @@ const models: TsoaRoute.Models = {
             "visitorCategory": {"dataType":"string","required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
+            "token": {"dataType":"string","required":true},
             "status": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
             "updatedBy": {"dataType":"string","required":true},
