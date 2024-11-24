@@ -2123,20 +2123,13 @@
 					"password": {
 						"type": "string"
 					},
-					"role": {
-						"items": {
-							"$ref": "#/components/schemas/RoleEnum"
-						},
-						"type": "array"
-					},
 					"notificationToken": {
 						"type": "string"
 					}
 				},
 				"required": [
 					"email",
-					"password",
-					"role"
+					"password"
 				],
 				"type": "object",
 				"additionalProperties": false

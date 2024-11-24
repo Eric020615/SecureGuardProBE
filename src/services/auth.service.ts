@@ -1,5 +1,11 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { AuthTokenPayloadDto, LoginDto, RegisterUserDto, RequestResetPasswordDto, ResetPasswordDto } from '../dtos/auth.dto'
+import {
+	AuthTokenPayloadDto,
+	LoginDto,
+	RegisterUserDto,
+	RequestResetPasswordDto,
+	ResetPasswordDto,
+} from '../dtos/auth.dto'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { FirebaseClient } from '../config/initFirebase'
 import { OperationError } from '../common/operation-error'
@@ -44,10 +50,7 @@ export class AuthService {
 	registerService = async (registerUserDto: RegisterUserDto, userRole: RoleEnum) => {
 		try {
 			if (registerUserDto.confirmPassword !== registerUserDto.password) {
-				throw new OperationError(
-					'Confirm Password and Password not Match',
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError('Confirm Password and Password not Match', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const userCredentials = await createUserWithEmailAndPassword(
 				this.auth,
@@ -59,9 +62,7 @@ export class AuthService {
 				await this.authAdmin.updateUser(user.uid, { disabled: true })
 			}
 			if (userRole === RoleEnum.RESIDENT_SUBUSER) {
-				const request = await this.userRepository.getSubUserRequestByEmailRepository(
-					registerUserDto.email,
-				)
+				const request = await this.userRepository.getSubUserRequestByEmailRepository(registerUserDto.email)
 				await this.userRepository.editSubUserRequestRepository(
 					request[0].guid as string,
 					{
@@ -77,10 +78,7 @@ export class AuthService {
 			return token
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
-				throw new OperationError(
-					convertFirebaseAuthEnumMessage(error.code),
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -88,35 +86,21 @@ export class AuthService {
 
 	loginService = async (loginDto: LoginDto) => {
 		try {
-			const response = await signInWithEmailAndPassword(
-				this.auth,
-				loginDto.email,
-				loginDto.password,
-			)
+			const response = await signInWithEmailAndPassword(this.auth, loginDto.email, loginDto.password)
 			const user = await this.authAdmin.getUser(response.user.uid)
-			const role = user.customClaims?.role || 'No role assigned'
-			if (!loginDto.role.includes(role)){
-				throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
+			const role = user.customClaims?.role || ''
 			if (user.disabled) {
 				throw new OperationError('User Account Disabled', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const userInformation = await this.userService.getUserByIdService(response.user.uid)
-			if (userInformation.role !== role) {
-				throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
 			const token = this.jwtConfig.createToken({
 				userGuid: response.user.uid,
-				role: userInformation.role,
+				role: role,
 			} as AuthTokenPayloadDto)
 			return { token, userGuid: response.user.uid }
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
 				console.log(error)
-				throw new OperationError(
-					convertFirebaseAuthEnumMessage(error.code),
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -133,10 +117,7 @@ export class AuthService {
 			}
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
-				throw new OperationError(
-					convertFirebaseAuthEnumMessage(error.code),
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -145,7 +126,7 @@ export class AuthService {
 	sendResetPasswordEmail = async (requestResetPasswordDto: RequestResetPasswordDto) => {
 		try {
 			const isEmailExist = await this.userService.isEmailRegistered(requestResetPasswordDto.email)
-			if(!isEmailExist) {
+			if (!isEmailExist) {
 				throw new OperationError('Email not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			const link = await this.authAdmin.generatePasswordResetLink(requestResetPasswordDto.email)
@@ -164,10 +145,7 @@ export class AuthService {
 			}
 		} catch (error) {
 			if (error instanceof FirebaseError) {
-				throw new OperationError(
-					convertFirebaseAuthEnumMessage(error.code),
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -175,18 +153,18 @@ export class AuthService {
 
 	resetPasswordService = async (resetPasswordDto: ResetPasswordDto, userGuid: string) => {
 		try {
-			const user : UserRecord = await this.authAdmin.getUser(userGuid)
-			await signInWithEmailAndPassword(this.auth, user.email as string, resetPasswordDto.currentPassword); // Sign in the user with the current password
+			const user: UserRecord = await this.authAdmin.getUser(userGuid)
+			await signInWithEmailAndPassword(this.auth, user.email as string, resetPasswordDto.currentPassword) // Sign in the user with the current password
 			if (resetPasswordDto.currentPassword === resetPasswordDto.newPassword) {
-				throw new OperationError('New password cannot be the same as the current password', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				throw new OperationError(
+					'New password cannot be the same as the current password',
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
 			}
 			await this.authAdmin.updateUser(userGuid, { password: resetPasswordDto.newPassword }) // Update the user's password
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
-				throw new OperationError(
-					convertFirebaseAuthEnumMessage(error.code),
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

@@ -18,7 +18,6 @@ export interface VisitorPassTokenPayloadDto {
 export interface LoginDto {
 	email: string
 	password: string
-	role: RoleEnum[]
 	notificationToken?: string
 }
 

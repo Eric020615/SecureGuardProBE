@@ -821,7 +821,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
-            "role": {"dataType":"array","array":{"dataType":"refEnum","ref":"RoleEnum"},"required":true},
             "notificationToken": {"dataType":"string"},
         },
         "additionalProperties": false,
