@@ -56,5 +56,14 @@ export interface GetVisitorPassDetailsDto {
 	visitorCategory: string
 	visitorContactNumber: string
 	visitDateTime: string
-	qrCode: GetQrCodeByVisitorDto
+}
+
+export interface GetVisitorDetailsByTokenDto {
+	visitorId: number
+	visitorGuid: string
+	visitorName: string
+	visitorEmail: string
+	visitorCategory: string
+	visitorContactNumber: string
+	visitDateTime: string
 }

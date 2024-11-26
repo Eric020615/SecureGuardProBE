@@ -339,22 +339,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"GetQrCodeByVisitorDto": {
-				"properties": {
-					"badgeNumber": {
-						"type": "string"
-					},
-					"data": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"badgeNumber",
-					"data"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"GetVisitorPassDetailsDto": {
 				"properties": {
 					"visitorId": {
@@ -378,9 +362,6 @@
 					},
 					"visitDateTime": {
 						"type": "string"
-					},
-					"qrCode": {
-						"$ref": "#/components/schemas/GetQrCodeByVisitorDto"
 					}
 				},
 				"required": [
@@ -390,8 +371,7 @@
 					"visitorEmail",
 					"visitorCategory",
 					"visitorContactNumber",
-					"visitDateTime",
-					"qrCode"
+					"visitDateTime"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -447,6 +427,69 @@
 					"visitorContactNumber",
 					"visitDateTime"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetVisitorDetailsByTokenDto": {
+				"properties": {
+					"visitorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"visitorGuid": {
+						"type": "string"
+					},
+					"visitorName": {
+						"type": "string"
+					},
+					"visitorEmail": {
+						"type": "string"
+					},
+					"visitorCategory": {
+						"type": "string"
+					},
+					"visitorContactNumber": {
+						"type": "string"
+					},
+					"visitDateTime": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"visitorId",
+					"visitorGuid",
+					"visitorName",
+					"visitorEmail",
+					"visitorCategory",
+					"visitorContactNumber",
+					"visitDateTime"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponse_GetVisitorDetailsByTokenDto_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetVisitorDetailsByTokenDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetVisitorDetailsByTokenDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -2714,6 +2757,45 @@
 						}
 					}
 				}
+			}
+		},
+		"/visitors/verify-token": {
+			"get": {
+				"operationId": "getVisitorDetailsByToken",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDetailsByTokenDto_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_GetVisitorDetailsByTokenDto_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Visitor"
+				],
+				"security": [
+					{
+						"visitor": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/users/admin": {

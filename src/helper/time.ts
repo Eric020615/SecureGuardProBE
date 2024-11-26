@@ -86,3 +86,15 @@ export const addTimeToDateString = (
 	if (!dateString) return ''
 	return moment(dateString).utc().add(amount, timeUnit).format(dateFormat)
 }
+
+// Calculate the difference between two date strings
+export const calculateDateDifference = (
+	startDateString: string,
+	endDateString: string,
+	timeUnit: moment.unitOfTime.Diff = 'seconds', // Default to seconds
+): number => {
+	if (!startDateString || !endDateString) return 0
+	const start = moment.utc(startDateString)
+	const end = moment.utc(endDateString)
+	return end.diff(start, timeUnit) 
+}

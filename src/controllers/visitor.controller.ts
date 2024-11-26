@@ -24,6 +24,7 @@ import {
 	EditVisitorByIdDto,
 	GetVisitorDetailsDto,
 	GetVisitorPassDetailsDto,
+	GetVisitorDetailsByTokenDto,
 } from '../dtos/visitor.dto'
 import { VisitorService } from '../services/visitor.service'
 import { provideSingleton } from '../helper/provideSingleton'
@@ -205,6 +206,37 @@ export class VisitorController extends Controller {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
 			const response = {
 				message: 'Failed to update visitor',
+				status: '500',
+				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('Visitor')
+	@OperationId('getVisitorDetailsByToken')
+	@Response<IResponse<GetVisitorDetailsByTokenDto>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Get('/verify-token')
+	@Security('visitor', [])
+	public async getVisitorDetailsByToken(
+		@Request() request: ISecurityMiddlewareRequest,
+	): Promise<IResponse<GetVisitorDetailsByTokenDto>> {
+		try {
+			if (!request.visitorGuid) {
+				throw new OperationError('Visitor not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const data = await this.visitorService.getVisitorDetailsByTokenService(request.visitorGuid)
+			const response = {
+				message: 'Visitors verified successfully',
+				status: '200',
+				data: data,
+			}
+			return response
+		} catch (err: any) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}

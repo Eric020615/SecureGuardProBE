@@ -7,39 +7,29 @@ import {
 	GetVisitorByDateDto,
 	GetVisitorDetailsDto,
 	GetVisitorPassDetailsDto,
+	GetVisitorDetailsByTokenDto,
 } from '../dtos/visitor.dto'
 import { VisitorRepository } from '../repositories/visitor.repository'
 import { Visitor } from '../models/visitor.model'
 import {
-	addTimeToDateString,
-	convertDateStringToFormattedString,
+	calculateDateDifference,
 	convertDateStringToTimestamp,
 	convertTimestampToUserTimezone,
+	getCurrentDateString,
 	getCurrentTimestamp,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import {
-	DepartmentEnum,
-	DocumentStatus,
-	ITimeFormat,
-	JobTitleEnum,
-	PaginationDirection,
-	StaffConst,
-} from '../common/constants'
+import { DocumentStatus, ITimeFormat, PaginationDirection } from '../common/constants'
 import { MicroEngineService } from './microEngine.service'
-import { CreateStaffDto } from '../dtos/microengine.dto'
-import { CardService } from './card.service'
 import { JwtConfig } from '../config/jwtConfig'
 import { VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
-import { RoleEnum } from '../common/role'
 
 @provideSingleton(VisitorService)
 export class VisitorService {
 	constructor(
 		@inject(VisitorRepository) private visitorRepository: VisitorRepository,
 		@inject(MicroEngineService) private microEngineService: MicroEngineService,
-		@inject(CardService) private cardService: CardService,
 		@inject(JwtConfig) private jwtConfig: JwtConfig,
 	) {}
 
@@ -65,43 +55,47 @@ export class VisitorService {
 			if (!id) {
 				throw new OperationError('Failed to create visitor', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			let staffInfo = {
-				...StaffConst,
-				Profile: {
-					Branch: 'HQ',
-					Department: DepartmentEnum.VI,
-					JobTitle: JobTitleEnum.VI,
-					EmailAddress: createVisitorDto.visitorEmail,
-					ContactNo: createVisitorDto.visitorContactNumber,
-					Remark1: userId,
-				},
-				AccessControlData: {
-					AccessEntryDate: convertDateStringToFormattedString(createVisitorDto.visitDateTime, ITimeFormat.dateTime),
-					AccessExitDate: addTimeToDateString(createVisitorDto.visitDateTime, 'hours', 2, ITimeFormat.dateTime),
-					DoorAccessRightId: '0001',
-					FloorAccessRightId: '001',
-					DefaultFloorGroupId: 'N/Available',
-				},
-				Card: {
-					BadgeCategory: 'QRCode',
-				},
-				UserId: `${RoleEnum.VISITOR} ${id.toString()}`,
-				UserName: createVisitorDto.visitorName,
-				UserType: 'Normal',
-			} as CreateStaffDto
-			const badgeNumber = await this.microEngineService.addUser(staffInfo, userId)
-			if (!badgeNumber) {
-				throw new OperationError('Failed to create visitor temporary card', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
-			await this.microEngineService.sendByCardGuid()
-			const token = this.jwtConfig.createToken({
-				visitorGuid: guid,
-			} as VisitorPassTokenPayloadDto)
+			// let staffInfo = {
+			// 	...StaffConst,
+			// 	Profile: {
+			// 		Branch: 'HQ',
+			// 		Department: DepartmentEnum.VI,
+			// 		JobTitle: JobTitleEnum.VI,
+			// 		EmailAddress: createVisitorDto.visitorEmail,
+			// 		ContactNo: createVisitorDto.visitorContactNumber,
+			// 		Remark1: userId,
+			// 	},
+			// 	AccessControlData: {
+			// 		AccessEntryDate: convertDateStringToFormattedString(createVisitorDto.visitDateTime, ITimeFormat.dateTime),
+			// 		AccessExitDate: addTimeToDateString(createVisitorDto.visitDateTime, 'hours', 2, ITimeFormat.dateTime),
+			// 		DoorAccessRightId: '0001',
+			// 		FloorAccessRightId: '001',
+			// 		DefaultFloorGroupId: 'N/Available',
+			// 	},
+			// 	Card: {
+			// 		BadgeCategory: 'QRCode',
+			// 	},
+			// 	UserId: `${RoleEnum.VISITOR} ${id.toString()}`,
+			// 	UserName: createVisitorDto.visitorName,
+			// 	UserType: 'Normal',
+			// } as CreateStaffDto
+			// const badgeNumber = await this.microEngineService.addUser(staffInfo, userId)
+			// if (!badgeNumber) {
+			// 	throw new OperationError('Failed to create visitor temporary card', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			// }
+			// await this.microEngineService.sendByCardGuid()
+			// generate token and valid until visitDateTime
+			const token = this.jwtConfig.createToken(
+				{
+					visitorGuid: guid,
+				} as VisitorPassTokenPayloadDto,
+				calculateDateDifference(getCurrentDateString(ITimeFormat.isoDateTime), createVisitorDto.visitDateTime),
+			)
 			if (!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			let visitor: Visitor = {
-				badgeNumber: badgeNumber.toString(),
+				badgeNumber: '',
 				token: token,
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
@@ -220,7 +214,6 @@ export class VisitorService {
 	getVisitorPassDetailsService = async (visitorGuid: string) => {
 		try {
 			const visitors = await this.visitorRepository.getVisitorDetailsRepository(visitorGuid)
-			const qrCode = await this.cardService.getQrCodeByVisitor(visitors.id, visitors.badgeNumber)
 			let data: GetVisitorPassDetailsDto = {} as GetVisitorPassDetailsDto
 			data = {
 				visitorId: visitors.id,
@@ -230,11 +223,31 @@ export class VisitorService {
 				visitorCategory: visitors.visitorCategory,
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
-				qrCode: qrCode,
 			}
 			return data
 		} catch (error: any) {
-			console.log(error)
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	getVisitorDetailsByTokenService = async (visitorGuid: string) => {
+		try {
+			const visitors = await this.visitorRepository.getVisitorDetailsRepository(visitorGuid)
+			let data: GetVisitorDetailsByTokenDto = {} as GetVisitorDetailsByTokenDto
+			if (visitors.visitDateTime < getCurrentTimestamp()) {
+				throw new OperationError('Visitor pass expired', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			data = {
+				visitorId: visitors.id,
+				visitorGuid: visitors.guid ? visitors.guid : '',
+				visitorName: visitors.visitorName,
+				visitorEmail: visitors.visitorEmail,
+				visitorCategory: visitors.visitorCategory,
+				visitorContactNumber: visitors.visitorContactNumber,
+				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
+			}
+			return data
+		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
