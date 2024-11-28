@@ -32,6 +32,7 @@ import { RefDataRepository } from '../repositories/refData.repository'
 import { Unit } from '../models/refData.model'
 import { NotificationRepository } from '../repositories/notification.repository'
 import { GetFacilityBookingUserDto } from '../dtos/facility.dto'
+import { VisitorRepository } from '../repositories/visitor.repository'
 
 dotenv.config()
 
@@ -40,6 +41,7 @@ export class UserService {
 	private authAdmin
 	constructor(
 		@inject(UserRepository) private userRepository: UserRepository,
+		@inject(VisitorRepository) private visitorRepository: VisitorRepository,
 		@inject(RefDataRepository) private refDataRepository: RefDataRepository,
 		@inject(NotificationRepository) private notificationRepository: NotificationRepository,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
@@ -55,13 +57,20 @@ export class UserService {
 			switch (role) {
 				case RoleEnum.SYSTEM_ADMIN:
 				case RoleEnum.RESIDENT:
+				case RoleEnum.STAFF:
 					return userGuid
 				case RoleEnum.RESIDENT_SUBUSER:
 					const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(userGuid)
 					if (!subUser) {
 						throw new OperationError('Sub user not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 					}
-					return subUser ? subUser.parentUserGuid : ''
+					return subUser.parentUserGuid ? subUser.parentUserGuid : ''
+				case RoleEnum.VISITOR:
+					const visitor = await this.visitorRepository.getVisitorDetailsRepository(userGuid)
+					if (!visitor) {
+						throw new OperationError('Visitor not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+					}
+					return visitor.createdBy ? visitor.createdBy : ''
 				default:
 					throw new OperationError('Invalid role', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}

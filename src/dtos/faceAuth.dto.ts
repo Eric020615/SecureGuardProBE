@@ -1,7 +1,13 @@
-import { GeneralFileDto } from "./index.dto";
+import { GeneralFileDto } from './index.dto'
+import { GetVisitorDetailsByTokenDto } from './visitor.dto'
 
 export interface CreateUpdateFaceAuthDto {
-    faceData: GeneralFileDto
+	faceData: GeneralFileDto
+}
+
+export interface CreateUpdateVisitorFaceAuthDto {
+	visitorDetails: GetVisitorDetailsByTokenDto
+	faceData: GeneralFileDto
 }
 
 export interface StaffProfileDto {

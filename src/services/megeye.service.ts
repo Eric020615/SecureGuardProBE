@@ -9,9 +9,8 @@ import { provideSingleton } from '../helper/provideSingleton'
 export class MegeyeService {
 	constructor(
 		@inject(MegeyeManager)
-		private megeyeManager: MegeyeManager
-	) {
-	}
+		private megeyeManager: MegeyeManager,
+	) {}
 
 	public async createPerson(createPersonDto: CreatePersonDto) {
 		try {
@@ -21,10 +20,7 @@ export class MegeyeService {
 				data: createPersonDto,
 			})
 			if (!success) {
-				throw new OperationError(
-					'Failed to create user face auth',
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError('Failed to create user face auth', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			return response
 		} catch (error: any) {
@@ -40,10 +36,7 @@ export class MegeyeService {
 				data: editPersonDto,
 			})
 			if (!success) {
-				throw new OperationError(
-					'Failed to create user face auth',
-					HttpStatusCode.INTERNAL_SERVER_ERROR,
-				)
+				throw new OperationError('Failed to edit user face auth', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			return response
 		} catch (error: any) {
@@ -57,9 +50,12 @@ export class MegeyeService {
 				path: listUrl.personnelManagement.queryPersonDetailsById.path.replace('{id}', personId),
 				type: listUrl.personnelManagement.queryPersonDetailsById.type,
 			})
+			if (!success) {
+				return null
+			}
 			return response
 		} catch (error: any) {
-			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+			return null
 		}
 	}
 }

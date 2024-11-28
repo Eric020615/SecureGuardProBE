@@ -37,7 +37,7 @@ export class MicroEngineService {
 		this.expiresAt = null
 	}
 
-	private async apiRequest<T>(url: string, method: IType, data?: any, params?: any): Promise<T> {
+	private async apiRequest<T>(url: string, method: IType, data?: any, params?: any): Promise<T | null> {
 		try {
 			await this.validateOrRefreshToken()
 			const response = await axios({
@@ -56,10 +56,8 @@ export class MicroEngineService {
 			if (axios.isAxiosError(error)) {
 				const errorMessage = error.response?.data?.Message || error.message
 				console.log(errorMessage)
-				throw new OperationError(errorMessage, HttpStatusCode.INTERNAL_SERVER_ERROR)
-			} else {
-				throw new Error('An unexpected error occurred')
 			}
+			return null
 		}
 	}
 
@@ -69,7 +67,7 @@ export class MicroEngineService {
 		data?: any,
 		params?: any,
 		headers?: Record<string, string>,
-	): Promise<T> {
+	): Promise<T | null> {
 		try {
 			const response = await axios({
 				method: method,
@@ -86,11 +84,9 @@ export class MicroEngineService {
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				const errorMessage = error.response?.data?.Message || error.message
-				console.warn(errorMessage)
-				throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
-			} else {
-				throw new Error('An unexpected error occurred')
+				console.log(errorMessage)
 			}
+			return null
 		}
 	}
 
@@ -116,6 +112,9 @@ export class MicroEngineService {
 					Authorization: `Basic ${credentials}`,
 				},
 			)
+			if (!response) {
+				throw new Error('Failed to login with basic auth for microengine.')
+			}
 			this.apiKey = response.Result?.AccessToken ? response.Result.AccessToken : ''
 			this.refreshToken = response.Result?.RefreshToken ? response.Result.RefreshToken : ''
 			this.expiresAt = convertDateStringToDate(response.Result?.ExpiresAt ? response.Result.ExpiresAt : '')
@@ -130,6 +129,9 @@ export class MicroEngineService {
 			listUrl.identityApi.auth.refreshToken.type,
 			{ refreshToken: this.refreshToken },
 		)
+		if (!response) {
+			throw new Error('Failed to refresh token in microengine.')
+		}
 		this.apiKey = response.Result?.AccessToken || ''
 		this.refreshToken = response.Result?.RefreshToken || ''
 		this.expiresAt = convertDateStringToDate(response.Result?.ExpiresAt || '')
@@ -158,6 +160,9 @@ export class MicroEngineService {
 			listUrl.identityApi.auth.terminateSession.type,
 			{ UserId: microEngineConfig.userId },
 		)
+		if (!response) {
+			throw new Error('Failed to terminateSession microengine.')
+		}
 		if (response.StatusCode === HttpStatusCode.OK) {
 			this.apiKey = ''
 			this.refreshToken = ''
@@ -171,8 +176,13 @@ export class MicroEngineService {
 	}
 
 	async getUserById(userId: string) {
-		const url = listUrl.cardDbManagementApi.users.getById.path.replace('{userId}', userId)
-		return this.apiRequest(url, listUrl.cardDbManagementApi.users.getById.type)
+		try {
+			const url = listUrl.cardDbManagementApi.users.getById.path.replace('{userId}', userId)
+			const data = await this.apiRequest<IResponse<GetStaffDto>>(url, listUrl.cardDbManagementApi.users.getById.type)
+			return data
+		} catch (error) {
+			return null
+		}
 	}
 
 	async addUser(data: CreateStaffDto, userGuid: string) {

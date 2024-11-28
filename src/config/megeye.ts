@@ -219,9 +219,6 @@ export class MegeyeManager {
 						} catch (error: any) {
 							response = error.response
 							console.log(error.response.data)
-							error.response.data.forEach((element: any) => {
-								console.log(element)
-							})
 						}
 					}
 					if (!success) {
@@ -237,7 +234,8 @@ export class MegeyeManager {
 			}
 		}
 
-		return _handler(payload)
+		const data = await  _handler(payload)
+		return data
 	}
 
 	// Helper function to serialize parameters for URL

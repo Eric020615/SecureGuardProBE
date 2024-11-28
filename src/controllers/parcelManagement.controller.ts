@@ -71,7 +71,6 @@ export class ParcelManagementController extends Controller {
 			return response
 		} catch (err) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			console.log(err)
 			const response = {
 				message: 'Failed to create parcel',
 				status: '500',
