@@ -144,7 +144,7 @@ export class FaceAuthService {
 			const personDetails = await this.megeyeService.queryPersonDetailsById(
 				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid
 			)
-			
+
 			// if exists update face auth
 			if (userCard && personDetails) {
 				// update face auth
@@ -163,13 +163,6 @@ export class FaceAuthService {
 						phone_num: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
 					},
 					createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-				)
-				await this.faceAuthRepository.editFaceAuthRepository(
-					createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-					{
-						updatedBy: staffGuid,
-						updatedDateTime: getCurrentTimestamp(),
-					} as FaceAuth,
 				)
 				return
 			}
@@ -230,12 +223,7 @@ export class FaceAuthService {
 				phone_num: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
 				card_number: badgeNumber.toString(),
 			})
-			await this.faceAuthRepository.createFaceAuthRepository(
-				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-				new FaceAuth(staffGuid, staffGuid, getCurrentTimestamp(), getCurrentTimestamp()),
-			)
 		} catch (error: any) {
-			console.log("shithist")
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

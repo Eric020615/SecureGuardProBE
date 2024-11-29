@@ -138,15 +138,19 @@ export class MicroEngineService {
 	}
 
 	private async validateOrRefreshToken() {
-		if (!this.refreshToken || !this.expiresAt || !this.apiKey) {
-			await this.terminateSession()
-			await this.loginWithBasicAuth()
-		}
-		if (this.expiresAt) {
-			// if expires, refresh token
-			if (this.expiresAt && moment().isAfter(this.expiresAt)) {
-				this.refreshAccessToken()
+		try {
+			if (!this.refreshToken || !this.expiresAt || !this.apiKey) {
+				await this.terminateSession()
+				await this.loginWithBasicAuth()
 			}
+			if (this.expiresAt) {
+				// if expires, refresh token
+				if (this.expiresAt && moment().isAfter(this.expiresAt)) {
+					this.refreshAccessToken()
+				}
+			}
+		} catch (error) {
+			console.log(error)
 		}
 	}
 

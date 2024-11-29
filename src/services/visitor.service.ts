@@ -55,36 +55,6 @@ export class VisitorService {
 			if (!id) {
 				throw new OperationError('Failed to create visitor', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			// let staffInfo = {
-			// 	...StaffConst,
-			// 	Profile: {
-			// 		Branch: 'HQ',
-			// 		Department: DepartmentEnum.VI,
-			// 		JobTitle: JobTitleEnum.VI,
-			// 		EmailAddress: createVisitorDto.visitorEmail,
-			// 		ContactNo: createVisitorDto.visitorContactNumber,
-			// 		Remark1: userId,
-			// 	},
-			// 	AccessControlData: {
-			// 		AccessEntryDate: convertDateStringToFormattedString(createVisitorDto.visitDateTime, ITimeFormat.dateTime),
-			// 		AccessExitDate: addTimeToDateString(createVisitorDto.visitDateTime, 'hours', 2, ITimeFormat.dateTime),
-			// 		DoorAccessRightId: '0001',
-			// 		FloorAccessRightId: '001',
-			// 		DefaultFloorGroupId: 'N/Available',
-			// 	},
-			// 	Card: {
-			// 		BadgeCategory: 'QRCode',
-			// 	},
-			// 	UserId: `${RoleEnum.VISITOR} ${id.toString()}`,
-			// 	UserName: createVisitorDto.visitorName,
-			// 	UserType: 'Normal',
-			// } as CreateStaffDto
-			// const badgeNumber = await this.microEngineService.addUser(staffInfo, userId)
-			// if (!badgeNumber) {
-			// 	throw new OperationError('Failed to create visitor temporary card', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			// }
-			// await this.microEngineService.sendByCardGuid()
-			// generate token and valid until visitDateTime
 			const token = this.jwtConfig.createToken(
 				{
 					visitorGuid: guid,
@@ -95,7 +65,6 @@ export class VisitorService {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			let visitor: Visitor = {
-				badgeNumber: '',
 				token: token,
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),

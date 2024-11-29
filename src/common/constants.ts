@@ -116,7 +116,7 @@ export const StaffConst: CreateStaffDto = {
 		UserDefinedField8: '',
 	} as StaffProfileDto,
 	Card: {
-		BadgeCategory: 'MifareSector',
+		BadgeCategory: 'ISO14443ACSN',
 		Token: 'Card',
 		BadgeNo: '',
 		CardSerialNo: '',
