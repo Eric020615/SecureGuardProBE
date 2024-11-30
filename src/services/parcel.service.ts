@@ -17,7 +17,7 @@ export class ParcelService {
 	) {}
 	createParcelService = async (createParcelDto: CreateParcelDto, userId: string) => {
 		try {
-			const fileGuid = await this.fileService.uploadFile(
+			const fileGuid = await this.fileService.uploadFileService(
 				createParcelDto.parcelImage,
 				`parcel/${createParcelDto.floor}/${createParcelDto.unit}/${getCurrentDateString(ITimeFormat.isoDateTime)}`,
 				createParcelDto.parcelImage.contentType,

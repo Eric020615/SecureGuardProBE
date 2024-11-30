@@ -123,6 +123,7 @@ export class MicroEngineService {
 		}
 	}
 
+	// take note of this
 	private async refreshAccessToken(): Promise<void> {
 		const response = await this.authApiRequest<IResponse<RefreshTokenResponse>>(
 			listUrl.identityApi.auth.refreshToken.path,
@@ -189,10 +190,7 @@ export class MicroEngineService {
 		}
 	}
 
-	async addUser(data: CreateStaffDto, userGuid: string) {
-		const badgeNumber = await this.cardRepository.createCardRepository(
-			new Card(0, DocumentStatus.Active, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
-		)
+	async addUser(data: CreateStaffDto, userGuid: string, badgeNumber: string) {
 		const odataQuery = `$filter=UserId eq '${data.UserId}' and Cards/any(c: c/BadgeNo eq '${badgeNumber}')`
 		const response = await this.getUserOdata(odataQuery)
 		if (response && response.value.length > 0) {
@@ -202,7 +200,7 @@ export class MicroEngineService {
 			...data,
 			Card: {
 				...data.Card,
-				BadgeNo: badgeNumber.toString(),
+				BadgeNo: badgeNumber,
 			},
 		}
 		await this.apiRequest(
@@ -210,7 +208,6 @@ export class MicroEngineService {
 			listUrl.cardDbManagementApi.users.add.type,
 			JSON.stringify(data),
 		)
-		return badgeNumber
 	}
 
 	async updateUser(userId: string, data: any) {

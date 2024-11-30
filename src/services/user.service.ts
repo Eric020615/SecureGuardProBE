@@ -94,7 +94,7 @@ export class UserService {
 			}
 
 			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
-				const supportedDocuments = await this.fileService.uploadMultipleFiles(
+				const supportedDocuments = await this.fileService.uploadMultipleFilesService(
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
 					userGuid,
@@ -157,7 +157,7 @@ export class UserService {
 			}
 
 			if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateStaffDto(createUserDto)) {
-				const supportedDocuments = await this.fileService.uploadMultipleFiles(
+				const supportedDocuments = await this.fileService.uploadMultipleFilesService(
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
 					userGuid,
@@ -193,7 +193,7 @@ export class UserService {
 			}
 
 			if (role === RoleEnum.STAFF && this.instanceOfCreateStaffDto(createUserDto)) {
-				const supportedDocuments = await this.fileService.uploadMultipleFiles(
+				const supportedDocuments = await this.fileService.uploadMultipleFilesService(
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
 					userGuid,
@@ -478,7 +478,7 @@ export class UserService {
 			if (!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const [success, message] = await this.emailService.sendEmail(
+			const [success, message] = await this.emailService.sendEmailService(
 				createSubUserRequestDto.email,
 				SendGridTemplateIds.SubUserRegistration,
 				{

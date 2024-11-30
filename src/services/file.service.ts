@@ -21,7 +21,7 @@ export class FileService {
 		this.storage = this.firebaseClient.storage // Store the storage instance
 	}
 
-	public uploadFile = async (
+	public uploadFileService = async (
 		file: GeneralFileDto,
 		folderpath: string,
 		contentType: string,
@@ -55,7 +55,7 @@ export class FileService {
 		}
 	}
 
-	public uploadMultipleFiles = async (
+	public uploadMultipleFilesService = async (
 		fileDto: GeneralFileDto[],
 		folderpath: string,
 		userGuid: string,

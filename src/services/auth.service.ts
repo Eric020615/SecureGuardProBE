@@ -23,6 +23,9 @@ import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGr
 import { UserRecord } from 'firebase-admin/auth'
 import { JwtConfig } from '../config/jwtConfig'
 import { EmailService } from './email.service'
+import { CardRepository } from '../repositories/card.repository'
+import { Card } from '../models/card.model'
+import { getCurrentTimestamp } from '../helper/time'
 
 @provideSingleton(AuthService)
 export class AuthService {
@@ -40,6 +43,8 @@ export class AuthService {
 		private firebaseClient: FirebaseClient,
 		@inject(UserRepository)
 		private userRepository: UserRepository,
+		@inject(CardRepository)
+		private cardRepository: CardRepository,
 		@inject(JwtConfig)
 		private jwtConfig: JwtConfig,
 	) {
@@ -133,7 +138,7 @@ export class AuthService {
 			if (!link) {
 				throw new OperationError('Failed to send reset password email', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const [success, message] = await this.emailService.sendEmail(
+			const [success, message] = await this.emailService.sendEmailService(
 				requestResetPasswordDto.email,
 				SendGridTemplateIds.PasswordReset,
 				{

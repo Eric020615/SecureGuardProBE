@@ -1,5 +1,3 @@
-import { GetQrCodeByVisitorDto } from './card.dto'
-
 export interface CreateVisitorDto {
 	visitorName: string
 	visitorEmail: string

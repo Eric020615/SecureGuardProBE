@@ -27,8 +27,6 @@ import { FacilityManagementController } from './controllers/facilityManagement.c
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FacilityController } from './controllers/facility.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { FaceAuthController } from './controllers/faceAuthController';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CardController } from './controllers/card.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './controllers/auth.controller';
@@ -793,19 +791,21 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateUpdateFaceAuthDto": {
+    "GetCardByUserDto": {
         "dataType": "refObject",
         "properties": {
-            "faceData": {"ref":"GeneralFileDto","required":true},
+            "badgeNumber": {"dataType":"string","required":true},
+            "cardHolder": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateUpdateVisitorFaceAuthDto": {
+    "IResponse_GetCardByUserDto_": {
         "dataType": "refObject",
         "properties": {
-            "visitorDetails": {"ref":"GetVisitorDetailsByTokenDto","required":true},
-            "faceData": {"ref":"GeneralFileDto","required":true},
+            "message": {"dataType":"string"},
+            "data": {"dataType":"union","subSchemas":[{"ref":"GetCardByUserDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetCardByUserDto"}},{"dataType":"enum","enums":[null]}]},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -825,6 +825,23 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string"},
             "data": {"dataType":"union","subSchemas":[{"ref":"GetQrCodeByUserDto"},{"dataType":"array","array":{"dataType":"refObject","ref":"GetQrCodeByUserDto"}},{"dataType":"enum","enums":[null]}]},
             "status": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateUpdateFaceAuthDto": {
+        "dataType": "refObject",
+        "properties": {
+            "faceData": {"ref":"GeneralFileDto","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateUpdateVisitorFaceAuthDto": {
+        "dataType": "refObject",
+        "properties": {
+            "visitorDetails": {"ref":"GetVisitorDetailsByTokenDto","required":true},
+            "faceData": {"ref":"GeneralFileDto","required":true},
         },
         "additionalProperties": false,
     },
@@ -2482,14 +2499,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/face-auth',
+        app.post('/cards',
             authenticateMiddleware([{"jwt":["SA","STF","RES","SUB"]}]),
-            ...(fetchMiddlewares<RequestHandler>(FaceAuthController)),
-            ...(fetchMiddlewares<RequestHandler>(FaceAuthController.prototype.createFaceAuth)),
+            ...(fetchMiddlewares<RequestHandler>(CardController)),
+            ...(fetchMiddlewares<RequestHandler>(CardController.prototype.createCard)),
 
-            async function FaceAuthController_createFaceAuth(request: ExRequest, response: ExResponse, next: any) {
+            async function CardController_createCard(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    createUpdateFaceAuthDto: {"in":"body","name":"createUpdateFaceAuthDto","required":true,"ref":"CreateUpdateFaceAuthDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -2501,13 +2517,13 @@ export function RegisterRoutes(app: Router) {
 
                 const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
 
-                const controller: any = await container.get<FaceAuthController>(FaceAuthController);
+                const controller: any = await container.get<CardController>(CardController);
                 if (typeof controller['setStatus'] === 'function') {
                 controller.setStatus(undefined);
                 }
 
               await templateService.apiHandler({
-                methodName: 'createFaceAuth',
+                methodName: 'createCard',
                 controller,
                 response,
                 next,
@@ -2519,14 +2535,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/face-auth/visitors',
-            authenticateMiddleware([{"jwt":["SA","STF"]}]),
-            ...(fetchMiddlewares<RequestHandler>(FaceAuthController)),
-            ...(fetchMiddlewares<RequestHandler>(FaceAuthController.prototype.createVisitorFaceAuth)),
+        app.get('/cards',
+            authenticateMiddleware([{"jwt":["SA","STF","RES","SUB"]}]),
+            ...(fetchMiddlewares<RequestHandler>(CardController)),
+            ...(fetchMiddlewares<RequestHandler>(CardController.prototype.getCardByUser)),
 
-            async function FaceAuthController_createVisitorFaceAuth(request: ExRequest, response: ExResponse, next: any) {
+            async function CardController_getCardByUser(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    createUpdateVisitorFaceAuthDto: {"in":"body","name":"createUpdateVisitorFaceAuthDto","required":true,"ref":"CreateUpdateVisitorFaceAuthDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -2538,13 +2553,13 @@ export function RegisterRoutes(app: Router) {
 
                 const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
 
-                const controller: any = await container.get<FaceAuthController>(FaceAuthController);
+                const controller: any = await container.get<CardController>(CardController);
                 if (typeof controller['setStatus'] === 'function') {
                 controller.setStatus(undefined);
                 }
 
               await templateService.apiHandler({
-                methodName: 'createVisitorFaceAuth',
+                methodName: 'getCardByUser',
                 controller,
                 response,
                 next,
@@ -2581,6 +2596,80 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getQrCodeByUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/cards/face-auth',
+            authenticateMiddleware([{"jwt":["SA","STF","RES","SUB"]}]),
+            ...(fetchMiddlewares<RequestHandler>(CardController)),
+            ...(fetchMiddlewares<RequestHandler>(CardController.prototype.createFaceAuth)),
+
+            async function CardController_createFaceAuth(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    createUpdateFaceAuthDto: {"in":"body","name":"createUpdateFaceAuthDto","required":true,"ref":"CreateUpdateFaceAuthDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<CardController>(CardController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'createFaceAuth',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/cards/face-auth/visitors',
+            authenticateMiddleware([{"jwt":["SA","STF"]}]),
+            ...(fetchMiddlewares<RequestHandler>(CardController)),
+            ...(fetchMiddlewares<RequestHandler>(CardController.prototype.createVisitorFaceAuth)),
+
+            async function CardController_createVisitorFaceAuth(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    createUpdateVisitorFaceAuthDto: {"in":"body","name":"createUpdateVisitorFaceAuthDto","required":true,"ref":"CreateUpdateVisitorFaceAuthDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<CardController>(CardController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'createVisitorFaceAuth',
                 controller,
                 response,
                 next,

@@ -36,7 +36,7 @@ export class NoticeService {
 			if (!noticeGuid) {
 				throw new OperationError('Failed to create notice', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			const fileGuids = await this.fileService.uploadMultipleFiles(
+			const fileGuids = await this.fileService.uploadMultipleFilesService(
 				createNoticeDto.attachments,
 				`notice/attachments/${noticeGuid}`,
 				userId,

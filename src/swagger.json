@@ -2084,31 +2084,45 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CreateUpdateFaceAuthDto": {
+			"GetCardByUserDto": {
 				"properties": {
-					"faceData": {
-						"$ref": "#/components/schemas/GeneralFileDto"
+					"badgeNumber": {
+						"type": "string"
+					},
+					"cardHolder": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"faceData"
+					"badgeNumber",
+					"cardHolder"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CreateUpdateVisitorFaceAuthDto": {
+			"IResponse_GetCardByUserDto_": {
 				"properties": {
-					"visitorDetails": {
-						"$ref": "#/components/schemas/GetVisitorDetailsByTokenDto"
+					"message": {
+						"type": "string"
 					},
-					"faceData": {
-						"$ref": "#/components/schemas/GeneralFileDto"
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/GetCardByUserDto"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/GetCardByUserDto"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
 					}
 				},
-				"required": [
-					"visitorDetails",
-					"faceData"
-				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -2151,6 +2165,34 @@
 						"type": "string"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUpdateFaceAuthDto": {
+				"properties": {
+					"faceData": {
+						"$ref": "#/components/schemas/GeneralFileDto"
+					}
+				},
+				"required": [
+					"faceData"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUpdateVisitorFaceAuthDto": {
+				"properties": {
+					"visitorDetails": {
+						"$ref": "#/components/schemas/GetVisitorDetailsByTokenDto"
+					},
+					"faceData": {
+						"$ref": "#/components/schemas/GeneralFileDto"
+					}
+				},
+				"required": [
+					"visitorDetails",
+					"faceData"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -4622,9 +4664,9 @@
 				]
 			}
 		},
-		"/face-auth": {
+		"/cards": {
 			"post": {
-				"operationId": "createFaceAuth",
+				"operationId": "createCard",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -4651,7 +4693,7 @@
 					}
 				},
 				"tags": [
-					"FaceAuth"
+					"Card"
 				],
 				"security": [
 					{
@@ -4663,29 +4705,17 @@
 						]
 					}
 				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateUpdateFaceAuthDto"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/face-auth/visitors": {
-			"post": {
-				"operationId": "createVisitorFaceAuth",
+				"parameters": []
+			},
+			"get": {
+				"operationId": "retrieveCard",
 				"responses": {
 					"200": {
 						"description": "OK",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IResponse_any_"
+									"$ref": "#/components/schemas/IResponse_GetCardByUserDto_"
 								}
 							}
 						}
@@ -4705,27 +4735,19 @@
 					}
 				},
 				"tags": [
-					"FaceAuth"
+					"Card"
 				],
 				"security": [
 					{
 						"jwt": [
 							"SA",
-							"STF"
+							"STF",
+							"RES",
+							"SUB"
 						]
 					}
 				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateUpdateVisitorFaceAuthDto"
-							}
-						}
-					}
-				}
+				"parameters": []
 			}
 		},
 		"/cards/qr-code": {
@@ -4770,6 +4792,112 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/cards/face-auth": {
+			"post": {
+				"operationId": "createFaceAuth",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Card"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"STF",
+							"RES",
+							"SUB"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUpdateFaceAuthDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/cards/face-auth/visitors": {
+			"post": {
+				"operationId": "createVisitorFaceAuth",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Card"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"STF"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUpdateVisitorFaceAuthDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/auth/signup": {
