@@ -4751,6 +4751,48 @@
 			}
 		},
 		"/cards/qr-code": {
+			"post": {
+				"operationId": "createQRCode",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Card"
+				],
+				"security": [
+					{
+						"jwt": [
+							"SA",
+							"STF",
+							"RES",
+							"SUB"
+						]
+					}
+				],
+				"parameters": []
+			},
 			"get": {
 				"operationId": "retrieveQrCode",
 				"responses": {

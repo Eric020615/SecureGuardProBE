@@ -115,7 +115,7 @@ export class CardService {
 					AccessEntryDate: getCurrentDateString(ITimeFormat.dateTime),
 					AccessExitDate: addTimeToDateString(getCurrentDateString(ITimeFormat.date), 'years', 1, ITimeFormat.dateTime),
 				},
-				UserId: `${userData.role} ${userData.userId.toString()}`,
+				UserId: `${userData.role} ${userData.userId.toString()} QR`,
 				UserName: userData.firstName + ' ' + userData.lastName,
 				UserType: 'Normal',
 			} as CreateStaffDto
@@ -134,13 +134,13 @@ export class CardService {
 			if (userData == null) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			let data: GetQrCodeByUserDto
+			let data: GetQrCodeByUserDto = {} as GetQrCodeByUserDto
 			const userCard = await this.microEngineService.getUserQrCode(
-				`${userData.role} ${userData.userId.toString()}`,
+				`${userData.role} ${userData.userId.toString()} QR`,
 				userData.badgeNumber,
 			)
 			if (!userCard) {
-				throw new OperationError('User card not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				return data
 			}
 			data = {
 				badgeNumber: userCard.Result?.BadgeNo ? userCard.Result?.BadgeNo : '',
@@ -252,7 +252,7 @@ export class CardService {
 						data: createUpdateFaceAuthDto.faceData.fileData,
 					},
 				],
-				person_code: `${role} ${userData.userId.toString()}`, // for display purpose
+				person_code: `${role} ${userData.userId.toString()} FR`, // for display purpose
 				phone_num: userData.contactNumber,
 				card_number: userData.badgeNumber,
 			})

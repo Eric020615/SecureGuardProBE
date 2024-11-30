@@ -91,6 +91,35 @@ export class CardController extends Controller {
 	}
 
 	@Tags('Card')
+	@OperationId('createQRCode')
+	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
+	@SuccessResponse(HttpStatusCode.OK, 'OK')
+	@Post('/qr-code')
+	@Security('jwt', ['SA', 'STF', 'RES', 'SUB'])
+	public async createQRCode(@Request() request: ISecurityMiddlewareRequest): Promise<IResponse<any>> {
+		try {
+			if (!request.userGuid || !request.role) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const data = await this.cardService.createQrCodeService(request.userGuid, request.role)
+			const response = {
+				message: 'Successfully create qr code',
+				status: '200',
+				data: data,
+			}
+			return response
+		} catch (err) {
+			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			const response = {
+				message: 'Failed to create qr code',
+				status: '500',
+				data: null,
+			}
+			return response
+		}
+	}
+
+	@Tags('Card')
 	@OperationId('retrieveQrCode')
 	@Response<IResponse<any>>(HttpStatusCode.BAD_REQUEST, 'Bad Request')
 	@SuccessResponse(HttpStatusCode.OK, 'OK')
@@ -108,10 +137,18 @@ export class CardController extends Controller {
 				data: data,
 			}
 			return response
-		} catch (err) {
+		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
+			if (err instanceof OperationError) {
+				const response = {
+					message: err.message ? err.message : '',
+					status: '500',
+					data: null,
+				}
+				return response
+			}
 			const response = {
-				message: 'Failed to retrieve qr code',
+				message: err,
 				status: '500',
 				data: null,
 			}
