@@ -1,12 +1,66 @@
 import { AccessControlDataDto, CardDto, CreateStaffDto, StaffProfileDto } from '../dtos/microengine.dto'
 
-export enum DocumentStatus {
-	Active = 1,
-	SoftDeleted = 0,
-	Archived = -1,
-	Pending = 2,
-	Draft = 3,
-	Suspended = 4,
+export enum PaginationDirectionEnum {
+	Next = 'next',
+	Previous = 'prev',
+}
+
+export enum FacilityEnum {
+	BC = 'Badminton Court',
+	BBC = 'Basketball Court',
+	GR = 'Gym Room',
+}
+
+export enum DocumentStatusEnum {
+	Active = 'Active',
+	SoftDeleted = 'SoftDeleted',
+	Archived = 'Archived',
+	Pending = 'Pending',
+	Draft = 'Draft',
+	Suspended = 'Suspended',
+}
+
+export enum RoleRecognitionTypeEnum {
+	SA = 'staff',
+	STF = 'staff',
+	RES = 'staff',
+	SUB = 'staff',
+	VI = 'visitor',
+}
+
+export enum DepartmentEnum {
+	SA = 'Admin',
+	STF = 'Security',
+	RES = 'Tenant',
+	SUB = 'Tenant',
+	VI = 'Visitor',
+}
+
+export enum JobTitleEnum {
+	SA = 'Manager',
+	STF = 'Staff',
+	RES = 'Resident',
+	SUB = 'Resident',
+	VI = 'Visitor',
+}
+
+export enum ParcelStatusEnum {
+	Received = 'Received', // Parcel has been received by the concierge
+	Stored = 'Stored', // Parcel has been placed in the parcel room/storage
+	Notified = 'Notified', // Resident has been notified about the parcel
+	PickedUp = 'PickedUp', // Resident has collected the parcel
+	Unclaimed = 'Unclaimed', // Parcel has not been claimed after a certain period
+	ReturnedToSender = 'ReturnedToSender', // Parcel was returned to the sender
+	Damaged = 'Damaged', // Parcel was received in a damaged condition
+	Lost = 'Lost', // Parcel has been misplaced or lost
+}
+
+export enum VisitStatusEnum {
+	Scheduled = 'Scheduled', // Visit is scheduled but hasn't occurred yet
+	CheckedIn = 'CheckedIn', // Visitor has checked in
+	CheckedOut = 'CheckedOut', // Visitor has checked out
+	Cancelled = 'Cancelled', // Visit has been cancelled
+	NoShow = 'NoShow', // Visitor did not show up for the visit
 }
 
 export const ITimeFormat = {
@@ -41,51 +95,6 @@ export const ITimeFormat = {
 	// Week and Day of Year Formats
 	weekOfYear: 'YYYY [Week] WW', // 2024 Week 35
 	dayOfYear: 'YYYY [Day] DDD', // 2024 Day 243
-}
-
-export enum PaginationDirection {
-	Next = 'next',
-	Previous = 'prev',
-}
-
-interface map {
-	[key: string]: string
-}
-
-export const FacilityName: map = {
-	BC: 'Badminton Court',
-	BBC: 'Basketball Court',
-	GR: 'Gym Room',
-}
-
-export const FacilityEnum = {
-	BC: 'Badminton Court',
-	BBC: 'Basketball Court',
-	GR: 'Gym Room',
-}
-
-export enum RoleRecognitionTypeEnum {
-	'SA' = 'staff',
-	'STF' = 'staff',
-	'RES' = 'staff',
-	'SUB' = 'staff',
-	'VI' = 'visitor',
-}
-
-export enum DepartmentEnum {
-	'SA' = 'Admin',
-	'STF' = 'Security',
-	'RES' = 'Tenant',
-	'SUB' = 'Tenant',
-	'VI' = 'Visitor',
-}
-
-export enum JobTitleEnum {
-	'SA' = 'Manager',
-	'STF' = 'Staff',
-	'RES' = 'Resident',
-	'SUB' = 'Resident',
-	'VI' = 'Visitor',
 }
 
 export const StaffConst: CreateStaffDto = {

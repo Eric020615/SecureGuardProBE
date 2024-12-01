@@ -1,7 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "./base.model";
+import { DocumentStatusEnum, VisitStatusEnum } from "../common/constants";
 
-export class Visitor extends BaseModel{ 
+export class Visitors extends BaseModel{ 
     visitorName: string;
     visitorEmail: string;
     visitorCategory: string;
@@ -9,6 +10,7 @@ export class Visitor extends BaseModel{
     visitDateTime: Timestamp;
     badgeNumber: string;
     token: string;
+    visitStatus: VisitStatusEnum;
 
     constructor(
         id: number,
@@ -19,7 +21,8 @@ export class Visitor extends BaseModel{
         visitDateTime: Timestamp,
         badgeNumber: string,
         token: string,
-        status: number,
+        visitStatus: VisitStatusEnum,
+        status: DocumentStatusEnum,
         createdBy: string,
         updatedBy: string,
         createdDateTime: Timestamp,
@@ -33,5 +36,6 @@ export class Visitor extends BaseModel{
         this.visitDateTime = visitDateTime,
         this.badgeNumber = badgeNumber,
         this.token = token
+        this.visitStatus = visitStatus
     }
 }

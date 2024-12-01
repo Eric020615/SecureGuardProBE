@@ -1,11 +1,11 @@
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
-import { FileModel } from '../models/file.model'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatusEnum } from '../common/constants'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
+import { Files } from '../models/files.model'
 
 @provideSingleton(FileRepository)
 export class FileRepository {
@@ -22,7 +22,7 @@ export class FileRepository {
 		this.fileCollection = collection(this.firebaseClient.firestore, 'files')
 	}
 
-	async createFileRepository(file: FileModel) {
+	async createFileRepository(file: Files) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
@@ -41,7 +41,7 @@ export class FileRepository {
 		const fileDocRef = doc(this.fileCollection, fileGuid)
 		const fileDoc = await getDoc(fileDocRef)
 		if (fileDoc.exists()) {
-			return fileDoc.data() as FileModel
+			return fileDoc.data() as Files
 		}
 		throw new Error('File not found')
 	}
@@ -49,8 +49,8 @@ export class FileRepository {
 	async getFileByGuidRepository(fileGuid: string) {
 		const fileDocRef = doc(this.fileCollection, fileGuid)
 		const fileDoc = await getDoc(fileDocRef)
-		let result: FileModel = {} as FileModel
-		result = fileDoc.data() as FileModel
+		let result: Files = {} as Files
+		result = fileDoc.data() as Files
 		result.guid = fileDoc.id
 		return result
 	}
@@ -59,25 +59,25 @@ export class FileRepository {
 		if (fileGuids.length === 0) {
 			return []
 		}
-		const constraints = [where('__name__', 'in', fileGuids), where('status', '==', DocumentStatus.Active)]
+		const constraints = [where('__name__', 'in', fileGuids), where('status', '==', DocumentStatusEnum.Active)]
 		const q = query(this.fileCollection, ...constraints)
 		const fileSnapshot = await getDocs(q)
-		let files: FileModel[] = []
+		let files: Files[] = []
 		fileSnapshot.forEach((doc) => {
-			let data = doc.data() as FileModel
+			let data = doc.data() as Files
 			data.guid = doc.id
 			files.push(data)
 		})
 		return files
 	}
 
-	async updateFileByIdRepository(fileGuid: string, file: Partial<FileModel>) {
+	async updateFileByIdRepository(fileGuid: string, file: Partial<Files>) {
 		const docRef = doc(this.fileCollection, fileGuid)
 		await updateDoc(docRef, { ...file, updatedDateTime: new Date() })
 	}
 
 	async deleteFileByIdRepository(fileGuid: string) {
 		const docRef = doc(this.fileCollection, fileGuid)
-		await updateDoc(docRef, { status: DocumentStatus.SoftDeleted })
+		await updateDoc(docRef, { status: DocumentStatusEnum.SoftDeleted })
 	}
 }

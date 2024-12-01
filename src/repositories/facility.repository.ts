@@ -15,12 +15,11 @@ import moment from 'moment-timezone'
 import { convertDateStringToTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { FacilityBooking } from '../models/facilityBooking.model'
 import { RepositoryService } from './repository'
 import { SequenceRepository } from './sequence.repository'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
-import { DocumentStatus, PaginationDirection } from '../common/constants'
-import { Facility } from '../models/facility.model'
+import { DocumentStatusEnum, PaginationDirectionEnum } from '../common/constants'
+import { Facilities, FacilityBookings } from '../models/facilities.model'
 import { SpaceAvailabilityDto } from '../dtos/facility.dto'
 
 @provideSingleton(FacilityBookingRepository)
@@ -38,18 +37,18 @@ export class FacilityBookingRepository {
 		@inject(SequenceRepository)
 		private sequenceRepository: SequenceRepository,
 	) {
-		this.facilityBookingCollection = collection(this.firebaseClient.firestore, 'facilityBooking')
+		this.facilityBookingCollection = collection(this.firebaseClient.firestore, 'facilityBookings')
 		this.refDataCollection = collection(
 			this.firebaseClient.firestore,
-			'refData/facility/information',
+			'refData/facilities/informations',
 		)
 	}
 
-	async createFacilityBookingRepository(data: FacilityBooking) {
+	async createFacilityBookingRepository(data: FacilityBookings) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'facilityBooking',
+				counterName: 'facilityBookings',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -72,10 +71,10 @@ export class FacilityBookingRepository {
 				isPast ? '<=' : '>',
 				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
-			where('status', '==', DocumentStatus.Active),
+			where('status', '==', DocumentStatusEnum.Active),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBookings>(
 			this.facilityBookingCollection,
 			lastId,
 			pageSize,
@@ -84,9 +83,9 @@ export class FacilityBookingRepository {
 		return { rows, count }
 	}
 
-	async getFacilityBookingHistoryByAdminRepository (direction: PaginationDirection, id: number, pageSize: number) {
+	async getFacilityBookingHistoryByAdminRepository (direction: PaginationDirectionEnum, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
-		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBooking>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBookings>(
 			this.facilityBookingCollection,
 			id,
 			pageSize,
@@ -101,12 +100,12 @@ export class FacilityBookingRepository {
 	) {
 		const facilityBookingDocRef = doc(this.facilityBookingCollection, facilityBookingGuid)
 		const facilityBookingDoc = await getDoc(facilityBookingDocRef)
-		let result: FacilityBooking = {} as FacilityBooking
-		result = facilityBookingDoc.data() as FacilityBooking
+		let result: FacilityBookings = {} as FacilityBookings
+		result = facilityBookingDoc.data() as FacilityBookings
 		return result
 	}
 
-	async cancelFacilityBookingRepository(data: FacilityBooking, bookingGuid: string) {
+	async cancelFacilityBookingRepository(data: FacilityBookings, bookingGuid: string) {
 		const docRef = doc(this.facilityBookingCollection, bookingGuid)
 		await updateDoc(docRef, { ...data })
 	}
@@ -137,7 +136,7 @@ export class FacilityBookingRepository {
 	): Promise<SpaceAvailabilityDto[] | SpaceAvailabilityDto> {
 		const facilityDocRef = doc(this.refDataCollection, facilityId)
 		const facilityDoc = await getDoc(facilityDocRef)
-		let result: Facility = facilityDoc.data() as Facility
+		let result: Facilities = facilityDoc.data() as Facilities
 
 		// Case 1: If spaceId is provided, return the availability for that specific space
 		if (spaceId) {
@@ -149,8 +148,8 @@ export class FacilityBookingRepository {
 			const q = query(
 				this.facilityBookingCollection,
 				and(
-					where('facilityId', '==', facilityId),
-					where('spaceId', '==', spaceId),
+					where('facilityName', '==', facilityId),
+					where('spaceName', '==', spaceId),
 					where('isCancelled', '==', false), // Exclude cancelled bookings
 					where('startDate', '<', convertDateStringToTimestamp(endDate)),
 					where('endDate', '>', convertDateStringToTimestamp(startDate)),
@@ -172,8 +171,8 @@ export class FacilityBookingRepository {
 				const q = query(
 					this.facilityBookingCollection,
 					and(
-						where('facilityId', '==', facilityId),
-						where('spaceId', '==', space.id),
+						where('facilityName', '==', facilityId),
+						where('spaceName', '==', space.id),
 						where('isCancelled', '==', false), // Exclude cancelled bookings
 						where('startDate', '<', convertDateStringToTimestamp(endDate)),
 						where('endDate', '>', convertDateStringToTimestamp(startDate)),

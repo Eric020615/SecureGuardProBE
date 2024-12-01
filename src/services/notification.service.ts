@@ -4,10 +4,10 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { NotificationRepository } from '../repositories/notification.repository'
 import { NotificationManager } from '../config/notification'
-import { Notification } from '../models/notification.model'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatusEnum } from '../common/constants'
 import { convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { GetNotificationDto } from '../dtos/notification.dto'
+import { Notifications } from '../models/notifications.model'
 
 @provideSingleton(NotificationService)
 export class NotificationService {
@@ -81,14 +81,14 @@ export class NotificationService {
 	createNotificationService = async (title: string, body: string, data: Record<string, any>, userGuid: string) => {
 		try {
 			await this.notificationRepository.createNotificationRepository(
-				new Notification(
+				new Notifications(
 					0,
 					userGuid,
 					title,
 					body,
 					data,
 					false,
-					DocumentStatus.Active,
+					DocumentStatusEnum.Active,
 					userGuid,
 					userGuid,
 					getCurrentTimestamp(),

@@ -10,7 +10,7 @@ import {
 	GetVisitorDetailsByTokenDto,
 } from '../dtos/visitor.dto'
 import { VisitorRepository } from '../repositories/visitor.repository'
-import { Visitor } from '../models/visitor.model'
+import { Visitors } from '../models/visitors.model'
 import {
 	calculateDateDifference,
 	convertDateStringToTimestamp,
@@ -20,7 +20,7 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus, ITimeFormat, PaginationDirection } from '../common/constants'
+import { DocumentStatusEnum, ITimeFormat, PaginationDirectionEnum, VisitStatusEnum } from '../common/constants'
 import { MicroEngineService } from './microEngine.service'
 import { JwtConfig } from '../config/jwtConfig'
 import { VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
@@ -36,7 +36,7 @@ export class VisitorService {
 	createVisitorService = async (createVisitorDto: CreateVisitorDto, userId: string) => {
 		try {
 			const { id, guid } = await this.visitorRepository.createVisitorRepository(
-				new Visitor(
+				new Visitors(
 					0,
 					createVisitorDto.visitorName,
 					createVisitorDto.visitorEmail,
@@ -45,7 +45,8 @@ export class VisitorService {
 					convertDateStringToTimestamp(createVisitorDto.visitDateTime),
 					'',
 					'',
-					DocumentStatus.Active,
+					VisitStatusEnum.Scheduled,
+					DocumentStatusEnum.Active,
 					userId,
 					userId,
 					getCurrentTimestamp(),
@@ -64,11 +65,11 @@ export class VisitorService {
 			if (!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			let visitor: Visitor = {
+			let visitor: Visitors = {
 				token: token,
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
-			} as Visitor
+			} as Visitors
 			await this.visitorRepository.editVisitorByIdRepository(guid, visitor)
 		} catch (error: any) {
 			console.log(error)
@@ -78,14 +79,14 @@ export class VisitorService {
 
 	editVisitorByIdService = async (editVisitorByIdDto: EditVisitorByIdDto, visitorGuid: string, userId: string) => {
 		try {
-			let visitor: Visitor = {
+			let visitor: Visitors = {
 				visitorName: editVisitorByIdDto.visitorName,
 				visitorCategory: editVisitorByIdDto.visitorCategory,
 				visitorContactNumber: editVisitorByIdDto.visitorContactNumber,
 				visitDateTime: convertDateStringToTimestamp(editVisitorByIdDto.visitDateTime),
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
-			} as Visitor
+			} as Visitors
 			await this.visitorRepository.editVisitorByIdRepository(visitorGuid, visitor)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -105,7 +106,7 @@ export class VisitorService {
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
-							status: DocumentStatus[visitor.status],
+							status: DocumentStatusEnum[visitor.status],
 						} as GetVisitorDto
 				  })
 				: []
@@ -129,7 +130,7 @@ export class VisitorService {
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
 				token: visitors.token,
-				status: DocumentStatus[visitors.status],
+				status: DocumentStatusEnum[visitors.status],
 				createdBy: visitors.createdBy,
 				updatedBy: visitors.updatedBy,
 				createdDateTime: convertTimestampToUserTimezone(visitors.createdDateTime),
@@ -142,7 +143,7 @@ export class VisitorService {
 		}
 	}
 
-	getVisitorByAdminService = async (direction: PaginationDirection, id: number, limit: number) => {
+	getVisitorByAdminService = async (direction: PaginationDirectionEnum, id: number, limit: number) => {
 		try {
 			let { rows, count } = await this.visitorRepository.getVisitorByAdminRepository(direction, id, limit)
 			let data: GetVisitorDto[] = []
@@ -156,7 +157,7 @@ export class VisitorService {
 							visitorCategory: visitor.visitorCategory,
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
-							status: DocumentStatus[visitor.status],
+							status: DocumentStatusEnum[visitor.status],
 						} as GetVisitorDto
 				  })
 				: []
@@ -204,7 +205,7 @@ export class VisitorService {
 			const visitors = await this.visitorRepository.getVisitorDetailsRepository(visitorGuid)
 			let data: GetVisitorDetailsByTokenDto = {} as GetVisitorDetailsByTokenDto
 			if (visitors.visitDateTime < getCurrentTimestamp()) {
-				throw new OperationError('Visitor pass expired', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				throw new OperationError('Visitors pass expired', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			data = {
 				visitorId: visitors.id,

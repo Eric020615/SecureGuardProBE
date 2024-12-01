@@ -6,14 +6,14 @@ import {
 	GetFacilityBookingHistoryDto,
 	SpaceAvailabilityDto,
 } from '../dtos/facility.dto'
-import { FacilityBooking } from '../models/facilityBooking.model'
 import { FacilityBookingRepository } from '../repositories/facility.repository'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus, FacilityName, PaginationDirection } from '../common/constants'
+import { DocumentStatusEnum, FacilityEnum, PaginationDirectionEnum } from '../common/constants'
+import { FacilityBookings } from '../models/facilities.model'
 
 @provideSingleton(FacilityService)
 export class FacilityService {
@@ -43,7 +43,7 @@ export class FacilityService {
 				throw new OperationError('You already have an upcoming booking.', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.facilityRepository.createFacilityBookingRepository(
-				new FacilityBooking(
+				new FacilityBookings(
 					0,
 					createFacilityBookingDto.facilityId,
 					createFacilityBookingDto.spaceId,
@@ -53,7 +53,7 @@ export class FacilityService {
 					createFacilityBookingDto.numOfGuest,
 					false,
 					'',
-					DocumentStatus.Active,
+					DocumentStatusEnum.Active,
 					userId,
 					userId,
 					getCurrentTimestamp(),
@@ -76,11 +76,11 @@ export class FacilityService {
 							bookingGuid: facilityBooking.guid,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-							facilityName: FacilityName[facilityBooking.facilityId],
+							facilityName: FacilityEnum[facilityBooking.facilityName as unknown as keyof typeof FacilityEnum],
 							bookedBy: facilityBooking.bookedBy,
 							numOfGuest: facilityBooking.numOfGuest,
 							isCancelled: facilityBooking.isCancelled,
-							status: DocumentStatus[facilityBooking.status],
+							status: DocumentStatusEnum[facilityBooking.status],
 							createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
 							updatedDateTime: convertTimestampToUserTimezone(facilityBooking.updatedDateTime),
 						} as GetFacilityBookingHistoryDto
@@ -92,7 +92,7 @@ export class FacilityService {
 		}
 	}
 
-	getFacilityBookingHistoryByAdminService = async (direction: PaginationDirection, id: number, limit: number) => {
+	getFacilityBookingHistoryByAdminService = async (direction: PaginationDirectionEnum, id: number, limit: number) => {
 		try {
 			let { rows, count } = await this.facilityRepository.getFacilityBookingHistoryByAdminRepository(
 				direction,
@@ -107,11 +107,11 @@ export class FacilityService {
 							bookingGuid: facilityBooking.guid,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-							facilityName: FacilityName[facilityBooking.facilityId],
+							facilityName: FacilityEnum[facilityBooking.facilityName as unknown as keyof typeof FacilityEnum],
 							bookedBy: facilityBooking.bookedBy,
 							numOfGuest: facilityBooking.numOfGuest,
 							isCancelled: facilityBooking.isCancelled,
-							status: DocumentStatus[facilityBooking.status],
+							status: DocumentStatusEnum[facilityBooking.status],
 							createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
 							updatedDateTime: convertTimestampToUserTimezone(facilityBooking.updatedDateTime),
 						} as GetFacilityBookingHistoryDto
@@ -126,20 +126,20 @@ export class FacilityService {
 
 	getFacilityBookingDetailsByFacilityBookingGuidService = async (facilityBookingGuid: string) => {
 		try {
-			let facilityBooking: FacilityBooking =
+			let facilityBooking: FacilityBookings =
 				await this.facilityRepository.getFacilityBookingDetailsByFacilityBookingGuidRepository(facilityBookingGuid)
 			let data: GetFacilityBookingDetailsDto = {} as GetFacilityBookingDetailsDto
 			data = {
 				bookingId: facilityBooking.id,
 				bookingGuid: facilityBooking.guid ? facilityBooking.guid : '',
-				facilityName: FacilityName[facilityBooking.facilityId],
+				facilityName: FacilityEnum[facilityBooking.facilityName as unknown as keyof typeof FacilityEnum],
 				startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 				endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
 				bookedBy: facilityBooking.bookedBy,
 				numOfGuest: facilityBooking.numOfGuest,
 				isCancelled: facilityBooking.isCancelled,
 				cancelRemark: facilityBooking.cancelRemark,
-				status: DocumentStatus[facilityBooking.status],
+				status: DocumentStatusEnum[facilityBooking.status],
 				createdBy: facilityBooking.createdBy,
 				createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
 				updatedBy: facilityBooking.updatedBy,
@@ -151,18 +151,19 @@ export class FacilityService {
 		}
 	}
 
-	cancelFacilityBookingService = async (userId: string, facilityBookingGuid: string, cancelFacilityBookingDto: CancelFacilityBookingDto) => {
+	cancelFacilityBookingService = async (
+		userId: string,
+		facilityBookingGuid: string,
+		cancelFacilityBookingDto: CancelFacilityBookingDto,
+	) => {
 		try {
-			let facilityBooking: FacilityBooking = {
+			let facilityBooking: FacilityBookings = {
 				isCancelled: true,
 				cancelRemark: cancelFacilityBookingDto.cancelRemark ? cancelFacilityBookingDto.cancelRemark : 'Cancel by user',
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
-			} as FacilityBooking
-			await this.facilityRepository.cancelFacilityBookingRepository(
-				facilityBooking,
-				facilityBookingGuid,
-			)
+			} as FacilityBookings
+			await this.facilityRepository.cancelFacilityBookingRepository(facilityBooking, facilityBookingGuid)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}

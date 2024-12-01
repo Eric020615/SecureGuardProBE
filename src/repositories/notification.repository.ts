@@ -1,6 +1,4 @@
 import {
-	getDocs,
-	query,
 	where,
 	orderBy,
 	updateDoc,
@@ -15,11 +13,11 @@ import {
 import { FirebaseClient } from '../config/initFirebase'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatusEnum } from '../common/constants'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
-import { Notification, NotificationToken } from '../models/notification.model'
 import { RepositoryService } from './repository'
+import { Notifications, NotificationTokens } from '../models/notifications.model'
 
 @provideSingleton(NotificationRepository)
 export class NotificationRepository {
@@ -36,8 +34,8 @@ export class NotificationRepository {
 		@inject(RepositoryService)
 		private repositoryService: RepositoryService,
 	) {
-		this.notificationTokenCollection = collection(this.firebaseClient.firestore, 'notificationToken')
-		this.notificationCollection = collection(this.firebaseClient.firestore, 'notification')
+		this.notificationTokenCollection = collection(this.firebaseClient.firestore, 'notificationTokens')
+		this.notificationCollection = collection(this.firebaseClient.firestore, 'notifications')
 	}
 
 	async createNotificationTokenRepository(token: string, userGuid: string) {
@@ -55,7 +53,7 @@ export class NotificationRepository {
 	async getNotificationTokenByUserGuidRepository(userGuid: string) {
 		const docRef = doc(this.notificationTokenCollection, userGuid)
 		const querySnapshot = await getDoc(docRef)
-		const data = querySnapshot.data() as NotificationToken
+		const data = querySnapshot.data() as NotificationTokens
 		return data
 	}
 
@@ -64,11 +62,11 @@ export class NotificationRepository {
 		await deleteDoc(docRef)
 	}
 
-	async createNotificationRepository(data: Notification) {
+	async createNotificationRepository(data: Notifications) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'notification',
+				counterName: 'notifications',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -81,10 +79,10 @@ export class NotificationRepository {
 	async getNotificationRepository(id: number, pageSize: number, userGuid: string) {
 		const constraints = [
 			where('userGuid', '==', userGuid),
-			where('status', '==', DocumentStatus.Active),
+			where('status', '==', DocumentStatusEnum.Active),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<Notification>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Notifications>(
 			this.notificationCollection,
 			id,
 			pageSize,

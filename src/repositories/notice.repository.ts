@@ -1,14 +1,14 @@
 import { addDoc, collection, doc, getDoc, where, orderBy, updateDoc } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
-import { Notice } from '../models/notice.model'
 import { convertDateStringToTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
-import { DocumentStatus, PaginationDirection } from '../common/constants'
+import { DocumentStatusEnum, PaginationDirectionEnum } from '../common/constants'
 import { RepositoryService } from './repository'
+import { Notices } from '../models/notices.model'
 
 @provideSingleton(NoticeRepository)
 export class NoticeRepository {
@@ -24,14 +24,14 @@ export class NoticeRepository {
 		@inject(RepositoryService)
 		private repositoryService: RepositoryService,
 	) {
-		this.noticeCollection = collection(this.firebaseClient.firestore, 'notice')
+		this.noticeCollection = collection(this.firebaseClient.firestore, 'notices')
 	}
 
-	async createNoticeRepository(notice: Notice) {
+	async createNoticeRepository(notice: Notices) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'notice',
+				counterName: 'notices',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -42,9 +42,9 @@ export class NoticeRepository {
 		})
 	}
 
-	async getNoticeByAdminRepository(direction: PaginationDirection, id: number, pageSize: number) {
+	async getNoticeByAdminRepository(direction: PaginationDirectionEnum, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
-		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Notices>(
 			this.noticeCollection,
 			id,
 			pageSize,
@@ -58,10 +58,10 @@ export class NoticeRepository {
 		const constraints = [
 			where('startDate', '<=', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())),
 			where('endDate', '>', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())),
-			where('status', '==', DocumentStatus.Active),
+			where('status', '==', DocumentStatusEnum.Active),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<Notice>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Notices>(
 			this.noticeCollection,
 			id,
 			pageSize,
@@ -73,18 +73,18 @@ export class NoticeRepository {
 	async getNoticeDetailsByIdRepository(noticeGuid: string) {
 		const noticeDocRef = doc(this.noticeCollection, noticeGuid)
 		const noticeDoc = await getDoc(noticeDocRef)
-		let result: Notice = {} as Notice
-		result = noticeDoc.data() as Notice
+		let result: Notices = {} as Notices
+		result = noticeDoc.data() as Notices
 		return result
 	}
 
-	async editNoticeByIdRepository(noticeGuid: string, notice: Notice) {
+	async editNoticeByIdRepository(noticeGuid: string, notice: Notices) {
 		const docRef = doc(this.noticeCollection, noticeGuid)
 		await updateDoc(docRef, { ...notice })
 	}
 
 	async deleteNoticeByIdRepository(noticeGuid: string) {
 		const docRef = doc(this.noticeCollection, noticeGuid)
-		await updateDoc(docRef, { status: DocumentStatus.SoftDeleted })
+		await updateDoc(docRef, { status: DocumentStatusEnum.SoftDeleted })
 	}
 }

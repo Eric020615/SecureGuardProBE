@@ -1,4 +1,3 @@
-// services/MicroengineService.ts
 import axios from 'axios'
 import { provideSingleton } from '../helper/provideSingleton'
 import { IType, listUrl, microEngineConfig } from '../config/microengine'
@@ -14,12 +13,8 @@ import {
 	TerminateUserRequest,
 } from '../dtos/microengine.dto'
 import moment from 'moment'
-import { convertDateStringToDate, getCurrentTimestamp } from '../helper/time'
+import { convertDateStringToDate } from '../helper/time'
 import { HttpStatusCode } from '../common/http-status-code'
-import { inject } from 'inversify'
-import { CardRepository } from '../repositories/card.repository'
-import { Card } from '../models/card.model'
-import { DocumentStatus } from '../common/constants'
 import { OperationError } from '../common/operation-error'
 
 @provideSingleton(MicroEngineService)
@@ -29,8 +24,6 @@ export class MicroEngineService {
 	private expiresAt: Date | null
 
 	constructor(
-		@inject(CardRepository)
-		private cardRepository: CardRepository,
 	) {
 		this.apiKey = ''
 		this.refreshToken = ''

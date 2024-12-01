@@ -1,10 +1,10 @@
 import { Timestamp } from "firebase/firestore";
-import { DocumentStatus } from "../common/constants";
+import { DocumentStatusEnum } from "../common/constants";
 
 export class BaseModel { 
     id: number;
     guid?: string;
-    status: DocumentStatus;
+    status: DocumentStatusEnum;
     createdBy: string;
     updatedBy: string;
     createdDateTime: Timestamp;
@@ -12,7 +12,7 @@ export class BaseModel {
 
     constructor(
         id: number,
-        status: number,
+        status: DocumentStatusEnum,
         createdBy: string,
         updatedBy: string,
         createdDateTime: Timestamp,

@@ -13,7 +13,7 @@ import {
 import { RoleEnum } from '../common/role'
 import {
 	DepartmentEnum,
-	DocumentStatus,
+	DocumentStatusEnum,
 	ITimeFormat,
 	JobTitleEnum,
 	RoleRecognitionTypeEnum,
@@ -27,10 +27,10 @@ import {
 	getCurrentTimestamp,
 } from '../helper/time'
 import { UserRepository } from '../repositories/user.repository'
-import { User } from '../models/user.model'
 import { MegeyeService } from './megeye.service'
 import { CardRepository } from '../repositories/card.repository'
-import { Card } from '../models/card.model'
+import { Cards } from '../models/cards.model'
+import { Users } from '../models/users.model'
 
 @provideSingleton(CardService)
 export class CardService {
@@ -51,7 +51,7 @@ export class CardService {
 				throw new Error('User card already exists')
 			}
 			const badgeNumber = await this.createBadgeNumber(userGuid, role)
-			await this.userRepository.editUserDetailsByIdRepository(userGuid, { badgeNumber: badgeNumber.toString() } as User)
+			await this.userRepository.editUserDetailsByIdRepository(userGuid, { badgeNumber: badgeNumber.toString() } as Users)
 		} catch (error) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -375,12 +375,12 @@ export class CardService {
 			badgeNumber: 0,
 			referralUid: referralUid ? referralUid : userGuid,
 			role: role,
-			status: DocumentStatus.Active,
+			status: DocumentStatusEnum.Active,
 			createdBy: userGuid,
 			updatedBy: userGuid,
 			createdDateTime: getCurrentTimestamp(),
 			updatedDateTime: getCurrentTimestamp(),
-		} as Card)
+		} as Cards)
 		return badgeNumber
 	}
 }

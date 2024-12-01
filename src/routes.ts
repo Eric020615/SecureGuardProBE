@@ -77,12 +77,12 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PaginationDirection.Next": {
+    "PaginationDirectionEnum.Next": {
         "dataType": "refEnum",
         "enums": ["next"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PaginationDirection.Previous": {
+    "PaginationDirectionEnum.Previous": {
         "dataType": "refEnum",
         "enums": ["prev"],
     },
@@ -708,11 +708,16 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FacilityEnum": {
+        "dataType": "refEnum",
+        "enums": ["Badminton Court","Basketball Court","Gym Room"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateFacilityBookingDto": {
         "dataType": "refObject",
         "properties": {
             "bookedBy": {"dataType":"string"},
-            "facilityId": {"dataType":"string","required":true},
+            "facilityId": {"ref":"FacilityEnum","required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
             "numOfGuest": {"dataType":"double","required":true},
@@ -947,7 +952,7 @@ export function RegisterRoutes(app: Router) {
             async function VisitorManagementController_getVisitorByAdmin(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirectionEnum.Next"},{"ref":"PaginationDirectionEnum.Previous"}]},
                     id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
@@ -1284,7 +1289,7 @@ export function RegisterRoutes(app: Router) {
             async function UserManagementController_getUserList(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     isActive: {"in":"query","name":"isActive","required":true,"dataType":"boolean"},
-                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirectionEnum.Next"},{"ref":"PaginationDirectionEnum.Previous"}]},
                     id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
@@ -2024,7 +2029,7 @@ export function RegisterRoutes(app: Router) {
 
             async function NoticeManagementController_getNoticeByAdmin(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirectionEnum.Next"},{"ref":"PaginationDirectionEnum.Previous"}]},
                     id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };
@@ -2279,7 +2284,7 @@ export function RegisterRoutes(app: Router) {
 
             async function FacilityManagementController_getFacilityBookingHistoryByAdmin(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirection.Next"},{"ref":"PaginationDirection.Previous"}]},
+                    direction: {"in":"query","name":"direction","required":true,"dataType":"union","subSchemas":[{"ref":"PaginationDirectionEnum.Next"},{"ref":"PaginationDirectionEnum.Previous"}]},
                     id: {"in":"query","name":"id","required":true,"dataType":"double"},
                     limit: {"in":"query","name":"limit","required":true,"dataType":"double"},
             };

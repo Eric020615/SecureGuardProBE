@@ -1,13 +1,13 @@
 import { addDoc, collection, doc, getDoc, getDocs, query, where, updateDoc, orderBy } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import moment from 'moment-timezone'
-import { Visitor } from '../models/visitor.model'
+import { Visitors } from '../models/visitors.model'
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, generateAllDatesInRange } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
-import { DocumentStatus, ITimeFormat, PaginationDirection } from '../common/constants'
+import { DocumentStatusEnum, ITimeFormat, PaginationDirectionEnum } from '../common/constants'
 import { RepositoryService } from './repository'
 
 @provideSingleton(VisitorRepository)
@@ -24,14 +24,14 @@ export class VisitorRepository {
 		@inject(RepositoryService)
 		private repositoryService: RepositoryService,
 	) {
-		this.visitorCollection = collection(this.firebaseClient.firestore, 'visitor')
+		this.visitorCollection = collection(this.firebaseClient.firestore, 'visitors')
 	}
 
-	async createVisitorRepository(visitor: Visitor) {
+	async createVisitorRepository(visitor: Visitors) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'visitor',
+				counterName: 'visitors',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -42,7 +42,7 @@ export class VisitorRepository {
 		})
 	}
 
-	async editVisitorByIdRepository(visitorGuid: string, visitor: Visitor) {
+	async editVisitorByIdRepository(visitorGuid: string, visitor: Visitors) {
 		const docRef = doc(this.visitorCollection, visitorGuid)
 		await updateDoc(docRef, { ...visitor })
 	}
@@ -50,9 +50,9 @@ export class VisitorRepository {
 	async getVisitorListRepository() {
 		const q = query(this.visitorCollection)
 		const querySnapshot = await getDocs(q)
-		let result: Visitor[] = []
+		let result: Visitors[] = []
 		querySnapshot.forEach((doc) => {
-			let data = doc.data() as Visitor
+			let data = doc.data() as Visitors
 			data.guid = doc.id
 			result.push(data)
 		})
@@ -67,10 +67,10 @@ export class VisitorRepository {
 				isPast ? '<=' : '>',
 				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
-			where('status', '==', DocumentStatus.Active),
+			where('status', '==', DocumentStatusEnum.Active),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Visitors>(
 			this.visitorCollection,
 			id,
 			pageSize,
@@ -82,15 +82,15 @@ export class VisitorRepository {
 	async getVisitorDetailsRepository(visitorGuid: string) {
 		const visitorDocRef = doc(this.visitorCollection, visitorGuid)
 		const visitorDoc = await getDoc(visitorDocRef)
-		let result: Visitor = {} as Visitor
-		result = visitorDoc.data() as Visitor
+		let result: Visitors = {} as Visitors
+		result = visitorDoc.data() as Visitors
 		result.guid = visitorDoc.id
 		return result
 	}
 
-	async getVisitorByAdminRepository(direction: PaginationDirection, id: number, pageSize: number) {
+	async getVisitorByAdminRepository(direction: PaginationDirectionEnum, id: number, pageSize: number) {
 		const constraints = [orderBy('id', 'asc')]
-		let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Visitors>(
 			this.visitorCollection,
 			id,
 			pageSize,
@@ -117,7 +117,7 @@ export class VisitorRepository {
 			visitorCountMap[date] = 0
 		})
 		snapshot.forEach((doc) => {
-			const data = doc.data() as Visitor
+			const data = doc.data() as Visitors
 			const visitDateString = convertTimestampToUserTimezone(data.visitDateTime, ITimeFormat.isoDateTime)
 			let index = 0
 			while (index < dateRange.length) {
@@ -142,10 +142,10 @@ export class VisitorRepository {
 	// 			isPast ? '<=' : '>',
 	// 			convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 	// 		),
-	// 		where('status', '==', DocumentStatus.Active),
+	// 		where('status', '==', DocumentStatusEnum.Active),
 	// 		orderBy('id', 'asc'),
 	// 	]
-	// 	let { rows, count } = await this.repositoryService.getPaginatedData<Visitor>(
+	// 	let { rows, count } = await this.repositoryService.getPaginatedData<Visitors>(
 	// 		this.visitorCollection,
 	// 		offset,
 	// 		pageSize,

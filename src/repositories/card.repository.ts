@@ -1,10 +1,9 @@
-import { addDoc, and, collection, getDocs, query, updateDoc, where } from 'firebase/firestore'
+import { addDoc, collection, updateDoc } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { Card } from '../models/card.model'
+import { Cards } from '../models/cards.model'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
-import { RepositoryService } from './repository'
 import { SequenceRepository } from './sequence.repository'
 
 @provideSingleton(CardRepository)
@@ -16,19 +15,17 @@ export class CardRepository {
 		private firebaseClient: FirebaseClient,
 		@inject(FirebaseAdmin)
 		private firebaseAdmin: FirebaseAdmin,
-		@inject(RepositoryService)
-		private repositoryService: RepositoryService,
 		@inject(SequenceRepository)
 		private sequenceRepository: SequenceRepository,
 	) {
-		this.cardCollection = collection(this.firebaseClient.firestore, 'card')
+		this.cardCollection = collection(this.firebaseClient.firestore, 'cards')
 	}
 
-	async createCardRepository(data: Card) {
+	async createCardRepository(data: Cards) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'badgeNumber',
+				counterName: 'badgeNumbers',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')

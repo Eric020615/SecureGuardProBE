@@ -1,8 +1,9 @@
 import { RoleEnum } from '../common/role'
 import { Timestamp } from 'firebase/firestore'
 import { BaseModel } from './base.model'
+import { DocumentStatusEnum } from '../common/constants'
 
-export class User extends BaseModel {
+export class Users extends BaseModel {
 	firstName: string
 	lastName: string
 	contactNumber: string
@@ -20,7 +21,7 @@ export class User extends BaseModel {
 		dateOfBirth: Timestamp | null,
 		role: RoleEnum,
 		badgeNumber: string,
-		status: number,
+		status: DocumentStatusEnum,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,
@@ -37,7 +38,7 @@ export class User extends BaseModel {
 	}
 }
 
-export class SubUser {
+export class SubUsers {
 	id?: string
 	parentUserGuid: string
 	createdBy: string
@@ -60,7 +61,7 @@ export class SubUser {
 	}
 }
 
-export class SubUserRequest extends BaseModel {
+export class SubUserRequests extends BaseModel {
 	email: string
 	parentUserGuid: string
 
@@ -68,7 +69,7 @@ export class SubUserRequest extends BaseModel {
 		id: number,
 		email: string,
 		parentUserGuid: string,
-		status: number,
+		status: DocumentStatusEnum,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,
@@ -80,7 +81,7 @@ export class SubUserRequest extends BaseModel {
 	}
 }
 
-export class Resident {
+export class Residents {
 	id?: string
 	unit: string
 	floor: string
@@ -109,7 +110,7 @@ export class Resident {
 	}
 }
 
-export class Staff {
+export class Staffs {
 	id?: string
 	staffId: string
 	isAdmin: boolean

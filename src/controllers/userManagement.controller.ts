@@ -22,7 +22,7 @@ import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { PaginationDirection } from '../common/constants'
+import { PaginationDirectionEnum } from '../common/constants'
 import { GetUserByAdminDto, GetUserDetailsByIdDto } from '../dtos/user.dto'
 import { UserService } from '../services/user.service'
 
@@ -41,7 +41,7 @@ export class UserManagementController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getUserList(
 		@Query() isActive: boolean,
-		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() direction: PaginationDirectionEnum.Next | PaginationDirectionEnum.Previous,
 		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetUserByAdminDto>> {

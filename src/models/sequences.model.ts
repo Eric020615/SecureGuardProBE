@@ -1,4 +1,4 @@
-export class Sequence { 
+export class Sequences { 
     sequenceValue: number;
 
     constructor(

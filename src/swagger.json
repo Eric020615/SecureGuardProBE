@@ -115,13 +115,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PaginationDirection.Next": {
+			"PaginationDirectionEnum.Next": {
 				"enum": [
 					"next"
 				],
 				"type": "string"
 			},
-			"PaginationDirection.Previous": {
+			"PaginationDirectionEnum.Previous": {
 				"enum": [
 					"prev"
 				],
@@ -1868,13 +1868,21 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"FacilityEnum": {
+				"enum": [
+					"Badminton Court",
+					"Basketball Court",
+					"Gym Room"
+				],
+				"type": "string"
+			},
 			"CreateFacilityBookingDto": {
 				"properties": {
 					"bookedBy": {
 						"type": "string"
 					},
 					"facilityId": {
-						"type": "string"
+						"$ref": "#/components/schemas/FacilityEnum"
 					},
 					"startDate": {
 						"type": "string"

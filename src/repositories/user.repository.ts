@@ -12,14 +12,14 @@ import {
 } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import 'moment-timezone'
-import { Resident, SubUser, SubUserRequest, Staff, User } from '../models/user.model'
+import { Residents, SubUsers, SubUserRequests, Staffs, Users } from '../models/users.model'
 import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
 import { RepositoryService } from './repository'
-import { DocumentStatus, PaginationDirection } from '../common/constants'
+import { DocumentStatusEnum, PaginationDirectionEnum } from '../common/constants'
 
 @provideSingleton(UserRepository)
 export class UserRepository {
@@ -39,18 +39,18 @@ export class UserRepository {
 		@inject(RepositoryService)
 		private repositoryService: RepositoryService,
 	) {
-		this.userCollection = collection(this.firebaseClient.firestore, 'user')
-		this.subUserRequestCollection = collection(this.firebaseClient.firestore, 'subUserRequest')
-		this.subUserCollection = collection(this.firebaseClient.firestore, 'subUser')
-		this.residentCollection = collection(this.firebaseClient.firestore, 'resident')
-		this.staffCollection = collection(this.firebaseClient.firestore, 'staff')
+		this.userCollection = collection(this.firebaseClient.firestore, 'users')
+		this.subUserRequestCollection = collection(this.firebaseClient.firestore, 'subUserRequests')
+		this.subUserCollection = collection(this.firebaseClient.firestore, 'subUsers')
+		this.residentCollection = collection(this.firebaseClient.firestore, 'residents')
+		this.staffCollection = collection(this.firebaseClient.firestore, 'staffs')
 	}
 
-	createResidentRepository = async (user: User, resident: Resident, userId: string) => {
+	createResidentRepository = async (user: Users, resident: Residents, userId: string) => {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'user',
+				counterName: 'users',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -63,11 +63,11 @@ export class UserRepository {
 		})
 	}
 
-	createStaffRepository = async (user: User, staff: Staff, userId: string) => {
+	createStaffRepository = async (user: Users, staff: Staffs, userId: string) => {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'user',
+				counterName: 'users',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -80,11 +80,11 @@ export class UserRepository {
 		})
 	}
 
-	createSubUserRepository = async (user: User, subUser: SubUser, userGuid: string) => {
+	createSubUserRepository = async (user: Users, subUser: SubUsers, userGuid: string) => {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const userId = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'user',
+				counterName: 'users',
 			})
 			if (Number.isNaN(userId)) {
 				throw new Error('Failed to generate id')
@@ -100,13 +100,13 @@ export class UserRepository {
 	getUserByIdRepository = async (userGuid: string) => {
 		const docRef = doc(this.userCollection, userGuid)
 		const userDoc = await getDoc(docRef)
-		let result: User = {} as User
-		result = userDoc.data() as User
+		let result: Users = {} as Users
+		result = userDoc.data() as Users
 		result.guid = userDoc.id
 		return result
 	}
 
-	getUserListByAdminRepository = async (userList: UserRecord[], direction: PaginationDirection, id: number, pageSize: number) => {
+	getUserListByAdminRepository = async (userList: UserRecord[], direction: PaginationDirectionEnum, id: number, pageSize: number) => {
 		const userGuid = userList.map((user) => user.uid)
 		if (userGuid.length === 0) {
 			return { rows: [], count: 0 }
@@ -115,7 +115,7 @@ export class UserRepository {
 			where('__name__', 'in', userGuid),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<User>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Users>(
 			this.userCollection,
 			id,
 			pageSize,
@@ -136,9 +136,9 @@ export class UserRepository {
 		]
 		const q = query(this.userCollection, ...constraints)
 		const querySnapshot = await getDocs(q)
-		let result: User[] = []
+		let result: Users[] = []
 		querySnapshot.forEach((doc) => {
-			let data = doc.data() as User
+			let data = doc.data() as Users
 			data.guid = doc.id
 			result.push(data)
 		})
@@ -148,34 +148,34 @@ export class UserRepository {
 	getResidentDetailsRepository = async (userId: string) => {
 		const docRef = doc(this.residentCollection, userId)
 		const resDoc = await getDoc(docRef)
-		let result: Resident = {} as Resident
-		result = resDoc.data() as Resident
+		let result: Residents = {} as Residents
+		result = resDoc.data() as Residents
 		return result
 	}
 
 	getStaffDetailsRepository = async (userId: string) => {
 		const docRef = doc(this.staffCollection, userId)
 		const resDoc = await getDoc(docRef)
-		let result: Staff = {} as Staff
-		result = resDoc.data() as Staff
+		let result: Staffs = {} as Staffs
+		result = resDoc.data() as Staffs
 		return result
 	}
 
-	updateUserStatusByIdRepository = async (id: string, user: User) => {
+	updateUserStatusByIdRepository = async (id: string, user: Users) => {
 		const docRef = doc(this.userCollection, id)
 		await updateDoc(docRef, { ...user })
 	}
 
-	editUserDetailsByIdRepository = async (id: string, user: User) => {
+	editUserDetailsByIdRepository = async (id: string, user: Users) => {
 		const docRef = doc(this.userCollection, id)
 		await updateDoc(docRef, { ...user })
 	}
 
-	createSubUserRequestRepository = async (data: SubUserRequest) => {
+	createSubUserRequestRepository = async (data: SubUserRequests) => {
 		const id = await this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'subUserRequest',
+				counterName: 'subUserRequests',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -190,8 +190,8 @@ export class UserRepository {
 	getSubUserParentUserGuidByUserGuidRepository = async (userGuid: string) => {
 		const subUserDocRef = doc(this.subUserCollection, userGuid)
 		const subUserDoc = await getDoc(subUserDocRef)
-		let result: SubUser = {} as SubUser
-		result = subUserDoc.data() as SubUser
+		let result: SubUsers = {} as SubUsers
+		result = subUserDoc.data() as SubUsers
 		return result
 	}
 
@@ -214,10 +214,10 @@ export class UserRepository {
 		}
 		const constraints = [
 			where('__name__', 'in', subUser),
-			where('status', '==', DocumentStatus.Active),
+			where('status', '==', DocumentStatusEnum.Active),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<User>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Users>(
 			this.userCollection,
 			id,
 			pageSize,
@@ -229,14 +229,14 @@ export class UserRepository {
 	getSubUserRequestByEmailRepository = async (email: string) => {
 		const constraints = [
 			where('email', '==', email),
-			where('status', '!=', DocumentStatus.SoftDeleted),
+			where('status', '!=', DocumentStatusEnum.SoftDeleted),
 			orderBy('id', 'asc'),
 		]
 		const q = query(this.subUserRequestCollection, ...constraints)
 		const querySnapshot = await getDocs(q)
-		let result: SubUserRequest[] = []
+		let result: SubUserRequests[] = []
 		querySnapshot.forEach((doc) => {
-			let data = doc.data() as SubUserRequest
+			let data = doc.data() as SubUserRequests
 			data.guid = doc.id
 			result.push(data)
 		})
@@ -245,13 +245,13 @@ export class UserRepository {
 
 	editSubUserRequestRepository = async (
 		subUserRequestGuid: string,
-		subUserRequest: SubUserRequest,
+		subUserRequest: SubUserRequests,
 	) => {
 		const docRef = doc(this.subUserRequestCollection, subUserRequestGuid)
 		await updateDoc(docRef, { ...subUserRequest })
 	}
 
-	editSubUserByIdRepository = async (subUserGuid: string, subUser: SubUser, user: User) => {
+	editSubUserByIdRepository = async (subUserGuid: string, subUser: SubUsers, user: Users) => {
 		const subUserDocRef = doc(this.subUserCollection, subUserGuid)
 		await updateDoc(subUserDocRef, { ...subUser })
 		const userDocRef = doc(this.userCollection, subUserGuid)

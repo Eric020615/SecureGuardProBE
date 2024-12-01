@@ -5,9 +5,9 @@ import { inject } from 'inversify'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
 import { RepositoryService } from './repository'
-import { Parcel } from '../models/parcel.model'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatusEnum } from '../common/constants'
 import { getCurrentTimestamp } from '../helper/time'
+import { Parcels } from '../models/parcels.model'
 
 @provideSingleton(ParcelRepository)
 export class ParcelRepository {
@@ -23,14 +23,14 @@ export class ParcelRepository {
 		@inject(RepositoryService)
 		private repositoryService: RepositoryService,
 	) {
-		this.parcelCollection = collection(this.firebaseClient.firestore, 'parcel')
+		this.parcelCollection = collection(this.firebaseClient.firestore, 'parcels')
 	}
 
-	async createParcelRepository(parcel: Parcel) {
+	async createParcelRepository(parcel: Parcels) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
-				counterName: 'parcel',
+				counterName: 'parcels',
 			})
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
@@ -44,10 +44,10 @@ export class ParcelRepository {
 		const constraints = [
 			where('floor', '==', floor),
 			where('unit', '==', unit),
-			where('status', '==', DocumentStatus.Active),
+			where('status', '==', DocumentStatusEnum.Active),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<Parcel>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Parcels>(
 			this.parcelCollection,
 			id,
 			pageSize,
@@ -61,7 +61,7 @@ export class ParcelRepository {
 			where('createdBy', '==', userGuid),
 			orderBy('id', 'asc'),
 		]
-		let { rows, count } = await this.repositoryService.getPaginatedData<Parcel>(
+		let { rows, count } = await this.repositoryService.getPaginatedData<Parcels>(
 			this.parcelCollection,
 			id,
 			pageSize,
@@ -73,14 +73,14 @@ export class ParcelRepository {
 	async getParcelDetailsByIdRepository(parcelGuid: string) {
 		const parcelDocRef = doc(this.parcelCollection, parcelGuid)
 		const parcelDoc = await getDoc(parcelDocRef)
-		let result: Parcel = {} as Parcel
-		result = parcelDoc.data() as Parcel
+		let result: Parcels = {} as Parcels
+		result = parcelDoc.data() as Parcels
 		result.guid = parcelDoc.id
 		return result
 	}
 
 	async deleteParcelByResidentRepository(parcelGuid: string) {
 		const docRef = doc(this.parcelCollection, parcelGuid)
-		await updateDoc(docRef, { status: DocumentStatus.SoftDeleted, updatedDateTime: getCurrentTimestamp() })
+		await updateDoc(docRef, { status: DocumentStatusEnum.SoftDeleted, updatedDateTime: getCurrentTimestamp() })
 	}
 }

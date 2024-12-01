@@ -1,6 +1,8 @@
+import { FacilityEnum } from "../common/constants"
+
 export interface CreateFacilityBookingDto {
 	bookedBy?: string
-	facilityId: string
+	facilityId: FacilityEnum
 	startDate: string
 	endDate: string
 	numOfGuest: number

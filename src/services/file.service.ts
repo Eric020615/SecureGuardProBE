@@ -3,10 +3,10 @@ import { inject } from 'inversify'
 import { FirebaseClient } from '../config/initFirebase' // adjust the path as needed
 import { GeneralFileDto, GeneralFileResponseDto } from '../dtos/index.dto'
 import { provideSingleton } from '../helper/provideSingleton'
-import { FileModel } from '../models/file.model'
-import { DocumentStatus } from '../common/constants'
+import { DocumentStatusEnum } from '../common/constants'
 import { getCurrentTimestamp } from '../helper/time'
 import { FileRepository } from '../repositories/file.repository'
+import { Files } from '../models/files.model'
 
 @provideSingleton(FileService)
 export class FileService {
@@ -34,12 +34,12 @@ export class FileService {
 				contentType: contentType,
 			})
 			const fileURL = await getDownloadURL(snapshot.ref)
-			const fileModel = new FileModel(
+			const fileModel = new Files(
 				0,
 				file.fileName,
 				fileURL,
 				file.contentType,
-				DocumentStatus.Active,
+				DocumentStatusEnum.Active,
 				userGuid,
 				userGuid,
 				getCurrentTimestamp(),
@@ -68,12 +68,12 @@ export class FileService {
 					const storageRef = ref(this.storage, `${folderpath}/${file.fileName}`)
 					const snapshot = await uploadString(storageRef, file.fileData, 'base64')
 					const fileURL = await getDownloadURL(snapshot.ref)
-					const fileModel = new FileModel(
+					const fileModel = new Files(
 						0,
 						file.fileName,
 						fileURL,
 						file.contentType,
-						DocumentStatus.Active,
+						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
@@ -164,12 +164,12 @@ export class FileService {
 					})
 					const fileURL = await getDownloadURL(snapshot.ref)
 
-					const fileModel = new FileModel(
+					const fileModel = new Files(
 						0,
 						file.fileName,
 						fileURL,
 						file.contentType,
-						DocumentStatus.Active,
+						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),

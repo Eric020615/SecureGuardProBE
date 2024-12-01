@@ -23,7 +23,7 @@ import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { PaginationDirection } from '../common/constants'
+import { PaginationDirectionEnum } from '../common/constants'
 
 @Route('notices/admin')
 @provideSingleton(NoticeManagementController)
@@ -72,7 +72,7 @@ export class NoticeManagementController extends Controller {
 	@Get('/')
 	@Security('jwt', ['SA'])
 	public async getNoticeByAdmin(
-		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() direction: PaginationDirectionEnum.Next | PaginationDirectionEnum.Previous,
 		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetNoticeDto>> {

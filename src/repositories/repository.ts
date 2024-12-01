@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore'
 import { BaseModel } from '../models/base.model'
 import { provideTransient } from '../helper/provideSingleton'
-import { PaginationDirection } from '../common/constants';
+import { PaginationDirectionEnum } from '../common/constants';
 
 @provideTransient(RepositoryService)
 export class RepositoryService {
@@ -21,14 +21,14 @@ export class RepositoryService {
 		id: number,
 		pageSize: number,
 		constraints: QueryConstraint[],
-		direction: PaginationDirection = PaginationDirection.Next,
+		direction: PaginationDirectionEnum = PaginationDirectionEnum.Next,
 	): Promise<{ rows: T[]; count: number }> {
 		try {
 			let q = null
-			if(direction === PaginationDirection.Next) {
+			if(direction === PaginationDirectionEnum.Next) {
 				q = query(collection, ...constraints, limit(pageSize), startAfter(id))
 			}
-			else if (direction === PaginationDirection.Previous) {
+			else if (direction === PaginationDirectionEnum.Previous) {
 				q = query(collection, ...constraints, limit(pageSize), endBefore(id))
 			}
 			else {

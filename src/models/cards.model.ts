@@ -1,11 +1,12 @@
 import { Timestamp } from 'firebase/firestore'
 import { RoleEnum } from '../common/role'
+import { DocumentStatusEnum } from '../common/constants'
 
-export class Card {
+export class Cards {
 	badgeNumber: number
 	referralUid: string
 	role: RoleEnum
-	status: number
+	status: DocumentStatusEnum
 	createdBy: string
 	updatedBy: string
 	createdDateTime: Timestamp
@@ -15,7 +16,7 @@ export class Card {
 		badgeNumber: number,
 		referralUid: string,
 		role: RoleEnum,
-		status: number,
+		status: DocumentStatusEnum,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,

@@ -19,7 +19,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { VisitorService } from '../services/visitor.service'
 import { GetVisitorDto, GetVisitorByDateDto, GetVisitorDetailsDto } from '../dtos/visitor.dto'
-import { PaginationDirection } from '../common/constants'
+import { PaginationDirectionEnum } from '../common/constants'
 
 @Route('visitors/admin')
 @provideSingleton(VisitorManagementController)
@@ -38,7 +38,7 @@ export class VisitorManagementController extends Controller {
 	@Security('jwt', ['SA'])
 	public async getVisitorByAdmin(
 		@Request() request: ISecurityMiddlewareRequest,
-		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() direction: PaginationDirectionEnum.Next | PaginationDirectionEnum.Previous,
 		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetVisitorDto>> {

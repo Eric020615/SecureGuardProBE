@@ -29,7 +29,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FacilityService } from '../services/facility.service'
 import { UserService } from '../services/user.service'
-import { PaginationDirection } from '../common/constants'
+import { PaginationDirectionEnum } from '../common/constants'
 
 @Route('facilities')
 @provideSingleton(FacilityController)

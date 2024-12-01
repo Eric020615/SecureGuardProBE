@@ -3,7 +3,7 @@ import { Controller, OperationId, Get, Response, Route, SuccessResponse, Tags, S
 import { HttpStatusCode } from '../common/http-status-code'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { PaginationDirection } from '../common/constants'
+import { PaginationDirectionEnum } from '../common/constants'
 import { GetFacilityBookingHistoryDto, GetFacilityBookingUserDto, SpaceAvailabilityDto } from '../dtos/facility.dto'
 import { FacilityService } from '../services/facility.service'
 import { UserService } from '../services/user.service'
@@ -53,7 +53,7 @@ export class FacilityManagementController extends Controller {
 	@Get('/bookings')
 	@Security('jwt', ['SA'])
 	public async getFacilityBookingHistoryByAdmin(
-		@Query() direction: PaginationDirection.Next | PaginationDirection.Previous,
+		@Query() direction: PaginationDirectionEnum.Next | PaginationDirectionEnum.Previous,
 		@Query() id: number,
 		@Query() limit: number,
 	): Promise<IPaginatedResponse<GetFacilityBookingHistoryDto>> {

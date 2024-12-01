@@ -1,5 +1,6 @@
 import { Timestamp } from 'firebase/firestore'
 import { BaseModel } from './base.model'
+import { DocumentStatusEnum } from '../common/constants'
 
 export interface FileMetadata {
 	fileName: string
@@ -9,7 +10,7 @@ export interface FileMetadata {
 	description?: string // Optional: Description or notes about the file
 }
 
-export class FileModel extends BaseModel implements FileMetadata {
+export class Files extends BaseModel implements FileMetadata {
 	fileName: string
 	fileURL: string
 	contentType: string
@@ -21,7 +22,7 @@ export class FileModel extends BaseModel implements FileMetadata {
 		fileName: string,
 		fileURL: string,
 		contentType: string,
-		status: number,
+		status: DocumentStatusEnum,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,

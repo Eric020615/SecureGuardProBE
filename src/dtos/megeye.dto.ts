@@ -1,5 +1,5 @@
 interface MegeyeError {
-    status: number;
+    status: string;
     source: {}
     title: string;
     detail: string;

@@ -1,7 +1,8 @@
 import { Timestamp } from 'firebase/firestore'
 import { BaseModel } from './base.model'
+import { DocumentStatusEnum } from '../common/constants'
 
-export class NotificationToken {
+export class NotificationTokens {
 	tokens: string[]
 
 	constructor(tokens: string[]) {
@@ -9,7 +10,7 @@ export class NotificationToken {
 	}
 }
 
-export class Notification extends BaseModel {
+export class Notifications extends BaseModel {
 	userGuid: string
 	title: string
 	body: string
@@ -23,7 +24,7 @@ export class Notification extends BaseModel {
 		body: string,
 		data: any,
 		isRead: boolean,
-		status: number,
+		status: DocumentStatusEnum,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,

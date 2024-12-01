@@ -3,11 +3,11 @@ import { HttpStatusCode } from '../common/http-status-code'
 import { convertTimestampToUserTimezone, getCurrentDateString, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus, ITimeFormat } from '../common/constants'
+import { DocumentStatusEnum, ITimeFormat, ParcelStatusEnum } from '../common/constants'
 import { ParcelRepository } from '../repositories/parcel.repository'
 import { CreateParcelDto, GetParcelDetailsDto, GetParcelDto } from '../dtos/parcel.dto'
-import { Parcel } from '../models/parcel.model'
 import { FileService } from './file.service'
+import { Parcels } from '../models/parcels.model'
 
 @provideSingleton(ParcelService)
 export class ParcelService {
@@ -25,12 +25,13 @@ export class ParcelService {
 				'parcel image',
 			)
 			await this.parcelRepository.createParcelRepository(
-				new Parcel(
+				new Parcels(
 					0,
 					fileGuid,
 					createParcelDto.floor,
 					createParcelDto.unit,
-					DocumentStatus.Active,
+					ParcelStatusEnum.Received,
+					DocumentStatusEnum.Active,
 					userId,
 					userId,
 					getCurrentTimestamp(),

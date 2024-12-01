@@ -17,16 +17,14 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
 import { UserRepository } from '../repositories/user.repository'
-import { DocumentStatus } from '../common/constants'
-import { SubUserRequest } from '../models/user.model'
+import { DocumentStatusEnum } from '../common/constants'
 import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGrid'
 import { UserRecord } from 'firebase-admin/auth'
 import { JwtConfig } from '../config/jwtConfig'
 import { EmailService } from './email.service'
 import { CardRepository } from '../repositories/card.repository'
-import { Card } from '../models/card.model'
-import { getCurrentTimestamp } from '../helper/time'
 import { validatePassword } from '../helper/validators'
+import { SubUserRequests } from '../models/users.model'
 
 @provideSingleton(AuthService)
 export class AuthService {
@@ -78,8 +76,8 @@ export class AuthService {
 				await this.userRepository.editSubUserRequestRepository(
 					request[0].guid as string,
 					{
-						status: DocumentStatus.Active,
-					} as SubUserRequest,
+						status: DocumentStatusEnum.Active,
+					} as SubUserRequests,
 				)
 			}
 			await this.authAdmin.setCustomUserClaims(user.uid, { role: userRole })

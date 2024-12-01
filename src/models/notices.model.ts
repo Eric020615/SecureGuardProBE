@@ -1,7 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "./base.model";
+import { DocumentStatusEnum } from "../common/constants";
 
-export class Notice extends BaseModel{ 
+export class Notices extends BaseModel{ 
     title: string;
     description: string;
     startDate: Timestamp;
@@ -15,7 +16,7 @@ export class Notice extends BaseModel{
         startDate: Timestamp,
         endDate: Timestamp,
         attachments: string[],
-        status: number,
+        status: DocumentStatusEnum,
         createdBy: string,
         updatedBy: string,
         createdDateTime: Timestamp,

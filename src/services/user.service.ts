@@ -13,7 +13,7 @@ import {
 	GetUserDto,
 	GetUserByAdminDto,
 } from '../dtos/user.dto'
-import { Resident, SubUser, Staff, User } from '../models/user.model'
+import { Residents, SubUsers, Staffs, Users } from '../models/users.model'
 import { UserRepository } from '../repositories/user.repository'
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
@@ -23,7 +23,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
 import * as dotenv from 'dotenv'
-import { DocumentStatus, PaginationDirection } from '../common/constants'
+import { DocumentStatusEnum, PaginationDirectionEnum } from '../common/constants'
 import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import { JwtConfig } from '../config/jwtConfig'
 import { FileService } from './file.service'
@@ -101,7 +101,7 @@ export class UserService {
 					'supported documents',
 				)
 				await this.userRepository.createResidentRepository(
-					new User(
+					new Users(
 						0,
 						createUserDto.firstName,
 						createUserDto.lastName,
@@ -110,13 +110,13 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
-						DocumentStatus.Active,
+						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 					),
-					new Resident(
+					new Residents(
 						createUserDto.floor,
 						createUserDto.unit,
 						userGuid,
@@ -136,7 +136,7 @@ export class UserService {
 
 			if (role === RoleEnum.RESIDENT_SUBUSER && this.instanceOfCreateSubUserDto(createUserDto)) {
 				await this.userRepository.createSubUserRepository(
-					new User(
+					new Users(
 						0,
 						createUserDto.firstName,
 						createUserDto.lastName,
@@ -145,13 +145,13 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
-						DocumentStatus.Active,
+						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 					),
-					new SubUser(createUserDto.parentUserGuid, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
+					new SubUsers(createUserDto.parentUserGuid, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
 					userGuid,
 				)
 			}
@@ -164,7 +164,7 @@ export class UserService {
 					'supported documents',
 				)
 				await this.userRepository.createStaffRepository(
-					new User(
+					new Users(
 						0,
 						createUserDto.firstName,
 						createUserDto.lastName,
@@ -173,13 +173,13 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
-						DocumentStatus.Active,
+						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 					),
-					new Staff(
+					new Staffs(
 						createUserDto.staffId,
 						true,
 						userGuid,
@@ -200,7 +200,7 @@ export class UserService {
 					'supported files',
 				)
 				await this.userRepository.createStaffRepository(
-					new User(
+					new Users(
 						0,
 						createUserDto.firstName,
 						createUserDto.lastName,
@@ -209,13 +209,13 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
-						DocumentStatus.Active,
+						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 					),
-					new Staff(
+					new Staffs(
 						createUserDto.staffId,
 						false,
 						userGuid,
@@ -262,7 +262,7 @@ export class UserService {
 		}
 	}
 
-	getUserListByAdminService = async (isActive: boolean, direction: PaginationDirection, id: number, limit: number) => {
+	getUserListByAdminService = async (isActive: boolean, direction: PaginationDirectionEnum, id: number, limit: number) => {
 		try {
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
@@ -286,7 +286,7 @@ export class UserService {
 								role: userInformation.role,
 								contactNumber: userInformation.contactNumber,
 								userStatus: userList[index].disabled ? 'Inactive' : 'Active',
-								status: DocumentStatus[userInformation.status],
+								status: DocumentStatusEnum[userInformation.status],
 							} as GetUserByAdminDto
 					  })
 					: []
@@ -303,7 +303,7 @@ export class UserService {
 			userList = userResult.users
 				.filter((user) => !user.disabled)
 				.filter((user) => user.customClaims?.role === RoleEnum.RESIDENT)
-			let users: User[] = await this.userRepository.getFacilityBookingUserRepository(userList)
+			let users: Users[] = await this.userRepository.getFacilityBookingUserRepository(userList)
 			let data: GetFacilityBookingUserDto[] = []
 			data =
 				users && users.length > 0
@@ -338,7 +338,7 @@ export class UserService {
 				isActive: !userRecord.disabled,
 				contactNumber: userDetails.contactNumber,
 				badgeNumber: userDetails.badgeNumber,
-				status: DocumentStatus[userDetails.status],
+				status: DocumentStatusEnum[userDetails.status],
 				createdBy: userDetails.createdBy,
 				createdDateTime: convertTimestampToUserTimezone(userDetails.createdDateTime),
 				updatedBy: userDetails.updatedBy,
@@ -375,7 +375,7 @@ export class UserService {
 
 	editUserDetailsByIdService = async (editUserDetailsByIdDto: EditUserDetailsByIdDto, userId: string) => {
 		try {
-			let user: User = {
+			let user: Users = {
 				firstName: editUserDetailsByIdDto.firstName,
 				lastName: editUserDetailsByIdDto.lastName,
 				contactNumber: editUserDetailsByIdDto.contactNumber,
@@ -383,7 +383,7 @@ export class UserService {
 				dateOfBirth: convertDateStringToTimestamp(editUserDetailsByIdDto.dateOfBirth),
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
-			} as User
+			} as Users
 			await this.userRepository.editUserDetailsByIdRepository(userId, user)
 			await this.authAdmin.updateUser(userId, { displayName: editUserDetailsByIdDto.userName })
 		} catch (error: any) {
@@ -395,13 +395,13 @@ export class UserService {
 		try {
 			const userRecord = await this.authAdmin.getUser(userId)
 			if (!userRecord.disabled) {
-				throw new OperationError('User was activated before.', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				throw new OperationError('Users was activated before.', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.authAdmin.updateUser(userId, { disabled: false })
 			await this.userRepository.updateUserStatusByIdRepository(userId, {
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
-			} as User)
+			} as Users)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -411,13 +411,13 @@ export class UserService {
 		try {
 			const userRecord = await this.authAdmin.getUser(userId)
 			if (userRecord.disabled) {
-				throw new OperationError('User was deactivated before.', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				throw new OperationError('Users was deactivated before.', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.authAdmin.updateUser(userId, { disabled: true })
 			await this.userRepository.updateUserStatusByIdRepository(userId, {
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
-			} as User)
+			} as Users)
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -428,10 +428,10 @@ export class UserService {
 			const userRecord = await this.authAdmin.getUser(userId)
 			this.authAdmin.deleteUser(userId)
 			await this.userRepository.updateUserStatusByIdRepository(userId, {
-				status: DocumentStatus.SoftDeleted,
+				status: DocumentStatusEnum.SoftDeleted,
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
-			} as User)
+			} as Users)
 			await this.notificationRepository.deleteNotificationTokenRepository(userId)
 			if (userRecord.customClaims?.role === RoleEnum.RESIDENT) {
 				const residentDetails = await this.userRepository.getResidentDetailsRepository(userId)
@@ -464,7 +464,7 @@ export class UserService {
 				id: 0,
 				email: createSubUserRequestDto.email,
 				parentUserGuid: userId,
-				status: DocumentStatus.Pending,
+				status: DocumentStatusEnum.Pending,
 				createdBy: userId,
 				createdDateTime: getCurrentTimestamp(),
 				updatedBy: userId,
@@ -539,14 +539,14 @@ export class UserService {
 	editSubUserStatusByIdService = async (subUserGuid: string, updatedBy: string, status: boolean) => {
 		try {
 			await this.authAdmin.updateUser(subUserGuid, { disabled: !status })
-			let subUser: SubUser = {
+			let subUser: SubUsers = {
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
-			} as SubUser
-			let user: User = {
+			} as SubUsers
+			let user: Users = {
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
-			} as User
+			} as Users
 			await this.userRepository.editSubUserByIdRepository(subUserGuid, subUser, user)
 		} catch (error) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -557,15 +557,15 @@ export class UserService {
 		try {
 			// can make it delete in the future for auth
 			await this.authAdmin.updateUser(subUserGuid, { disabled: true })
-			let subUser: SubUser = {
+			let subUser: SubUsers = {
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
-			} as SubUser
-			let user: User = {
-				status: DocumentStatus.SoftDeleted,
+			} as SubUsers
+			let user: Users = {
+				status: DocumentStatusEnum.SoftDeleted,
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
-			} as User
+			} as Users
 			await this.userRepository.editSubUserByIdRepository(subUserGuid, subUser, user)
 		} catch (error) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)

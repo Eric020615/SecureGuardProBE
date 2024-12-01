@@ -1,14 +1,14 @@
 import { CreateNoticeDto, GetNoticeDto, EditNoticeDto, GetNoticeDetailsDto } from '../dtos/notice.dto'
 import { NoticeRepository } from '../repositories/notice.repository'
-import { Notice } from '../models/notice.model'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatus, PaginationDirection } from '../common/constants'
+import { DocumentStatusEnum, PaginationDirectionEnum } from '../common/constants'
 import { FileService } from './file.service'
 import { arrayRemove, arrayUnion } from 'firebase/firestore'
+import { Notices } from '../models/notices.model'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
@@ -19,14 +19,14 @@ export class NoticeService {
 	createNoticeService = async (createNoticeDto: CreateNoticeDto, userId: string) => {
 		try {
 			const noticeGuid = await this.noticeRepository.createNoticeRepository(
-				new Notice(
+				new Notices(
 					0,
 					createNoticeDto.title,
 					createNoticeDto.description,
 					convertDateStringToTimestamp(createNoticeDto.startDate),
 					convertDateStringToTimestamp(createNoticeDto.endDate),
 					[],
-					DocumentStatus.Active,
+					DocumentStatusEnum.Active,
 					userId,
 					userId,
 					getCurrentTimestamp(),
@@ -45,14 +45,14 @@ export class NoticeService {
 			if (fileGuids.length > 0) {
 				await this.noticeRepository.editNoticeByIdRepository(noticeGuid, {
 					attachments: fileGuids,
-				} as Notice)
+				} as Notices)
 			}
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
 
-	getNoticeByAdminService = async (direction: PaginationDirection, id: number, limit: number) => {
+	getNoticeByAdminService = async (direction: PaginationDirectionEnum, id: number, limit: number) => {
 		try {
 			const { rows, count } = await this.noticeRepository.getNoticeByAdminRepository(direction, id, limit)
 			let data: GetNoticeDto[] = []
@@ -65,7 +65,7 @@ export class NoticeService {
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
 							endDate: convertTimestampToUserTimezone(notice.endDate),
-							status: DocumentStatus[notice.status],
+							status: DocumentStatusEnum[notice.status],
 						} as GetNoticeDto
 				  })
 				: []
@@ -88,7 +88,7 @@ export class NoticeService {
 							description: notice.description,
 							startDate: convertTimestampToUserTimezone(notice.startDate),
 							endDate: convertTimestampToUserTimezone(notice.endDate),
-							status: DocumentStatus[notice.status],
+							status: DocumentStatusEnum[notice.status],
 						} as GetNoticeDto
 				  })
 				: []
@@ -112,7 +112,7 @@ export class NoticeService {
 					startDate: convertTimestampToUserTimezone(notice.startDate),
 					endDate: convertTimestampToUserTimezone(notice.endDate),
 					attachments: attachments,
-					status: DocumentStatus[notice.status],
+					status: DocumentStatusEnum[notice.status],
 					createdBy: notice.createdBy,
 					createdDateTime: convertTimestampToUserTimezone(notice.createdDateTime),
 					updatedBy: notice.updatedBy,
@@ -127,14 +127,14 @@ export class NoticeService {
 
 	editNoticeByIdService = async (noticeGuid: string, editNoticeDto: EditNoticeDto, userId: string) => {
 		try {
-			let notice: Notice = {
+			let notice: Notices = {
 				title: editNoticeDto.title,
 				description: editNoticeDto.description,
 				startDate: convertDateStringToTimestamp(editNoticeDto.startDate),
 				endDate: convertDateStringToTimestamp(editNoticeDto.endDate),
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
-			} as Notice
+			} as Notices
 			const fileGuids = await this.fileService.editFilesService(
 				editNoticeDto.deletedAttachments,
 				editNoticeDto.newAttachments ?? [],
