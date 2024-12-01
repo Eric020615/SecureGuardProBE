@@ -29,6 +29,9 @@ export class FileService {
 		description: string,
 	) => {
 		try {
+			if (!file) {
+				return ""
+			}
 			const storageRef = ref(this.storage, `${folderpath}`)
 			const snapshot = await uploadString(storageRef, file.fileData, 'base64', {
 				contentType: contentType,
@@ -64,26 +67,28 @@ export class FileService {
 		try {
 			// Now use this.storage which persists across the method
 			const fileURLs = await Promise.all(
-				fileDto.map(async (file) => {
-					const storageRef = ref(this.storage, `${folderpath}/${file.fileName}`)
-					const snapshot = await uploadString(storageRef, file.fileData, 'base64')
-					const fileURL = await getDownloadURL(snapshot.ref)
-					const fileModel = new Files(
-						0,
-						file.fileName,
-						fileURL,
-						file.contentType,
-						DocumentStatusEnum.Active,
-						userGuid,
-						userGuid,
-						getCurrentTimestamp(),
-						getCurrentTimestamp(),
-						file.size,
-						description,
-					)
-					const fileGuid = await this.fileRepository.createFileRepository(fileModel)
-					return fileGuid
-				}),
+				fileDto
+					? fileDto.map(async (file) => {
+							const storageRef = ref(this.storage, `${folderpath}/${file.fileName}`)
+							const snapshot = await uploadString(storageRef, file.fileData, 'base64')
+							const fileURL = await getDownloadURL(snapshot.ref)
+							const fileModel = new Files(
+								0,
+								file.fileName,
+								fileURL,
+								file.contentType,
+								DocumentStatusEnum.Active,
+								userGuid,
+								userGuid,
+								getCurrentTimestamp(),
+								getCurrentTimestamp(),
+								file.size,
+								description,
+							)
+							const fileGuid = await this.fileRepository.createFileRepository(fileModel)
+							return fileGuid
+					  })
+					: [],
 			)
 
 			return fileURLs

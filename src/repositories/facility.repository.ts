@@ -40,7 +40,7 @@ export class FacilityBookingRepository {
 		this.facilityBookingCollection = collection(this.firebaseClient.firestore, 'facilityBookings')
 		this.refDataCollection = collection(
 			this.firebaseClient.firestore,
-			'refData/facilities/informations',
+			'refData/facility/informations',
 		)
 	}
 

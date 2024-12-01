@@ -22,7 +22,6 @@ import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGr
 import { UserRecord } from 'firebase-admin/auth'
 import { JwtConfig } from '../config/jwtConfig'
 import { EmailService } from './email.service'
-import { CardRepository } from '../repositories/card.repository'
 import { validatePassword } from '../helper/validators'
 import { SubUserRequests } from '../models/users.model'
 
@@ -42,8 +41,6 @@ export class AuthService {
 		private firebaseClient: FirebaseClient,
 		@inject(UserRepository)
 		private userRepository: UserRepository,
-		@inject(CardRepository)
-		private cardRepository: CardRepository,
 		@inject(JwtConfig)
 		private jwtConfig: JwtConfig,
 	) {
@@ -67,6 +64,7 @@ export class AuthService {
 				registerUserDto.email,
 				registerUserDto.password,
 			)
+			console.log(userCredentials)
 			const user = userCredentials.user
 			if (userRole != RoleEnum.RESIDENT_SUBUSER) {
 				await this.authAdmin.updateUser(user.uid, { disabled: true })

@@ -11,6 +11,7 @@ export class Users extends BaseModel {
 	dateOfBirth: Timestamp | null
 	role: RoleEnum
 	badgeNumber: string
+	supportedDocuments: string[]
 
 	constructor(
 		id: number,
@@ -21,6 +22,7 @@ export class Users extends BaseModel {
 		dateOfBirth: Timestamp | null,
 		role: RoleEnum,
 		badgeNumber: string,
+		supportedDocuments: string[],
 		status: DocumentStatusEnum,
 		createdBy: string,
 		updatedBy: string,
@@ -35,6 +37,7 @@ export class Users extends BaseModel {
 		this.dateOfBirth = dateOfBirth
 		this.role = role
 		this.badgeNumber = badgeNumber
+		this.supportedDocuments = supportedDocuments
 	}
 }
 
@@ -89,7 +92,6 @@ export class Residents {
 	updatedBy: string
 	createdDateTime: Timestamp
 	updatedDateTime: Timestamp
-	supportedDocuments: string[]
 
 	constructor(
 		unit: string,
@@ -98,7 +100,6 @@ export class Residents {
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
-		supportedDocuments: string[],
 	) {
 		this.unit = unit
 		this.floor = floor
@@ -106,7 +107,6 @@ export class Residents {
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime
 		this.updatedDateTime = updatedDateTime
-		this.supportedDocuments = supportedDocuments
 	}
 }
 
@@ -118,7 +118,6 @@ export class Staffs {
 	updatedBy: string
 	createdDateTime: Timestamp
 	updatedDateTime: Timestamp
-	supportedDocuments: string[]
 
 	constructor(
 		staffId: string,
@@ -127,7 +126,6 @@ export class Staffs {
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
-		supportedDocuments: string[],
 	) {
 		this.staffId = staffId
 		this.isAdmin = isAdmin
@@ -135,6 +133,5 @@ export class Staffs {
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime
 		this.updatedDateTime = updatedDateTime
-		this.supportedDocuments = supportedDocuments
 	}
 }

@@ -110,6 +110,7 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
+						supportedDocuments ? supportedDocuments : [],
 						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
@@ -123,7 +124,6 @@ export class UserService {
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
-						supportedDocuments ? supportedDocuments : [],
 					),
 					userGuid,
 				)
@@ -145,6 +145,7 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
+						[],
 						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
@@ -173,6 +174,7 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
+						supportedDocuments ? supportedDocuments : [],
 						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
@@ -186,7 +188,6 @@ export class UserService {
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
-						supportedDocuments ? supportedDocuments : [],
 					),
 					userGuid,
 				)
@@ -209,6 +210,7 @@ export class UserService {
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
 						role,
 						'',
+						supportedDocuments ? supportedDocuments : [],
 						DocumentStatusEnum.Active,
 						userGuid,
 						userGuid,
@@ -222,7 +224,6 @@ export class UserService {
 						userGuid,
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
-						supportedDocuments ? supportedDocuments : [],
 					),
 					userGuid,
 				)
@@ -262,7 +263,12 @@ export class UserService {
 		}
 	}
 
-	getUserListByAdminService = async (isActive: boolean, direction: PaginationDirectionEnum, id: number, limit: number) => {
+	getUserListByAdminService = async (
+		isActive: boolean,
+		direction: PaginationDirectionEnum,
+		id: number,
+		limit: number,
+	) => {
 		try {
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
@@ -338,6 +344,7 @@ export class UserService {
 				isActive: !userRecord.disabled,
 				contactNumber: userDetails.contactNumber,
 				badgeNumber: userDetails.badgeNumber,
+				supportedDocuments: await this.fileService.getFilesByGuidsService(userDetails.supportedDocuments),
 				status: DocumentStatusEnum[userDetails.status],
 				createdBy: userDetails.createdBy,
 				createdDateTime: convertTimestampToUserTimezone(userDetails.createdDateTime),
@@ -352,7 +359,6 @@ export class UserService {
 				data.roleInformation = {
 					floor: residentDetails.floor,
 					unit: residentDetails.unit,
-					supportedDocuments: await this.fileService.getFilesByGuidsService(residentDetails.supportedDocuments),
 				}
 				return data
 			}
@@ -363,7 +369,6 @@ export class UserService {
 				}
 				data.roleInformation = {
 					staffId: staffDetails.staffId,
-					supportedDocuments: await this.fileService.getFilesByGuidsService(staffDetails.supportedDocuments),
 				}
 				return data
 			}

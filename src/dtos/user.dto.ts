@@ -65,10 +65,11 @@ export interface GetUserDetailsByIdDto {
 	contactNumber: string
 	gender: string
 	role: RoleEnum
-	roleInformation?: ResidentInformationDto | SystemInformationDto
+	roleInformation?: ResidentInformationDto | StaffInformationDto
 	dateOfBirth: string
 	isActive?: boolean
 	badgeNumber: string
+	supportedDocuments: GeneralFileResponseDto[]
 	status: string
 	createdBy: string
 	createdDateTime: string
@@ -79,12 +80,10 @@ export interface GetUserDetailsByIdDto {
 export interface ResidentInformationDto {
 	floor: string
 	unit: string
-	supportedDocuments: GeneralFileResponseDto[]
 }
 
-export interface SystemInformationDto {
+export interface StaffInformationDto {
 	staffId: string
-	supportedDocuments: GeneralFileResponseDto[]
 }
 
 export interface EditUserDetailsByIdDto {
