@@ -26,6 +26,7 @@ import { EmailService } from './email.service'
 import { CardRepository } from '../repositories/card.repository'
 import { Card } from '../models/card.model'
 import { getCurrentTimestamp } from '../helper/time'
+import { validatePassword } from '../helper/validators'
 
 @provideSingleton(AuthService)
 export class AuthService {
@@ -54,6 +55,12 @@ export class AuthService {
 
 	registerService = async (registerUserDto: RegisterUserDto, userRole: RoleEnum) => {
 		try {
+			if (!validatePassword(registerUserDto.password)) {
+				throw new OperationError(
+					'Password does not meet the complexity requirements',
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
+			}
 			if (registerUserDto.confirmPassword !== registerUserDto.password) {
 				throw new OperationError('Confirm Password and Password not Match', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
