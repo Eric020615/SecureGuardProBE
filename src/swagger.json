@@ -626,6 +626,34 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ResidentInformationDto": {
+				"properties": {
+					"floor": {
+						"type": "string"
+					},
+					"unit": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"floor",
+					"unit"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StaffInformationDto": {
+				"properties": {
+					"staffId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"staffId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GeneralFileResponseDto": {
 				"properties": {
 					"fileGuid": {
@@ -650,48 +678,6 @@
 					"fileName",
 					"fileUrl",
 					"contentType"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ResidentInformationDto": {
-				"properties": {
-					"floor": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string"
-					},
-					"supportedDocuments": {
-						"items": {
-							"$ref": "#/components/schemas/GeneralFileResponseDto"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"floor",
-					"unit",
-					"supportedDocuments"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SystemInformationDto": {
-				"properties": {
-					"staffId": {
-						"type": "string"
-					},
-					"supportedDocuments": {
-						"items": {
-							"$ref": "#/components/schemas/GeneralFileResponseDto"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"staffId",
-					"supportedDocuments"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -732,7 +718,7 @@
 								"$ref": "#/components/schemas/ResidentInformationDto"
 							},
 							{
-								"$ref": "#/components/schemas/SystemInformationDto"
+								"$ref": "#/components/schemas/StaffInformationDto"
 							}
 						]
 					},
@@ -744,6 +730,12 @@
 					},
 					"badgeNumber": {
 						"type": "string"
+					},
+					"supportedDocuments": {
+						"items": {
+							"$ref": "#/components/schemas/GeneralFileResponseDto"
+						},
+						"type": "array"
 					},
 					"status": {
 						"type": "string"
@@ -773,6 +765,7 @@
 					"role",
 					"dateOfBirth",
 					"badgeNumber",
+					"supportedDocuments",
 					"status",
 					"createdBy",
 					"createdDateTime",

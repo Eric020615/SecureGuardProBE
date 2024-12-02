@@ -275,6 +275,23 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ResidentInformationDto": {
+        "dataType": "refObject",
+        "properties": {
+            "floor": {"dataType":"string","required":true},
+            "unit": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "StaffInformationDto": {
+        "dataType": "refObject",
+        "properties": {
+            "staffId": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GeneralFileResponseDto": {
         "dataType": "refObject",
         "properties": {
@@ -283,25 +300,6 @@ const models: TsoaRoute.Models = {
             "fileUrl": {"dataType":"string","required":true},
             "contentType": {"dataType":"string","required":true},
             "size": {"dataType":"double"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ResidentInformationDto": {
-        "dataType": "refObject",
-        "properties": {
-            "floor": {"dataType":"string","required":true},
-            "unit": {"dataType":"string","required":true},
-            "supportedDocuments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileResponseDto"},"required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SystemInformationDto": {
-        "dataType": "refObject",
-        "properties": {
-            "staffId": {"dataType":"string","required":true},
-            "supportedDocuments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileResponseDto"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -318,10 +316,11 @@ const models: TsoaRoute.Models = {
             "contactNumber": {"dataType":"string","required":true},
             "gender": {"dataType":"string","required":true},
             "role": {"ref":"RoleEnum","required":true},
-            "roleInformation": {"dataType":"union","subSchemas":[{"ref":"ResidentInformationDto"},{"ref":"SystemInformationDto"}]},
+            "roleInformation": {"dataType":"union","subSchemas":[{"ref":"ResidentInformationDto"},{"ref":"StaffInformationDto"}]},
             "dateOfBirth": {"dataType":"string","required":true},
             "isActive": {"dataType":"boolean"},
             "badgeNumber": {"dataType":"string","required":true},
+            "supportedDocuments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileResponseDto"},"required":true},
             "status": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
