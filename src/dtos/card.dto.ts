@@ -1,3 +1,6 @@
+import { GeneralFileDto } from './index.dto'
+import { GetVisitorDetailsByTokenDto } from './visitor.dto'
+
 export interface GetQrCodeByUserDto {
 	badgeNumber: string
 	data: string
@@ -7,9 +10,6 @@ export interface GetQrCodeByVisitorDto {
 	badgeNumber: string
 	data: string
 }
-
-import { GeneralFileDto } from './index.dto'
-import { GetVisitorDetailsByTokenDto } from './visitor.dto'
 
 export interface CreateUpdateFaceAuthDto {
 	faceData: GeneralFileDto

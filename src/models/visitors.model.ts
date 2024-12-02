@@ -1,11 +1,11 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseModel } from "./base.model";
-import { DocumentStatusEnum, VisitStatusEnum } from "../common/constants";
+import { DocumentStatusEnum, VisitorCategoryEnum, VisitStatusEnum } from "../common/constants";
 
 export class Visitors extends BaseModel{ 
     visitorName: string;
     visitorEmail: string;
-    visitorCategory: string;
+    visitorCategory: VisitorCategoryEnum;
     visitorContactNumber: string;
     visitDateTime: Timestamp;
     badgeNumber: string;
@@ -16,7 +16,7 @@ export class Visitors extends BaseModel{
         id: number,
         visitorName: string,
         visitorEmail: string,
-        visitorCategory: string,
+        visitorCategory: VisitorCategoryEnum,
         visitorContactNumber: string,
         visitDateTime: Timestamp,
         badgeNumber: string,

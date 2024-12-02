@@ -320,7 +320,13 @@
 						"type": "string"
 					},
 					"visitorCategory": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"FM",
+							"F",
+							"R"
+						],
+						"nullable": false
 					},
 					"visitorContactNumber": {
 						"type": "string"
@@ -411,7 +417,13 @@
 						"type": "string"
 					},
 					"visitorCategory": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"FM",
+							"F",
+							"R"
+						],
+						"nullable": false
 					},
 					"visitorContactNumber": {
 						"type": "string"
@@ -493,23 +505,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"GenderEnum": {
-				"enum": [
-					"M",
-					"F"
-				],
-				"type": "string"
-			},
-			"RoleEnum": {
-				"enum": [
-					"SA",
-					"STF",
-					"RES",
-					"SUB",
-					"VI"
-				],
-				"type": "string"
-			},
 			"GetUserByAdminDto": {
 				"properties": {
 					"userId": {
@@ -532,10 +527,10 @@
 						"type": "string"
 					},
 					"gender": {
-						"$ref": "#/components/schemas/GenderEnum"
+						"type": "string"
 					},
 					"role": {
-						"$ref": "#/components/schemas/RoleEnum"
+						"type": "string"
 					},
 					"userStatus": {
 						"type": "string"
@@ -710,7 +705,7 @@
 						"type": "string"
 					},
 					"role": {
-						"$ref": "#/components/schemas/RoleEnum"
+						"type": "string"
 					},
 					"roleInformation": {
 						"anyOf": [
@@ -819,7 +814,12 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"F",
+							"M"
+						],
+						"nullable": false
 					},
 					"dateOfBirth": {
 						"type": "string"
@@ -954,7 +954,7 @@
 						"type": "string"
 					},
 					"role": {
-						"$ref": "#/components/schemas/RoleEnum"
+						"type": "string"
 					},
 					"dateOfBirth": {
 						"type": "string"
@@ -1585,7 +1585,16 @@
 						"type": "array"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"Active",
+							"SoftDeleted",
+							"Archived",
+							"Pending",
+							"Draft",
+							"Suspended"
+						],
+						"nullable": false
 					},
 					"createdBy": {
 						"type": "string"
@@ -1861,21 +1870,19 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FacilityEnum": {
-				"enum": [
-					"Badminton Court",
-					"Basketball Court",
-					"Gym Room"
-				],
-				"type": "string"
-			},
 			"CreateFacilityBookingDto": {
 				"properties": {
 					"bookedBy": {
 						"type": "string"
 					},
 					"facilityId": {
-						"$ref": "#/components/schemas/FacilityEnum"
+						"type": "string",
+						"enum": [
+							"BC",
+							"BBC",
+							"GR"
+						],
+						"nullable": false
 					},
 					"startDate": {
 						"type": "string"
@@ -2270,7 +2277,15 @@
 						"type": "string"
 					},
 					"role": {
-						"$ref": "#/components/schemas/RoleEnum"
+						"type": "string",
+						"enum": [
+							"SA",
+							"STF",
+							"RES",
+							"SUB",
+							"VI"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
@@ -4981,7 +4996,14 @@
 						"name": "role",
 						"required": true,
 						"schema": {
-							"$ref": "#/components/schemas/RoleEnum"
+							"type": "string",
+							"enum": [
+								"SA",
+								"STF",
+								"RES",
+								"SUB",
+								"VI"
+							]
 						}
 					}
 				],

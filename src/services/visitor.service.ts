@@ -20,7 +20,15 @@ import {
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatusEnum, ITimeFormat, PaginationDirectionEnum, VisitStatusEnum } from '../common/constants'
+import {
+	DocumentStatusDescriptions,
+	DocumentStatusEnum,
+	ITimeFormat,
+	PaginationDirectionEnum,
+	VisitorCategoryDescriptions,
+	VisitorCategoryEnum,
+	VisitStatusEnum,
+} from '../common/constants'
 import { MicroEngineService } from './microEngine.service'
 import { JwtConfig } from '../config/jwtConfig'
 import { VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
@@ -40,7 +48,7 @@ export class VisitorService {
 					0,
 					createVisitorDto.visitorName,
 					createVisitorDto.visitorEmail,
-					createVisitorDto.visitorCategory,
+					VisitorCategoryEnum[createVisitorDto.visitorCategory as unknown as keyof typeof VisitorCategoryEnum],
 					createVisitorDto.visitorContactNumber,
 					convertDateStringToTimestamp(createVisitorDto.visitDateTime),
 					'',
@@ -81,7 +89,7 @@ export class VisitorService {
 		try {
 			let visitor: Visitors = {
 				visitorName: editVisitorByIdDto.visitorName,
-				visitorCategory: editVisitorByIdDto.visitorCategory,
+				visitorCategory: VisitorCategoryEnum[editVisitorByIdDto.visitorCategory],
 				visitorContactNumber: editVisitorByIdDto.visitorContactNumber,
 				visitDateTime: convertDateStringToTimestamp(editVisitorByIdDto.visitDateTime),
 				updatedBy: userId,
@@ -103,10 +111,10 @@ export class VisitorService {
 							visitorId: visitor.id,
 							visitorGuid: visitor.guid ? visitor.guid : '',
 							visitorName: visitor.visitorName,
-							visitorCategory: visitor.visitorCategory,
+							visitorCategory: VisitorCategoryEnum[visitor.visitorCategory],
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
-							status: DocumentStatusEnum[visitor.status],
+							status: DocumentStatusDescriptions[visitor.status],
 						} as GetVisitorDto
 				  })
 				: []
@@ -126,7 +134,7 @@ export class VisitorService {
 				visitorGuid: visitors.guid ? visitors.guid : '',
 				visitorName: visitors.visitorName,
 				visitorEmail: visitors.visitorEmail,
-				visitorCategory: visitors.visitorCategory,
+				visitorCategory: VisitorCategoryDescriptions[visitors.visitorCategory],
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
 				token: visitors.token,
@@ -154,10 +162,10 @@ export class VisitorService {
 							visitorGuid: visitor.guid ? visitor.guid : '',
 							visitorName: visitor.visitorName,
 							visitorEmail: visitor.visitorEmail,
-							visitorCategory: visitor.visitorCategory,
+							visitorCategory: VisitorCategoryDescriptions[visitor.visitorCategory],
 							visitorContactNumber: visitor.visitorContactNumber,
 							visitDateTime: convertTimestampToUserTimezone(visitor.visitDateTime),
-							status: DocumentStatusEnum[visitor.status],
+							status: DocumentStatusDescriptions[visitor.status],
 						} as GetVisitorDto
 				  })
 				: []
@@ -190,7 +198,7 @@ export class VisitorService {
 				visitorGuid: visitors.guid ? visitors.guid : '',
 				visitorName: visitors.visitorName,
 				visitorEmail: visitors.visitorEmail,
-				visitorCategory: visitors.visitorCategory,
+				visitorCategory: VisitorCategoryDescriptions[visitors.visitorCategory],
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
 			}
@@ -212,7 +220,7 @@ export class VisitorService {
 				visitorGuid: visitors.guid ? visitors.guid : '',
 				visitorName: visitors.visitorName,
 				visitorEmail: visitors.visitorEmail,
-				visitorCategory: visitors.visitorCategory,
+				visitorCategory: VisitorCategoryDescriptions[visitors.visitorCategory],
 				visitorContactNumber: visitors.visitorContactNumber,
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
 			}

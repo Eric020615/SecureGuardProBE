@@ -3,7 +3,7 @@ import { BaseModel } from './base.model'
 import { DocumentStatusEnum, FacilityEnum } from '../common/constants'
 
 export class Facilities {
-	facilityName?: FacilityEnum
+	facilityId?: FacilityEnum
 	image: string
 	name: string
 	spaces: {
@@ -28,8 +28,8 @@ export class Facilities {
 }
 
 export class FacilityBookings extends BaseModel {
-	facilityName: FacilityEnum
-	spaceName: string
+	facility: FacilityEnum
+	space: string
 	startDate: Timestamp
 	endDate: Timestamp
 	bookedBy: string
@@ -39,8 +39,8 @@ export class FacilityBookings extends BaseModel {
 
 	constructor(
 		id: number,
-		facilityName: FacilityEnum,
-		spaceName: string,
+		facility: FacilityEnum,
+		space: string,
 		startDate: Timestamp,
 		endDate: Timestamp,
 		bookedBy: string,
@@ -54,8 +54,8 @@ export class FacilityBookings extends BaseModel {
 		updatedDateTime: Timestamp,
 	) {
 		super(id, status, createdBy, updatedBy, createdDateTime, updatedDateTime)
-		this.facilityName = facilityName
-		this.spaceName = spaceName
+		this.facility = facility
+		this.space = space
 		this.startDate = startDate
 		this.endDate = endDate
 		this.bookedBy = bookedBy

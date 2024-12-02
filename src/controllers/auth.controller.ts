@@ -23,12 +23,12 @@ import {
 import { IResponse } from '../dtos/index.dto'
 import { HttpStatusCode } from '../common/http-status-code'
 import { OperationError } from '../common/operation-error'
-import { RoleEnum } from '../common/role'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { AuthService } from '../services/auth.service'
 import { ISecurityMiddlewareRequest } from '../middleware/security.middleware'
 import { NotificationService } from '../services/notification.service'
+import { RoleEnum } from '../common/constants'
 
 @Route('auth')
 @provideSingleton(AuthController)
@@ -43,7 +43,7 @@ export class AuthController extends Controller {
 	@Post('/signup')
 	public async signUp(
 		@Body() registerUserDto: RegisterUserDto,
-		@Query() role: RoleEnum,
+		@Query() role: keyof typeof RoleEnum,
 	): Promise<IResponse<any>> {
 		try {
 			const token = await this.authService.registerService(registerUserDto, role)

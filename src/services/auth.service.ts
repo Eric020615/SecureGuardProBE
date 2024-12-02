@@ -12,12 +12,11 @@ import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 import { FirebaseError } from 'firebase/app'
 import { convertFirebaseAuthEnumMessage } from '../common/firebase-error-code'
-import { RoleEnum } from '../common/role'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
 import { UserRepository } from '../repositories/user.repository'
-import { DocumentStatusEnum } from '../common/constants'
+import { DocumentStatusEnum, RoleEnum } from '../common/constants'
 import { PasswordResetTemplateData, SendGridTemplateIds } from '../common/sendGrid'
 import { UserRecord } from 'firebase-admin/auth'
 import { JwtConfig } from '../config/jwtConfig'
@@ -48,7 +47,7 @@ export class AuthService {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
 
-	registerService = async (registerUserDto: RegisterUserDto, userRole: RoleEnum) => {
+	registerService = async (registerUserDto: RegisterUserDto, userRole: keyof typeof RoleEnum) => {
 		try {
 			if (!validatePassword(registerUserDto.password)) {
 				throw new OperationError(
@@ -64,12 +63,11 @@ export class AuthService {
 				registerUserDto.email,
 				registerUserDto.password,
 			)
-			console.log(userCredentials)
 			const user = userCredentials.user
-			if (userRole != RoleEnum.RESIDENT_SUBUSER) {
+			if (userRole != "SUB") {
 				await this.authAdmin.updateUser(user.uid, { disabled: true })
 			}
-			if (userRole === RoleEnum.RESIDENT_SUBUSER) {
+			if (userRole === "SUB") {
 				const request = await this.userRepository.getSubUserRequestByEmailRepository(registerUserDto.email)
 				await this.userRepository.editSubUserRequestRepository(
 					request[0].guid as string,

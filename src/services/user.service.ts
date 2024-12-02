@@ -17,13 +17,19 @@ import { Residents, SubUsers, Staffs, Users } from '../models/users.model'
 import { UserRepository } from '../repositories/user.repository'
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
-import { RoleEnum } from '../common/role'
-import { UserRecord } from 'firebase-admin/auth'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
 import * as dotenv from 'dotenv'
-import { DocumentStatusEnum, PaginationDirectionEnum } from '../common/constants'
+import {
+	DocumentStatusDescriptions,
+	DocumentStatusEnum,
+	GenderDescriptions,
+	GenderEnum,
+	PaginationDirectionEnum,
+	RoleDescriptions,
+	RoleEnum,
+} from '../common/constants'
 import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import { JwtConfig } from '../config/jwtConfig'
 import { FileService } from './file.service'
@@ -33,6 +39,7 @@ import { Unit } from '../models/refData.model'
 import { NotificationRepository } from '../repositories/notification.repository'
 import { GetFacilityBookingUserDto } from '../dtos/facility.dto'
 import { VisitorRepository } from '../repositories/visitor.repository'
+import { UserRecord } from 'firebase-admin/auth'
 
 dotenv.config()
 
@@ -52,20 +59,20 @@ export class UserService {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
 
-	getEffectiveUserGuidService = async (userGuid: string, role: RoleEnum) => {
+	getEffectiveUserGuidService = async (userGuid: string, role: keyof typeof RoleEnum) => {
 		try {
 			switch (role) {
-				case RoleEnum.SYSTEM_ADMIN:
-				case RoleEnum.RESIDENT:
-				case RoleEnum.STAFF:
+				case 'SA':
+				case 'RES':
+				case 'STF':
 					return userGuid
-				case RoleEnum.RESIDENT_SUBUSER:
+				case 'SUB':
 					const subUser = await this.userRepository.getSubUserParentUserGuidByUserGuidRepository(userGuid)
 					if (!subUser) {
 						throw new OperationError('Sub user not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 					}
 					return subUser.parentUserGuid ? subUser.parentUserGuid : ''
-				case RoleEnum.VISITOR:
+				case 'VI':
 					const visitor = await this.visitorRepository.getVisitorDetailsRepository(userGuid)
 					if (!visitor) {
 						throw new OperationError('Visitor not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -82,7 +89,7 @@ export class UserService {
 	createUserService = async (
 		createUserDto: CreateResidentDto | CreateSubUserDto | CreateStaffDto,
 		userGuid: string,
-		role: RoleEnum,
+		role: keyof typeof RoleEnum,
 	) => {
 		try {
 			if (
@@ -93,7 +100,7 @@ export class UserService {
 				throw new OperationError('Invalid request', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 
-			if (role === RoleEnum.RESIDENT && this.instanceOfCreateResidentDto(createUserDto)) {
+			if (role === 'SA' && this.instanceOfCreateResidentDto(createUserDto)) {
 				const supportedDocuments = await this.fileService.uploadMultipleFilesService(
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
@@ -106,9 +113,9 @@ export class UserService {
 						createUserDto.firstName,
 						createUserDto.lastName,
 						createUserDto.contactNumber,
-						createUserDto.gender,
+						GenderEnum[createUserDto.gender],
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
-						role,
+						RoleEnum[role],
 						'',
 						supportedDocuments ? supportedDocuments : [],
 						DocumentStatusEnum.Active,
@@ -134,16 +141,16 @@ export class UserService {
 				)
 			}
 
-			if (role === RoleEnum.RESIDENT_SUBUSER && this.instanceOfCreateSubUserDto(createUserDto)) {
+			if (role === 'SUB' && this.instanceOfCreateSubUserDto(createUserDto)) {
 				await this.userRepository.createSubUserRepository(
 					new Users(
 						0,
 						createUserDto.firstName,
 						createUserDto.lastName,
 						createUserDto.contactNumber,
-						createUserDto.gender,
+						GenderEnum[createUserDto.gender],
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
-						role,
+						RoleEnum[role],
 						'',
 						[],
 						DocumentStatusEnum.Active,
@@ -157,7 +164,7 @@ export class UserService {
 				)
 			}
 
-			if (role === RoleEnum.SYSTEM_ADMIN && this.instanceOfCreateStaffDto(createUserDto)) {
+			if (role === 'SA' && this.instanceOfCreateStaffDto(createUserDto)) {
 				const supportedDocuments = await this.fileService.uploadMultipleFilesService(
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
@@ -170,9 +177,9 @@ export class UserService {
 						createUserDto.firstName,
 						createUserDto.lastName,
 						createUserDto.contactNumber,
-						createUserDto.gender,
+						GenderEnum[createUserDto.gender],
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
-						role,
+						RoleEnum[role],
 						'',
 						supportedDocuments ? supportedDocuments : [],
 						DocumentStatusEnum.Active,
@@ -181,19 +188,12 @@ export class UserService {
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 					),
-					new Staffs(
-						createUserDto.staffId,
-						true,
-						userGuid,
-						userGuid,
-						getCurrentTimestamp(),
-						getCurrentTimestamp(),
-					),
+					new Staffs(createUserDto.staffId, true, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
 					userGuid,
 				)
 			}
 
-			if (role === RoleEnum.STAFF && this.instanceOfCreateStaffDto(createUserDto)) {
+			if (role === 'STF' && this.instanceOfCreateStaffDto(createUserDto)) {
 				const supportedDocuments = await this.fileService.uploadMultipleFilesService(
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
@@ -206,9 +206,9 @@ export class UserService {
 						createUserDto.firstName,
 						createUserDto.lastName,
 						createUserDto.contactNumber,
-						createUserDto.gender,
+						GenderEnum[createUserDto.gender],
 						convertDateStringToTimestamp(createUserDto.dateOfBirth),
-						role,
+						RoleEnum[role],
 						'',
 						supportedDocuments ? supportedDocuments : [],
 						DocumentStatusEnum.Active,
@@ -217,14 +217,7 @@ export class UserService {
 						getCurrentTimestamp(),
 						getCurrentTimestamp(),
 					),
-					new Staffs(
-						createUserDto.staffId,
-						false,
-						userGuid,
-						userGuid,
-						getCurrentTimestamp(),
-						getCurrentTimestamp(),
-					),
+					new Staffs(createUserDto.staffId, false, userGuid, userGuid, getCurrentTimestamp(), getCurrentTimestamp()),
 					userGuid,
 				)
 			}
@@ -248,8 +241,8 @@ export class UserService {
 				userName: '',
 				firstName: userInformation.firstName,
 				lastName: userInformation.lastName,
-				gender: userInformation.gender,
-				role: userInformation.role,
+				gender: GenderDescriptions[userInformation.gender],
+				role: RoleDescriptions[userInformation.role],
 				dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
 				contactNumber: userInformation.contactNumber,
 				createdBy: userInformation.createdBy,
@@ -288,11 +281,11 @@ export class UserService {
 								userName: userList[index].displayName ? userList[index].displayName : '',
 								firstName: userInformation.firstName,
 								lastName: userInformation.lastName,
-								gender: userInformation.gender,
-								role: userInformation.role,
+								gender: GenderDescriptions[userInformation.gender],
+								role: RoleDescriptions[userInformation.role],
 								contactNumber: userInformation.contactNumber,
 								userStatus: userList[index].disabled ? 'Inactive' : 'Active',
-								status: DocumentStatusEnum[userInformation.status],
+								status: DocumentStatusDescriptions[userInformation.status],
 							} as GetUserByAdminDto
 					  })
 					: []
@@ -306,9 +299,7 @@ export class UserService {
 		try {
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
-			userList = userResult.users
-				.filter((user) => !user.disabled)
-				.filter((user) => user.customClaims?.role === RoleEnum.RESIDENT)
+			userList = userResult.users.filter((user) => !user.disabled).filter((user) => user.customClaims?.role === "RES")
 			let users: Users[] = await this.userRepository.getFacilityBookingUserRepository(userList)
 			let data: GetFacilityBookingUserDto[] = []
 			data =
@@ -330,7 +321,7 @@ export class UserService {
 		try {
 			const userDetails = await this.userRepository.getUserByIdRepository(userGuid)
 			let data: GetUserDetailsByIdDto = {} as GetUserDetailsByIdDto
-			const userRecord = await this.authAdmin.getUser(userGuid)
+			const userRecord: UserRecord = await this.authAdmin.getUser(userGuid)
 			data = {
 				userId: userDetails.id,
 				userGuid: userDetails.guid ? userDetails.guid : '',
@@ -338,8 +329,11 @@ export class UserService {
 				firstName: userDetails.firstName,
 				lastName: userDetails.lastName,
 				email: userRecord.email ? userRecord.email : '',
-				gender: userDetails.gender,
-				role: userRecord.customClaims?.role ? userRecord.customClaims.role : '',
+				gender: GenderDescriptions[userDetails.gender],
+				role:
+					userRecord.customClaims?.role && RoleEnum[userRecord.customClaims.role as keyof typeof RoleEnum]
+						? RoleDescriptions[RoleEnum[userRecord.customClaims.role as keyof typeof RoleEnum]]
+						: '',
 				dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
 				isActive: !userRecord.disabled,
 				contactNumber: userDetails.contactNumber,
@@ -351,7 +345,7 @@ export class UserService {
 				updatedBy: userDetails.updatedBy,
 				updatedDateTime: convertTimestampToUserTimezone(userDetails.updatedDateTime),
 			}
-			if (userDetails.role === RoleEnum.RESIDENT) {
+			if (userDetails.role === RoleEnum.RES) {
 				const residentDetails = await this.userRepository.getResidentDetailsRepository(userGuid)
 				if (!residentDetails) {
 					return data
@@ -362,7 +356,7 @@ export class UserService {
 				}
 				return data
 			}
-			if (data.role === RoleEnum.SYSTEM_ADMIN || data.role === RoleEnum.STAFF) {
+			if (userDetails.role === RoleEnum.SA || userDetails.role === RoleEnum.STF) {
 				const staffDetails = await this.userRepository.getStaffDetailsRepository(userGuid)
 				if (!staffDetails) {
 					return data
@@ -384,7 +378,7 @@ export class UserService {
 				firstName: editUserDetailsByIdDto.firstName,
 				lastName: editUserDetailsByIdDto.lastName,
 				contactNumber: editUserDetailsByIdDto.contactNumber,
-				gender: editUserDetailsByIdDto.gender,
+				gender: GenderEnum[editUserDetailsByIdDto.gender],
 				dateOfBirth: convertDateStringToTimestamp(editUserDetailsByIdDto.dateOfBirth),
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
@@ -438,7 +432,7 @@ export class UserService {
 				updatedDateTime: getCurrentTimestamp(),
 			} as Users)
 			await this.notificationRepository.deleteNotificationTokenRepository(userId)
-			if (userRecord.customClaims?.role === RoleEnum.RESIDENT) {
+			if (userRecord.customClaims?.role === RoleEnum.RES) {
 				const residentDetails = await this.userRepository.getResidentDetailsRepository(userId)
 				if (residentDetails) {
 					await this.refDataRepository.updatePropertyByResidentRepository(
@@ -515,7 +509,7 @@ export class UserService {
 										: '',
 									firstName: userInformation.firstName,
 									lastName: userInformation.lastName,
-									gender: userInformation.gender,
+									gender: GenderDescriptions[userInformation.gender],
 									dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
 									contactNumber: userInformation.contactNumber,
 									status: userInformation.guid

@@ -2,7 +2,7 @@ import { FacilityEnum } from "../common/constants"
 
 export interface CreateFacilityBookingDto {
 	bookedBy?: string
-	facilityId: FacilityEnum
+	facilityId: keyof typeof FacilityEnum
 	startDate: string
 	endDate: string
 	numOfGuest: number

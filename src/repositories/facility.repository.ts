@@ -40,7 +40,7 @@ export class FacilityBookingRepository {
 		this.facilityBookingCollection = collection(this.firebaseClient.firestore, 'facilityBookings')
 		this.refDataCollection = collection(
 			this.firebaseClient.firestore,
-			'refData/facility/informations',
+			'refData/facility/information',
 		)
 	}
 
@@ -148,8 +148,8 @@ export class FacilityBookingRepository {
 			const q = query(
 				this.facilityBookingCollection,
 				and(
-					where('facilityName', '==', facilityId),
-					where('spaceName', '==', spaceId),
+					where('facility', '==', facilityId),
+					where('space', '==', spaceId),
 					where('isCancelled', '==', false), // Exclude cancelled bookings
 					where('startDate', '<', convertDateStringToTimestamp(endDate)),
 					where('endDate', '>', convertDateStringToTimestamp(startDate)),
@@ -171,15 +171,14 @@ export class FacilityBookingRepository {
 				const q = query(
 					this.facilityBookingCollection,
 					and(
-						where('facilityName', '==', facilityId),
-						where('spaceName', '==', space.id),
+						where('facility', '==', facilityId),
+						where('space', '==', space.id),
 						where('isCancelled', '==', false), // Exclude cancelled bookings
 						where('startDate', '<', convertDateStringToTimestamp(endDate)),
 						where('endDate', '>', convertDateStringToTimestamp(startDate)),
 					),
 				)
 				const bookingsSnapshot = await getDocs(q)
-
 				return {
 					spaceId: space.id,
 					spaceName: space.name,

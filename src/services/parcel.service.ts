@@ -3,7 +3,7 @@ import { HttpStatusCode } from '../common/http-status-code'
 import { convertTimestampToUserTimezone, getCurrentDateString, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatusEnum, ITimeFormat, ParcelStatusEnum } from '../common/constants'
+import { DocumentStatusDescriptions, DocumentStatusEnum, ITimeFormat, ParcelStatusEnum } from '../common/constants'
 import { ParcelRepository } from '../repositories/parcel.repository'
 import { CreateParcelDto, GetParcelDetailsDto, GetParcelDto } from '../dtos/parcel.dto'
 import { FileService } from './file.service'
@@ -80,7 +80,7 @@ export class ParcelService {
 					parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
 					floor: parcel.floor,
 					unit: parcel.unit,
-					status: parcel.status,
+					status: DocumentStatusDescriptions[parcel.status],
 					createdBy: parcel.createdBy,
 					createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
 					updatedBy: parcel.updatedBy,
@@ -115,7 +115,7 @@ export class ParcelService {
 									parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
 									floor: parcel.floor,
 									unit: parcel.unit,
-									status: parcel.status,
+									status: DocumentStatusDescriptions[parcel.status],
 									createdBy: parcel.createdBy,
 									createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
 									updatedBy: parcel.updatedBy,

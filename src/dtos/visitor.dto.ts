@@ -1,7 +1,9 @@
+import { VisitorCategoryEnum } from "../common/constants"
+
 export interface CreateVisitorDto {
 	visitorName: string
 	visitorEmail: string
-	visitorCategory: string
+    visitorCategory: keyof typeof VisitorCategoryEnum;
 	visitorContactNumber: string
 	visitDateTime: string
 }
@@ -9,7 +11,7 @@ export interface CreateVisitorDto {
 export interface EditVisitorByIdDto {
 	visitorName: string
 	visitorEmail: string
-	visitorCategory: string
+    visitorCategory: keyof typeof VisitorCategoryEnum;
 	visitorContactNumber: string
 	visitDateTime: string
 }

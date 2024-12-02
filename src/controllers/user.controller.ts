@@ -51,7 +51,6 @@ export class UserController extends Controller {
 			if (!request.userGuid || !request.role) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			console.log(request.userGuid)
 			await this.userService.createUserService(createUserDto, request.userGuid, request.role)
 			const response = {
 				message: 'User created successfully',

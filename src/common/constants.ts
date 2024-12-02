@@ -6,20 +6,120 @@ export enum PaginationDirectionEnum {
 }
 
 export enum FacilityEnum {
-	BC = 'Badminton Court',
-	BBC = 'Basketball Court',
-	GR = 'Gym Room',
+	BC = 1, // Badminton Court
+	BBC = 2, // Basketball Court
+	GR = 3, // Gym Room
+}
+
+export const FacilityDescriptions = {
+	[FacilityEnum.BC]: 'Badminton Court',
+	[FacilityEnum.BBC]: 'Basketball Court',
+	[FacilityEnum.GR]: 'Gym Room',
 }
 
 export enum DocumentStatusEnum {
-	Active = 'Active',
-	SoftDeleted = 'SoftDeleted',
-	Archived = 'Archived',
-	Pending = 'Pending',
-	Draft = 'Draft',
-	Suspended = 'Suspended',
+	Active = 1,
+	SoftDeleted = 2,
+	Archived = 3,
+	Pending = 4,
+	Draft = 5,
+	Suspended = 6,
 }
 
+export const DocumentStatusDescriptions = {
+	[DocumentStatusEnum.Active]: 'Active',
+	[DocumentStatusEnum.SoftDeleted]: 'SoftDeleted',
+	[DocumentStatusEnum.Archived]: 'Archived',
+	[DocumentStatusEnum.Pending]: 'Pending',
+	[DocumentStatusEnum.Draft]: 'Draft',
+	[DocumentStatusEnum.Suspended]: 'Suspended',
+}
+
+export enum ParcelStatusEnum {
+	Received = 1, // Parcel has been received by the concierge
+	Stored = 2, // Parcel has been placed in the parcel room/storage
+	Notified = 3, // Resident has been notified about the parcel
+	PickedUp = 4, // Resident has collected the parcel
+	Unclaimed = 5, // Parcel has not been claimed after a certain period
+	ReturnedToSender = 6, // Parcel was returned to the sender
+	Damaged = 7, // Parcel was received in a damaged condition
+	Lost = 8, // Parcel has been misplaced or lost
+}
+
+export const ParcelStatusDescriptions = {
+	[ParcelStatusEnum.Received]: 'Received',
+	[ParcelStatusEnum.Stored]: 'Stored',
+	[ParcelStatusEnum.Notified]: 'Notified',
+	[ParcelStatusEnum.PickedUp]: 'PickedUp',
+	[ParcelStatusEnum.Unclaimed]: 'Unclaimed',
+	[ParcelStatusEnum.ReturnedToSender]: 'ReturnedToSender',
+	[ParcelStatusEnum.Damaged]: 'Damaged',
+	[ParcelStatusEnum.Lost]: 'Lost',
+}
+
+export enum VisitorCategoryEnum {
+	FM = 1, // Family Members
+	F = 2, // Friends
+	R = 3, // Relatives
+}
+
+export const VisitorCategoryDescriptions = {
+	[VisitorCategoryEnum.FM]: 'Family Members',
+	[VisitorCategoryEnum.F]: 'Friends',
+	[VisitorCategoryEnum.R]: 'Relatives',
+}
+
+export enum VisitStatusEnum {
+	Scheduled = 1, // Visit is scheduled but hasn't occurred yet
+	CheckedIn = 2, // Visitor has checked in
+	CheckedOut = 3, // Visitor has checked out
+	Cancelled = 4, // Visit has been cancelled
+	NoShow = 5, // Visitor did not show up for the visit
+}
+
+export const VisitStatusDescriptions = {
+	[VisitStatusEnum.Scheduled]: 'Scheduled',
+	[VisitStatusEnum.CheckedIn]: 'CheckedIn',
+	[VisitStatusEnum.CheckedOut]: 'CheckedOut',
+	[VisitStatusEnum.Cancelled]: 'Cancelled',
+	[VisitStatusEnum.NoShow]: 'NoShow',
+}
+
+export enum RoleIdEnum {
+	SA = "SA",
+	STF = "STF",
+	RES = "RES",
+	SUB = "SUB",
+	VI = "VI",
+}
+
+export enum RoleEnum {
+	SA = 1,
+	STF = 2,
+	RES = 3,
+	SUB = 4,
+	VI = 5,
+}
+
+export const RoleDescriptions = {
+	[RoleEnum.SA]: 'System Admin',
+	[RoleEnum.STF]: 'Staff',
+	[RoleEnum.RES]: 'Resident',
+	[RoleEnum.SUB]: 'Resident Subuser',
+	[RoleEnum.VI]: 'Visitor',
+}
+
+export enum GenderEnum {
+	M = 1,
+	F = 2,
+}
+
+export const GenderDescriptions = {
+	[GenderEnum.M]: 'Male',
+	[GenderEnum.F]: 'Female',
+}
+
+// megeye
 export enum RoleRecognitionTypeEnum {
 	SA = 'staff',
 	STF = 'staff',
@@ -28,6 +128,7 @@ export enum RoleRecognitionTypeEnum {
 	VI = 'visitor',
 }
 
+// microengine
 export enum DepartmentEnum {
 	SA = 'Admin',
 	STF = 'Security',
@@ -42,25 +143,6 @@ export enum JobTitleEnum {
 	RES = 'Resident',
 	SUB = 'Resident',
 	VI = 'Visitor',
-}
-
-export enum ParcelStatusEnum {
-	Received = 'Received', // Parcel has been received by the concierge
-	Stored = 'Stored', // Parcel has been placed in the parcel room/storage
-	Notified = 'Notified', // Resident has been notified about the parcel
-	PickedUp = 'PickedUp', // Resident has collected the parcel
-	Unclaimed = 'Unclaimed', // Parcel has not been claimed after a certain period
-	ReturnedToSender = 'ReturnedToSender', // Parcel was returned to the sender
-	Damaged = 'Damaged', // Parcel was received in a damaged condition
-	Lost = 'Lost', // Parcel has been misplaced or lost
-}
-
-export enum VisitStatusEnum {
-	Scheduled = 'Scheduled', // Visit is scheduled but hasn't occurred yet
-	CheckedIn = 'CheckedIn', // Visitor has checked in
-	CheckedOut = 'CheckedOut', // Visitor has checked out
-	Cancelled = 'Cancelled', // Visit has been cancelled
-	NoShow = 'NoShow', // Visitor did not show up for the visit
 }
 
 export const ITimeFormat = {

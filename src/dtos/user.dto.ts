@@ -1,12 +1,23 @@
-import { GenderEnum, RoleEnum } from '../common/role'
+import { GenderEnum, RoleDescriptions } from '../common/constants'
 import { GeneralFileDto, GeneralFileResponseDto } from './index.dto'
+
+interface CustomClaims {
+    role: keyof typeof RoleDescriptions; // 'SA' | 'STF' | 'RES' | 'SUB' | 'VI'
+}
+
+interface UserRecord {
+    displayName?: string;
+    email?: string;
+    disabled: boolean;
+    customClaims?: CustomClaims;
+}
 
 export interface CreateUserDto {
 	firstName: string
 	lastName: string
 	userName: string
 	contactNumber: string
-	gender: GenderEnum
+	gender: keyof typeof GenderEnum
 	dateOfBirth: string
 }
 
@@ -18,7 +29,7 @@ export interface GetUserDto {
 	userName: string
 	contactNumber: string
 	gender: string
-	role: RoleEnum
+	role: string
 	dateOfBirth: string
 	createdBy: string
 	createdDateTime: string
@@ -33,8 +44,8 @@ export interface GetUserByAdminDto {
     lastName: string
     userName: string
     contactNumber: string
-    gender: GenderEnum
-    role: RoleEnum
+    gender: string
+    role: string
     userStatus: string
 	status: string
 }
@@ -64,7 +75,7 @@ export interface GetUserDetailsByIdDto {
 	email: string
 	contactNumber: string
 	gender: string
-	role: RoleEnum
+	role: string
 	roleInformation?: ResidentInformationDto | StaffInformationDto
 	dateOfBirth: string
 	isActive?: boolean
@@ -92,7 +103,7 @@ export interface EditUserDetailsByIdDto {
 	userName: string
 	email: string
 	contactNumber: string
-	gender: string
+	gender: keyof typeof GenderEnum
 	dateOfBirth: string
 }
 

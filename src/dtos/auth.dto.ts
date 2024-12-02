@@ -1,8 +1,8 @@
-import { RoleEnum } from '../common/role'
+import { RoleEnum } from "../common/constants"
 
 export interface AuthTokenPayloadDto {
 	userGuid: string
-	role: RoleEnum
+	role: keyof typeof RoleEnum
 }
 
 export interface SubUserAuthTokenPayloadDto {

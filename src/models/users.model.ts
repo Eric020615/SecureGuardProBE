@@ -1,13 +1,12 @@
-import { RoleEnum } from '../common/role'
 import { Timestamp } from 'firebase/firestore'
 import { BaseModel } from './base.model'
-import { DocumentStatusEnum } from '../common/constants'
+import { DocumentStatusEnum, GenderEnum, RoleEnum } from '../common/constants'
 
 export class Users extends BaseModel {
 	firstName: string
 	lastName: string
 	contactNumber: string
-	gender: string
+	gender: GenderEnum
 	dateOfBirth: Timestamp | null
 	role: RoleEnum
 	badgeNumber: string
@@ -18,7 +17,7 @@ export class Users extends BaseModel {
 		firstName: string,
 		lastName: string,
 		contactNumber: string,
-		gender: string,
+		gender: GenderEnum,
 		dateOfBirth: Timestamp | null,
 		role: RoleEnum,
 		badgeNumber: string,

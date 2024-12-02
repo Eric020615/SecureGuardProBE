@@ -1,6 +1,5 @@
 import { Timestamp } from 'firebase/firestore'
-import { RoleEnum } from '../common/role'
-import { DocumentStatusEnum } from '../common/constants'
+import { DocumentStatusEnum, RoleEnum } from '../common/constants'
 
 export class Cards {
 	badgeNumber: number

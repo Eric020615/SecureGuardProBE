@@ -161,7 +161,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "visitorName": {"dataType":"string","required":true},
             "visitorEmail": {"dataType":"string","required":true},
-            "visitorCategory": {"dataType":"string","required":true},
+            "visitorCategory": {"dataType":"enum","enums":["FM","F","R"],"required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
         },
@@ -197,7 +197,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "visitorName": {"dataType":"string","required":true},
             "visitorEmail": {"dataType":"string","required":true},
-            "visitorCategory": {"dataType":"string","required":true},
+            "visitorCategory": {"dataType":"enum","enums":["FM","F","R"],"required":true},
             "visitorContactNumber": {"dataType":"string","required":true},
             "visitDateTime": {"dataType":"string","required":true},
         },
@@ -228,16 +228,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "GenderEnum": {
-        "dataType": "refEnum",
-        "enums": ["M","F"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "RoleEnum": {
-        "dataType": "refEnum",
-        "enums": ["SA","STF","RES","SUB","VI"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GetUserByAdminDto": {
         "dataType": "refObject",
         "properties": {
@@ -247,8 +237,8 @@ const models: TsoaRoute.Models = {
             "lastName": {"dataType":"string","required":true},
             "userName": {"dataType":"string","required":true},
             "contactNumber": {"dataType":"string","required":true},
-            "gender": {"ref":"GenderEnum","required":true},
-            "role": {"ref":"RoleEnum","required":true},
+            "gender": {"dataType":"string","required":true},
+            "role": {"dataType":"string","required":true},
             "userStatus": {"dataType":"string","required":true},
             "status": {"dataType":"string","required":true},
         },
@@ -315,7 +305,7 @@ const models: TsoaRoute.Models = {
             "email": {"dataType":"string","required":true},
             "contactNumber": {"dataType":"string","required":true},
             "gender": {"dataType":"string","required":true},
-            "role": {"ref":"RoleEnum","required":true},
+            "role": {"dataType":"string","required":true},
             "roleInformation": {"dataType":"union","subSchemas":[{"ref":"ResidentInformationDto"},{"ref":"StaffInformationDto"}]},
             "dateOfBirth": {"dataType":"string","required":true},
             "isActive": {"dataType":"boolean"},
@@ -348,7 +338,7 @@ const models: TsoaRoute.Models = {
             "userName": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
             "contactNumber": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
+            "gender": {"dataType":"enum","enums":["F","M"],"required":true},
             "dateOfBirth": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
@@ -398,7 +388,7 @@ const models: TsoaRoute.Models = {
             "userName": {"dataType":"string","required":true},
             "contactNumber": {"dataType":"string","required":true},
             "gender": {"dataType":"string","required":true},
-            "role": {"ref":"RoleEnum","required":true},
+            "role": {"dataType":"string","required":true},
             "dateOfBirth": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
@@ -611,7 +601,7 @@ const models: TsoaRoute.Models = {
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
             "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"GeneralFileResponseDto"},"required":true},
-            "status": {"dataType":"string","required":true},
+            "status": {"dataType":"enum","enums":["Active","SoftDeleted","Archived","Pending","Draft","Suspended"],"required":true},
             "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
             "updatedBy": {"dataType":"string","required":true},
@@ -707,16 +697,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "FacilityEnum": {
-        "dataType": "refEnum",
-        "enums": ["Badminton Court","Basketball Court","Gym Room"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateFacilityBookingDto": {
         "dataType": "refObject",
         "properties": {
             "bookedBy": {"dataType":"string"},
-            "facilityId": {"ref":"FacilityEnum","required":true},
+            "facilityId": {"dataType":"enum","enums":["BC","BBC","GR"],"required":true},
             "startDate": {"dataType":"string","required":true},
             "endDate": {"dataType":"string","required":true},
             "numOfGuest": {"dataType":"double","required":true},
@@ -891,7 +876,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "userGuid": {"dataType":"string","required":true},
-            "role": {"ref":"RoleEnum","required":true},
+            "role": {"dataType":"enum","enums":["SA","STF","RES","SUB","VI"],"required":true},
         },
         "additionalProperties": false,
     },
@@ -2728,7 +2713,7 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_signUp(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     registerUserDto: {"in":"body","name":"registerUserDto","required":true,"ref":"RegisterUserDto"},
-                    role: {"in":"query","name":"role","required":true,"ref":"RoleEnum"},
+                    role: {"in":"query","name":"role","required":true,"dataType":"enum","enums":["SA","STF","RES","SUB","VI"]},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -1,15 +1,15 @@
 import { Request } from 'express'
 import { AuthTokenPayloadDto, SubUserAuthTokenPayloadDto, VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
 import { AuthService } from '../services/auth.service'
-import { RoleEnum } from '../common/role'
 import { iocContainer } from '../ioc'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'
 import { JwtConfig } from '../config/jwtConfig'
+import { RoleEnum } from '../common/constants'
 
 export interface ISecurityMiddlewareRequest extends Request {
 	userGuid: string
-	role: RoleEnum
+	role: keyof typeof RoleEnum
 	subUserEmail: string
 	parentUserGuid: string
 	subUserRequestGuid: string

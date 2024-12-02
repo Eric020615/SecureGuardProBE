@@ -21,7 +21,6 @@ import { OperationError } from '../common/operation-error'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { UserService } from '../services/user.service'
-import { RoleEnum } from '../common/role'
 import { ResidentInformationDto } from '../dtos/user.dto'
 
 @Route('parcels')
@@ -50,9 +49,6 @@ export class ParcelController extends Controller {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			let userData = await this.userService.getUserDetailsByIdService(request.userGuid)
-			if (userData.role !== RoleEnum.RESIDENT) {
-				throw new OperationError('ROLE_NOT_PERMITTED', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
 			let roleInformation = userData.roleInformation as ResidentInformationDto
 			let { data, count } = await this.parcelService.getParcelByResidentService(
 				id,
