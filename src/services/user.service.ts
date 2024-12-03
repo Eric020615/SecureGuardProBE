@@ -327,7 +327,7 @@ export class UserService {
 				lastName: userDetails.lastName,
 				email: userRecord.email ? userRecord.email : '',
 				gender: GenderEnum[userDetails.gender] as keyof typeof GenderEnum,
-				role: RoleEnum[userRecord.customClaims?.role] as keyof typeof RoleEnum,
+				role: userRecord.customClaims?.role as keyof typeof RoleEnum,
 				dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
 				isActive: !userRecord.disabled,
 				contactNumber: userDetails.contactNumber,
