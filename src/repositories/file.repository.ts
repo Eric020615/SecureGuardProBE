@@ -59,7 +59,7 @@ export class FileRepository {
 		if (fileGuids.length === 0) {
 			return []
 		}
-		const constraints = [where('__name__', 'in', fileGuids), where('status', '==', DocumentStatusEnum.Active)]
+		const constraints = [where('__name__', 'in', fileGuids), where('status', '==', DocumentStatusEnum.ACTIVE)]
 		const q = query(this.fileCollection, ...constraints)
 		const fileSnapshot = await getDocs(q)
 		let files: Files[] = []
@@ -78,6 +78,6 @@ export class FileRepository {
 
 	async deleteFileByIdRepository(fileGuid: string) {
 		const docRef = doc(this.fileCollection, fileGuid)
-		await updateDoc(docRef, { status: DocumentStatusEnum.SoftDeleted })
+		await updateDoc(docRef, { status: DocumentStatusEnum.SOFT_DELETED })
 	}
 }

@@ -29,7 +29,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { FacilityService } from '../services/facility.service'
 import { UserService } from '../services/user.service'
-import { PaginationDirectionEnum } from '../common/constants'
+import { FacilityEnum } from '../common/constants'
 
 @Route('facilities')
 @provideSingleton(FacilityController)
@@ -195,7 +195,7 @@ export class FacilityController extends Controller {
 	@Security('jwt', ['SA', 'RES', 'SUB'])
 	public async checkFacilitySlot(
 		@Request() request: ISecurityMiddlewareRequest,
-		@Query() facilityId: string,
+		@Query() facilityId: keyof typeof FacilityEnum,
 		@Query() startDate: string,
 		@Query() endDate: string,
 	): Promise<IResponse<SpaceAvailabilityDto[]>> {

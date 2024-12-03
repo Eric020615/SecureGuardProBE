@@ -79,7 +79,7 @@ export class NotificationRepository {
 	async getNotificationRepository(id: number, pageSize: number, userGuid: string) {
 		const constraints = [
 			where('userGuid', '==', userGuid),
-			where('status', '==', DocumentStatusEnum.Active),
+			where('status', '==', DocumentStatusEnum.ACTIVE),
 			orderBy('id', 'asc'),
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Notifications>(

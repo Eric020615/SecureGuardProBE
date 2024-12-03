@@ -26,7 +26,7 @@ export class NoticeService {
 					convertDateStringToTimestamp(createNoticeDto.startDate),
 					convertDateStringToTimestamp(createNoticeDto.endDate),
 					[],
-					DocumentStatusEnum.Active,
+					DocumentStatusEnum.ACTIVE,
 					userId,
 					userId,
 					getCurrentTimestamp(),

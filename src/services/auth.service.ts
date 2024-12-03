@@ -72,7 +72,7 @@ export class AuthService {
 				await this.userRepository.editSubUserRequestRepository(
 					request[0].guid as string,
 					{
-						status: DocumentStatusEnum.Active,
+						status: DocumentStatusEnum.ACTIVE,
 					} as SubUserRequests,
 				)
 			}

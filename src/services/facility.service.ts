@@ -12,7 +12,7 @@ import { HttpStatusCode } from '../common/http-status-code'
 import { convertDateStringToTimestamp, convertTimestampToUserTimezone, getCurrentTimestamp } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
-import { DocumentStatusEnum, FacilityDescriptions, FacilityEnum, PaginationDirectionEnum } from '../common/constants'
+import { DocumentStatusEnum, FacilityEnum, PaginationDirectionEnum } from '../common/constants'
 import { FacilityBookings } from '../models/facilities.model'
 
 @provideSingleton(FacilityService)
@@ -53,7 +53,7 @@ export class FacilityService {
 					createFacilityBookingDto.numOfGuest,
 					false,
 					'',
-					DocumentStatusEnum.Active,
+					DocumentStatusEnum.ACTIVE,
 					userId,
 					userId,
 					getCurrentTimestamp(),
@@ -76,7 +76,7 @@ export class FacilityService {
 							bookingGuid: facilityBooking.guid,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-							facilityName: FacilityDescriptions[facilityBooking.facility],
+							facilityId: FacilityEnum[facilityBooking.facility],
 							bookedBy: facilityBooking.bookedBy,
 							numOfGuest: facilityBooking.numOfGuest,
 							isCancelled: facilityBooking.isCancelled,
@@ -107,7 +107,7 @@ export class FacilityService {
 							bookingGuid: facilityBooking.guid,
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-							facilityName: FacilityDescriptions[facilityBooking.facility],
+							facilityId: FacilityEnum[facilityBooking.facility],
 							bookedBy: facilityBooking.bookedBy,
 							numOfGuest: facilityBooking.numOfGuest,
 							isCancelled: facilityBooking.isCancelled,
@@ -132,7 +132,7 @@ export class FacilityService {
 			data = {
 				bookingId: facilityBooking.id,
 				bookingGuid: facilityBooking.guid ? facilityBooking.guid : '',
-				facilityName: FacilityDescriptions[facilityBooking.facility],
+				facilityId: FacilityEnum[facilityBooking.facility],
 				startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 				endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
 				bookedBy: facilityBooking.bookedBy,

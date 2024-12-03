@@ -359,7 +359,7 @@ export class CardService {
 			badgeNumber: 0,
 			referralUid: referralUid ? referralUid : userGuid,
 			role: role,
-			status: DocumentStatusEnum.Active,
+			status: DocumentStatusEnum.ACTIVE,
 			createdBy: userGuid,
 			updatedBy: userGuid,
 			createdDateTime: getCurrentTimestamp(),

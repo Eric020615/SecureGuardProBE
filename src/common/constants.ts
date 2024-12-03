@@ -18,21 +18,21 @@ export const FacilityDescriptions = {
 }
 
 export enum DocumentStatusEnum {
-	Active = 1,
-	SoftDeleted = 2,
-	Archived = 3,
-	Pending = 4,
-	Draft = 5,
-	Suspended = 6,
+	ACTIVE = 1,
+	SOFT_DELETED = 2,
+	ARCHIVED = 3,
+	PENDING = 4,
+	DRAFT = 5,
+	SUSPENDED = 6,
 }
 
 export const DocumentStatusDescriptions = {
-	[DocumentStatusEnum.Active]: 'Active',
-	[DocumentStatusEnum.SoftDeleted]: 'SoftDeleted',
-	[DocumentStatusEnum.Archived]: 'Archived',
-	[DocumentStatusEnum.Pending]: 'Pending',
-	[DocumentStatusEnum.Draft]: 'Draft',
-	[DocumentStatusEnum.Suspended]: 'Suspended',
+	[DocumentStatusEnum.ACTIVE]: 'Active',
+	[DocumentStatusEnum.SOFT_DELETED]: 'SoftDeleted',
+	[DocumentStatusEnum.ARCHIVED]: 'Archived',
+	[DocumentStatusEnum.PENDING]: 'Pending',
+	[DocumentStatusEnum.DRAFT]: 'Draft',
+	[DocumentStatusEnum.SUSPENDED]: 'Suspended',
 }
 
 export enum ParcelStatusEnum {

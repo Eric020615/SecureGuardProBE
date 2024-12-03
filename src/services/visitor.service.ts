@@ -54,7 +54,7 @@ export class VisitorService {
 					'',
 					'',
 					VisitStatusEnum.Scheduled,
-					DocumentStatusEnum.Active,
+					DocumentStatusEnum.ACTIVE,
 					userId,
 					userId,
 					getCurrentTimestamp(),

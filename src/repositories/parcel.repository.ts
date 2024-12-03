@@ -44,7 +44,7 @@ export class ParcelRepository {
 		const constraints = [
 			where('floor', '==', floor),
 			where('unit', '==', unit),
-			where('status', '==', DocumentStatusEnum.Active),
+			where('status', '==', DocumentStatusEnum.ACTIVE),
 			orderBy('id', 'asc'),
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Parcels>(
@@ -81,6 +81,6 @@ export class ParcelRepository {
 
 	async deleteParcelByResidentRepository(parcelGuid: string) {
 		const docRef = doc(this.parcelCollection, parcelGuid)
-		await updateDoc(docRef, { status: DocumentStatusEnum.SoftDeleted, updatedDateTime: getCurrentTimestamp() })
+		await updateDoc(docRef, { status: DocumentStatusEnum.SOFT_DELETED, updatedDateTime: getCurrentTimestamp() })
 	}
 }

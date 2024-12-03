@@ -118,7 +118,7 @@ export class UserService {
 						RoleEnum[role],
 						'',
 						supportedDocuments ? supportedDocuments : [],
-						DocumentStatusEnum.Active,
+						DocumentStatusEnum.ACTIVE,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
@@ -153,7 +153,7 @@ export class UserService {
 						RoleEnum[role],
 						'',
 						[],
-						DocumentStatusEnum.Active,
+						DocumentStatusEnum.ACTIVE,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
@@ -182,7 +182,7 @@ export class UserService {
 						RoleEnum[role],
 						'',
 						supportedDocuments ? supportedDocuments : [],
-						DocumentStatusEnum.Active,
+						DocumentStatusEnum.ACTIVE,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
@@ -211,7 +211,7 @@ export class UserService {
 						RoleEnum[role],
 						'',
 						supportedDocuments ? supportedDocuments : [],
-						DocumentStatusEnum.Active,
+						DocumentStatusEnum.ACTIVE,
 						userGuid,
 						userGuid,
 						getCurrentTimestamp(),
@@ -427,7 +427,7 @@ export class UserService {
 			const userRecord = await this.authAdmin.getUser(userId)
 			this.authAdmin.deleteUser(userId)
 			await this.userRepository.updateUserStatusByIdRepository(userId, {
-				status: DocumentStatusEnum.SoftDeleted,
+				status: DocumentStatusEnum.SOFT_DELETED,
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
 			} as Users)
@@ -463,7 +463,7 @@ export class UserService {
 				id: 0,
 				email: createSubUserRequestDto.email,
 				parentUserGuid: userId,
-				status: DocumentStatusEnum.Pending,
+				status: DocumentStatusEnum.PENDING,
 				createdBy: userId,
 				createdDateTime: getCurrentTimestamp(),
 				updatedBy: userId,
@@ -561,7 +561,7 @@ export class UserService {
 				updatedDateTime: getCurrentTimestamp(),
 			} as SubUsers
 			let user: Users = {
-				status: DocumentStatusEnum.SoftDeleted,
+				status: DocumentStatusEnum.SOFT_DELETED,
 				updatedBy: updatedBy,
 				updatedDateTime: getCurrentTimestamp(),
 			} as Users

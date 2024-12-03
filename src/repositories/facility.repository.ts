@@ -71,7 +71,7 @@ export class FacilityBookingRepository {
 				isPast ? '<=' : '>',
 				convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString()),
 			),
-			where('status', '==', DocumentStatusEnum.Active),
+			where('status', '==', DocumentStatusEnum.ACTIVE),
 			orderBy('id', 'asc'),
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<FacilityBookings>(

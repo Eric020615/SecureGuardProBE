@@ -88,7 +88,7 @@ export class NotificationService {
 					body,
 					data,
 					false,
-					DocumentStatusEnum.Active,
+					DocumentStatusEnum.ACTIVE,
 					userGuid,
 					userGuid,
 					getCurrentTimestamp(),

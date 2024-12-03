@@ -58,7 +58,7 @@ export class NoticeRepository {
 		const constraints = [
 			where('startDate', '<=', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())),
 			where('endDate', '>', convertDateStringToTimestamp(moment().tz('Asia/Kuala_Lumpur').toISOString())),
-			where('status', '==', DocumentStatusEnum.Active),
+			where('status', '==', DocumentStatusEnum.ACTIVE),
 			orderBy('id', 'asc'),
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Notices>(
@@ -85,6 +85,6 @@ export class NoticeRepository {
 
 	async deleteNoticeByIdRepository(noticeGuid: string) {
 		const docRef = doc(this.noticeCollection, noticeGuid)
-		await updateDoc(docRef, { status: DocumentStatusEnum.SoftDeleted })
+		await updateDoc(docRef, { status: DocumentStatusEnum.SOFT_DELETED })
 	}
 }

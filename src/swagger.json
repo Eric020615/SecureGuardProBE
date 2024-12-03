@@ -1587,12 +1587,12 @@
 					"status": {
 						"type": "string",
 						"enum": [
-							"Active",
-							"SoftDeleted",
-							"Archived",
-							"Pending",
-							"Draft",
-							"Suspended"
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
 						],
 						"nullable": false
 					},
@@ -1771,8 +1771,14 @@
 					"bookingGuid": {
 						"type": "string"
 					},
-					"facilityName": {
-						"type": "string"
+					"facilityId": {
+						"type": "string",
+						"enum": [
+							"BC",
+							"BBC",
+							"GR"
+						],
+						"nullable": false
 					},
 					"startDate": {
 						"type": "string"
@@ -1787,13 +1793,22 @@
 						"type": "boolean"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
 					"bookingId",
 					"bookingGuid",
-					"facilityName",
+					"facilityId",
 					"startDate",
 					"endDate",
 					"bookedBy",
@@ -1917,8 +1932,14 @@
 					"bookingGuid": {
 						"type": "string"
 					},
-					"facilityName": {
-						"type": "string"
+					"facilityId": {
+						"type": "string",
+						"enum": [
+							"BC",
+							"BBC",
+							"GR"
+						],
+						"nullable": false
 					},
 					"startDate": {
 						"type": "string"
@@ -1940,7 +1961,16 @@
 						"type": "string"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					},
 					"createdBy": {
 						"type": "string"
@@ -1958,7 +1988,7 @@
 				"required": [
 					"bookingId",
 					"bookingGuid",
-					"facilityName",
+					"facilityId",
 					"startDate",
 					"endDate",
 					"bookedBy",
@@ -4658,7 +4688,12 @@
 						"name": "facilityId",
 						"required": true,
 						"schema": {
-							"type": "string"
+							"type": "string",
+							"enum": [
+								"BC",
+								"BBC",
+								"GR"
+							]
 						}
 					},
 					{

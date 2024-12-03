@@ -214,7 +214,7 @@ export class UserRepository {
 		}
 		const constraints = [
 			where('__name__', 'in', subUser),
-			where('status', '==', DocumentStatusEnum.Active),
+			where('status', '==', DocumentStatusEnum.ACTIVE),
 			orderBy('id', 'asc'),
 		]
 		let { rows, count } = await this.repositoryService.getPaginatedData<Users>(
@@ -229,7 +229,7 @@ export class UserRepository {
 	getSubUserRequestByEmailRepository = async (email: string) => {
 		const constraints = [
 			where('email', '==', email),
-			where('status', '!=', DocumentStatusEnum.SoftDeleted),
+			where('status', '!=', DocumentStatusEnum.SOFT_DELETED),
 			orderBy('id', 'asc'),
 		]
 		const q = query(this.subUserRequestCollection, ...constraints)

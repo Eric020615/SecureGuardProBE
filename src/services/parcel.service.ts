@@ -31,7 +31,7 @@ export class ParcelService {
 					createParcelDto.floor,
 					createParcelDto.unit,
 					ParcelStatusEnum.Received,
-					DocumentStatusEnum.Active,
+					DocumentStatusEnum.ACTIVE,
 					userId,
 					userId,
 					getCurrentTimestamp(),
