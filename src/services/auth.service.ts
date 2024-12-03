@@ -94,7 +94,7 @@ export class AuthService {
 		try {
 			const response = await signInWithEmailAndPassword(this.auth, loginDto.email, loginDto.password)
 			const user = await this.authAdmin.getUser(response.user.uid)
-			const role = user.customClaims?.role || ''
+			const role = user.customClaims?.role as keyof typeof RoleEnum
 			if (user.disabled) {
 				throw new OperationError('User Account Disabled', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}

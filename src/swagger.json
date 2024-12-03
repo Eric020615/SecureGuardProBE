@@ -23,7 +23,13 @@
 						"type": "string"
 					},
 					"visitorCategory": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"FM",
+							"F",
+							"R"
+						],
+						"nullable": false
 					},
 					"visitorContactNumber": {
 						"type": "string"
@@ -32,7 +38,16 @@
 						"type": "string"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
@@ -143,7 +158,13 @@
 						"type": "string"
 					},
 					"visitorCategory": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"FM",
+							"F",
+							"R"
+						],
+						"nullable": false
 					},
 					"visitorContactNumber": {
 						"type": "string"
@@ -155,7 +176,16 @@
 						"type": "string"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					},
 					"createdBy": {
 						"type": "string"
@@ -361,7 +391,13 @@
 						"type": "string"
 					},
 					"visitorCategory": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"FM",
+							"F",
+							"R"
+						],
+						"nullable": false
 					},
 					"visitorContactNumber": {
 						"type": "string"
@@ -458,7 +494,13 @@
 						"type": "string"
 					},
 					"visitorCategory": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"FM",
+							"F",
+							"R"
+						],
+						"nullable": false
 					},
 					"visitorContactNumber": {
 						"type": "string"
@@ -527,16 +569,38 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"F",
+							"M"
+						],
+						"nullable": false
 					},
 					"role": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"SA",
+							"STF",
+							"RES",
+							"SUB",
+							"VI"
+						],
+						"nullable": false
 					},
 					"userStatus": {
 						"type": "string"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
@@ -702,10 +766,23 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"F",
+							"M"
+						],
+						"nullable": false
 					},
 					"role": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"SA",
+							"STF",
+							"RES",
+							"SUB",
+							"VI"
+						],
+						"nullable": false
 					},
 					"roleInformation": {
 						"anyOf": [
@@ -733,7 +810,16 @@
 						"type": "array"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					},
 					"createdBy": {
 						"type": "string"
@@ -871,13 +957,27 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"F",
+							"M"
+						],
+						"nullable": false
 					},
 					"dateOfBirth": {
 						"type": "string"
 					},
 					"status": {
-						"type": "boolean"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
@@ -951,10 +1051,23 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"F",
+							"M"
+						],
+						"nullable": false
 					},
 					"role": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"SA",
+							"STF",
+							"RES",
+							"SUB",
+							"VI"
+						],
+						"nullable": false
 					},
 					"dateOfBirth": {
 						"type": "string"
@@ -1251,6 +1364,18 @@
 					"unit": {
 						"type": "string"
 					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
+					},
 					"createdBy": {
 						"type": "string"
 					},
@@ -1270,6 +1395,7 @@
 					"parcelImage",
 					"floor",
 					"unit",
+					"status",
 					"createdBy",
 					"createdDateTime",
 					"updatedBy",
@@ -1475,7 +1601,16 @@
 						"type": "string"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SOFT_DELETED",
+							"ARCHIVED",
+							"PENDING",
+							"DRAFT",
+							"SUSPENDED"
+						],
+						"nullable": false
 					}
 				},
 				"required": [

@@ -29,7 +29,7 @@ export interface GetNoticeDto {
     description: string
     startDate: string
     endDate: string
-    status: string
+    status: keyof typeof DocumentStatusEnum
 }
 
 export interface GetNoticeDetailsDto {

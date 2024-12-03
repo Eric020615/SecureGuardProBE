@@ -15,9 +15,7 @@ import {
 	DocumentStatusEnum,
 	ITimeFormat,
 	JobTitleEnum,
-	RoleDescriptions,
 	RoleEnum,
-	RoleIdEnum,
 	RoleRecognitionTypeEnum,
 	StaffConst,
 } from '../common/constants'
@@ -112,7 +110,7 @@ export class CardService {
 					EmailAddress: userData.email,
 					ContactNo: userData.contactNumber,
 					Remark1: `userGuid: ${userData.userId.toString()}`,
-					Remark2: `referralUserGuid ${userData.role == RoleDescriptions[RoleEnum.SUB] ? referralUserGuid : ''}`,
+					Remark2: `referralUserGuid ${userData.role == "SUB" ? referralUserGuid : ''}`,
 				},
 				AccessControlData: {
 					...StaffConst.AccessControlData,
@@ -227,7 +225,7 @@ export class CardService {
 			await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[role],
 				id: effectiveUserGuid,
-				is_admin: userData.role === RoleDescriptions[RoleEnum.SA] ? true : false,
+				is_admin: userData.role === "SUB" ? true : false,
 				person_name: userData.firstName + ' ' + userData.lastName,
 				group_list: ['1'],
 				face_list: [

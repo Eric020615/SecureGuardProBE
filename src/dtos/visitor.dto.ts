@@ -1,9 +1,9 @@
-import { VisitorCategoryEnum } from "../common/constants"
+import { DocumentStatusEnum, VisitorCategoryEnum } from '../common/constants'
 
 export interface CreateVisitorDto {
 	visitorName: string
 	visitorEmail: string
-    visitorCategory: keyof typeof VisitorCategoryEnum;
+	visitorCategory: keyof typeof VisitorCategoryEnum
 	visitorContactNumber: string
 	visitDateTime: string
 }
@@ -11,7 +11,7 @@ export interface CreateVisitorDto {
 export interface EditVisitorByIdDto {
 	visitorName: string
 	visitorEmail: string
-    visitorCategory: keyof typeof VisitorCategoryEnum;
+	visitorCategory: keyof typeof VisitorCategoryEnum
 	visitorContactNumber: string
 	visitDateTime: string
 }
@@ -21,10 +21,10 @@ export interface GetVisitorDto {
 	visitorGuid: string
 	visitorName: string
 	visitorEmail: string
-	visitorCategory: string
+	visitorCategory: keyof typeof VisitorCategoryEnum
 	visitorContactNumber: string
 	visitDateTime: string
-	status: string
+	status: keyof typeof DocumentStatusEnum
 }
 
 export interface GetVisitorDetailsDto {
@@ -32,11 +32,11 @@ export interface GetVisitorDetailsDto {
 	visitorGuid: string
 	visitorName: string
 	visitorEmail: string
-	visitorCategory: string
+	visitorCategory: keyof typeof VisitorCategoryEnum
 	visitorContactNumber: string
 	visitDateTime: string
 	token: string
-	status: string
+	status: keyof typeof DocumentStatusEnum
 	createdBy: string
 	updatedBy: string
 	createdDateTime: string
@@ -53,7 +53,7 @@ export interface GetVisitorPassDetailsDto {
 	visitorGuid: string
 	visitorName: string
 	visitorEmail: string
-	visitorCategory: string
+	visitorCategory: keyof typeof VisitorCategoryEnum
 	visitorContactNumber: string
 	visitDateTime: string
 }
@@ -63,7 +63,7 @@ export interface GetVisitorDetailsByTokenDto {
 	visitorGuid: string
 	visitorName: string
 	visitorEmail: string
-	visitorCategory: string
+	visitorCategory: keyof typeof VisitorCategoryEnum
 	visitorContactNumber: string
 	visitDateTime: string
 }

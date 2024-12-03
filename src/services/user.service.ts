@@ -22,12 +22,9 @@ import { inject } from 'inversify'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
 import * as dotenv from 'dotenv'
 import {
-	DocumentStatusDescriptions,
 	DocumentStatusEnum,
-	GenderDescriptions,
 	GenderEnum,
 	PaginationDirectionEnum,
-	RoleDescriptions,
 	RoleEnum,
 } from '../common/constants'
 import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
@@ -241,8 +238,8 @@ export class UserService {
 				userName: '',
 				firstName: userInformation.firstName,
 				lastName: userInformation.lastName,
-				gender: GenderDescriptions[userInformation.gender],
-				role: RoleDescriptions[userInformation.role],
+				gender: GenderEnum[userInformation.gender] as keyof typeof GenderEnum,
+				role: RoleEnum[userInformation.role] as keyof typeof RoleEnum,
 				dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
 				contactNumber: userInformation.contactNumber,
 				createdBy: userInformation.createdBy,
@@ -281,11 +278,11 @@ export class UserService {
 								userName: userList[index].displayName ? userList[index].displayName : '',
 								firstName: userInformation.firstName,
 								lastName: userInformation.lastName,
-								gender: GenderDescriptions[userInformation.gender],
-								role: RoleDescriptions[userInformation.role],
+								gender: GenderEnum[userInformation.gender],
+								role: RoleEnum[userInformation.role],
 								contactNumber: userInformation.contactNumber,
 								userStatus: userList[index].disabled ? 'Inactive' : 'Active',
-								status: DocumentStatusDescriptions[userInformation.status],
+								status: DocumentStatusEnum[userInformation.status],
 							} as GetUserByAdminDto
 					  })
 					: []
@@ -299,7 +296,7 @@ export class UserService {
 		try {
 			const userResult = await this.authAdmin.listUsers()
 			let userList: UserRecord[] = []
-			userList = userResult.users.filter((user) => !user.disabled).filter((user) => user.customClaims?.role === "RES")
+			userList = userResult.users.filter((user) => !user.disabled).filter((user) => user.customClaims?.role === 'RES')
 			let users: Users[] = await this.userRepository.getFacilityBookingUserRepository(userList)
 			let data: GetFacilityBookingUserDto[] = []
 			data =
@@ -329,17 +326,14 @@ export class UserService {
 				firstName: userDetails.firstName,
 				lastName: userDetails.lastName,
 				email: userRecord.email ? userRecord.email : '',
-				gender: GenderDescriptions[userDetails.gender],
-				role:
-					userRecord.customClaims?.role && RoleEnum[userRecord.customClaims.role as keyof typeof RoleEnum]
-						? RoleDescriptions[RoleEnum[userRecord.customClaims.role as keyof typeof RoleEnum]]
-						: '',
+				gender: GenderEnum[userDetails.gender] as keyof typeof GenderEnum,
+				role: RoleEnum[userRecord.customClaims?.role] as keyof typeof RoleEnum,
 				dateOfBirth: convertTimestampToUserTimezone(userDetails.dateOfBirth),
 				isActive: !userRecord.disabled,
 				contactNumber: userDetails.contactNumber,
 				badgeNumber: userDetails.badgeNumber,
 				supportedDocuments: await this.fileService.getFilesByGuidsService(userDetails.supportedDocuments),
-				status: DocumentStatusEnum[userDetails.status],
+				status: DocumentStatusEnum[userDetails.status] as keyof typeof DocumentStatusEnum,
 				createdBy: userDetails.createdBy,
 				createdDateTime: convertTimestampToUserTimezone(userDetails.createdDateTime),
 				updatedBy: userDetails.updatedBy,
@@ -432,7 +426,8 @@ export class UserService {
 				updatedDateTime: getCurrentTimestamp(),
 			} as Users)
 			await this.notificationRepository.deleteNotificationTokenRepository(userId)
-			if (userRecord.customClaims?.role === RoleEnum.RES) {
+			const role = userRecord.customClaims?.role as keyof typeof RoleEnum
+			if (role == 'RES') {
 				const residentDetails = await this.userRepository.getResidentDetailsRepository(userId)
 				if (residentDetails) {
 					await this.refDataRepository.updatePropertyByResidentRepository(
@@ -509,7 +504,7 @@ export class UserService {
 										: '',
 									firstName: userInformation.firstName,
 									lastName: userInformation.lastName,
-									gender: GenderDescriptions[userInformation.gender],
+									gender: GenderEnum[userInformation.gender],
 									dateOfBirth: convertTimestampToUserTimezone(userInformation.dateOfBirth),
 									contactNumber: userInformation.contactNumber,
 									status: userInformation.guid

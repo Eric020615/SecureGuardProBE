@@ -1,4 +1,4 @@
-import { DocumentStatusDescriptions, DocumentStatusEnum, FacilityEnum } from "../common/constants"
+import { DocumentStatusEnum, FacilityEnum } from "../common/constants"
 
 export interface CreateFacilityBookingDto {
 	bookedBy?: string

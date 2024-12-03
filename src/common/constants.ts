@@ -11,12 +11,6 @@ export enum FacilityEnum {
 	GR = 3, // Gym Room
 }
 
-export const FacilityDescriptions = {
-	[FacilityEnum.BC]: 'Badminton Court',
-	[FacilityEnum.BBC]: 'Basketball Court',
-	[FacilityEnum.GR]: 'Gym Room',
-}
-
 export enum DocumentStatusEnum {
 	ACTIVE = 1,
 	SOFT_DELETED = 2,
@@ -26,47 +20,21 @@ export enum DocumentStatusEnum {
 	SUSPENDED = 6,
 }
 
-export const DocumentStatusDescriptions = {
-	[DocumentStatusEnum.ACTIVE]: 'Active',
-	[DocumentStatusEnum.SOFT_DELETED]: 'SoftDeleted',
-	[DocumentStatusEnum.ARCHIVED]: 'Archived',
-	[DocumentStatusEnum.PENDING]: 'Pending',
-	[DocumentStatusEnum.DRAFT]: 'Draft',
-	[DocumentStatusEnum.SUSPENDED]: 'Suspended',
-}
-
 export enum ParcelStatusEnum {
-	Received = 1, // Parcel has been received by the concierge
-	Stored = 2, // Parcel has been placed in the parcel room/storage
-	Notified = 3, // Resident has been notified about the parcel
-	PickedUp = 4, // Resident has collected the parcel
-	Unclaimed = 5, // Parcel has not been claimed after a certain period
-	ReturnedToSender = 6, // Parcel was returned to the sender
-	Damaged = 7, // Parcel was received in a damaged condition
-	Lost = 8, // Parcel has been misplaced or lost
-}
-
-export const ParcelStatusDescriptions = {
-	[ParcelStatusEnum.Received]: 'Received',
-	[ParcelStatusEnum.Stored]: 'Stored',
-	[ParcelStatusEnum.Notified]: 'Notified',
-	[ParcelStatusEnum.PickedUp]: 'PickedUp',
-	[ParcelStatusEnum.Unclaimed]: 'Unclaimed',
-	[ParcelStatusEnum.ReturnedToSender]: 'ReturnedToSender',
-	[ParcelStatusEnum.Damaged]: 'Damaged',
-	[ParcelStatusEnum.Lost]: 'Lost',
+	RECEIVED = 1, // Parcel has been received by the concierge
+	STORED = 2, // Parcel has been placed in the parcel room/storage
+	NOTIFIED = 3, // Resident has been notified about the parcel
+	PICKED_UP = 4, // Resident has collected the parcel
+	UNCLAIMED = 5, // Parcel has not been claimed after a certain period
+	RETURNED_TO_SENDER = 6, // Parcel was returned to the sender
+	DAMAGED = 7, // Parcel was received in a damaged condition
+	LOST = 8, // Parcel has been misplaced or lost
 }
 
 export enum VisitorCategoryEnum {
 	FM = 1, // Family Members
 	F = 2, // Friends
 	R = 3, // Relatives
-}
-
-export const VisitorCategoryDescriptions = {
-	[VisitorCategoryEnum.FM]: 'Family Members',
-	[VisitorCategoryEnum.F]: 'Friends',
-	[VisitorCategoryEnum.R]: 'Relatives',
 }
 
 export enum VisitStatusEnum {
@@ -77,22 +45,6 @@ export enum VisitStatusEnum {
 	NoShow = 5, // Visitor did not show up for the visit
 }
 
-export const VisitStatusDescriptions = {
-	[VisitStatusEnum.Scheduled]: 'Scheduled',
-	[VisitStatusEnum.CheckedIn]: 'CheckedIn',
-	[VisitStatusEnum.CheckedOut]: 'CheckedOut',
-	[VisitStatusEnum.Cancelled]: 'Cancelled',
-	[VisitStatusEnum.NoShow]: 'NoShow',
-}
-
-export enum RoleIdEnum {
-	SA = "SA",
-	STF = "STF",
-	RES = "RES",
-	SUB = "SUB",
-	VI = "VI",
-}
-
 export enum RoleEnum {
 	SA = 1,
 	STF = 2,
@@ -101,22 +53,9 @@ export enum RoleEnum {
 	VI = 5,
 }
 
-export const RoleDescriptions = {
-	[RoleEnum.SA]: 'System Admin',
-	[RoleEnum.STF]: 'Staff',
-	[RoleEnum.RES]: 'Resident',
-	[RoleEnum.SUB]: 'Resident Subuser',
-	[RoleEnum.VI]: 'Visitor',
-}
-
 export enum GenderEnum {
 	M = 1,
 	F = 2,
-}
-
-export const GenderDescriptions = {
-	[GenderEnum.M]: 'Male',
-	[GenderEnum.F]: 'Female',
 }
 
 // megeye

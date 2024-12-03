@@ -1,16 +1,3 @@
-interface MegeyeError {
-    status: string;
-    source: {}
-    title: string;
-    detail: string;
-    error_code: string;
-}
-
-interface MegeyeErrorResponse {
-    errors: MegeyeError[];
-}
-
-
 interface FaceData {
   idx: number;
   data: string;

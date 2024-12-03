@@ -1,16 +1,5 @@
-import { GenderEnum, RoleDescriptions } from '../common/constants'
+import { DocumentStatusEnum, GenderEnum, RoleEnum } from '../common/constants'
 import { GeneralFileDto, GeneralFileResponseDto } from './index.dto'
-
-interface CustomClaims {
-    role: keyof typeof RoleDescriptions; // 'SA' | 'STF' | 'RES' | 'SUB' | 'VI'
-}
-
-interface UserRecord {
-    displayName?: string;
-    email?: string;
-    disabled: boolean;
-    customClaims?: CustomClaims;
-}
 
 export interface CreateUserDto {
 	firstName: string
@@ -28,8 +17,8 @@ export interface GetUserDto {
 	lastName: string
 	userName: string
 	contactNumber: string
-	gender: string
-	role: string
+	gender: keyof typeof GenderEnum
+	role: keyof typeof RoleEnum
 	dateOfBirth: string
 	createdBy: string
 	createdDateTime: string
@@ -38,16 +27,16 @@ export interface GetUserDto {
 }
 
 export interface GetUserByAdminDto {
-    userId: number
-    userGuid: string
-    firstName: string
-    lastName: string
-    userName: string
-    contactNumber: string
-    gender: string
-    role: string
-    userStatus: string
-	status: string
+	userId: number
+	userGuid: string
+	firstName: string
+	lastName: string
+	userName: string
+	contactNumber: string
+	gender: keyof typeof GenderEnum
+	role: keyof typeof RoleEnum
+	userStatus: string
+	status: keyof typeof DocumentStatusEnum
 }
 
 export interface CreateSubUserDto extends CreateUserDto {
@@ -74,14 +63,14 @@ export interface GetUserDetailsByIdDto {
 	userName: string
 	email: string
 	contactNumber: string
-	gender: string
-	role: string
+	gender: keyof typeof GenderEnum
+	role: keyof typeof RoleEnum
 	roleInformation?: ResidentInformationDto | StaffInformationDto
 	dateOfBirth: string
 	isActive?: boolean
 	badgeNumber: string
 	supportedDocuments: GeneralFileResponseDto[]
-	status: string
+	status: keyof typeof DocumentStatusEnum
 	createdBy: string
 	createdDateTime: string
 	updatedBy: string
@@ -122,7 +111,7 @@ export interface GetSubUserByResidentDto {
 	lastName: string
 	userName: string
 	contactNumber: string
-	gender: string
+	gender: keyof typeof GenderEnum
 	dateOfBirth: string
-	status: boolean
+	status: keyof typeof DocumentStatusEnum
 }
