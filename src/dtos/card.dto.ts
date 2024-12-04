@@ -60,11 +60,6 @@ export interface AccessControlDataDto {
 	PinNo: string | null
 }
 
-export interface CreateFaceAuthStaffDto {
-	Card: CardDto
-	AccessControlData: AccessControlDataDto
-}
-
 export interface GetCardByUserDto {
 	badgeNumber: string
 	cardHolder: string

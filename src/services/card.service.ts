@@ -110,14 +110,14 @@ export class CardService {
 					EmailAddress: userData.email,
 					ContactNo: userData.contactNumber,
 					Remark1: `userGuid: ${userData.userId.toString()}`,
-					Remark2: `referralUserGuid ${userData.role == "SUB" ? referralUserGuid : ''}`,
+					Remark2: `referralUserGuid ${userData.role == 'SUB' ? referralUserGuid : ''}`,
 				},
 				AccessControlData: {
 					...StaffConst.AccessControlData,
 					AccessEntryDate: getCurrentDateString(ITimeFormat.dateTime),
 					AccessExitDate: addTimeToDateString(getCurrentDateString(ITimeFormat.date), 'years', 1, ITimeFormat.dateTime),
 				},
-				UserId: `${userData.role} ${userData.userId.toString()} QR`,
+				UserId: this.generateUserId(role, userData.userId, 'QRCode'),
 				UserName: userData.firstName + ' ' + userData.lastName,
 				UserType: 'Normal',
 			} as CreateStaffDto
@@ -138,7 +138,7 @@ export class CardService {
 			}
 			let data: GetQrCodeByUserDto = {} as GetQrCodeByUserDto
 			const userCard = await this.microEngineService.getUserQrCode(
-				`${userData.role} ${userData.userId.toString()} QR`,
+				this.generateUserId(userData.role, userData.userId, 'QRCode'),
 				userData.badgeNumber,
 			)
 			if (!userCard) {
@@ -173,7 +173,9 @@ export class CardService {
 			const effectiveUserGuid = await this.userService.getEffectiveUserGuidService(userGuid, role)
 
 			// query user card and person details
-			const userCard = await this.microEngineService.getUserById(`${role} ${userData.userId.toString()} FR`)
+			const userCard = await this.microEngineService.getUserById(
+				this.generateUserId(role, userData.userId, 'ISO14443ACSN'),
+			)
 			const personDetails = await this.megeyeService.queryPersonDetailsById(effectiveUserGuid)
 
 			// if exists update the access control details
@@ -201,6 +203,7 @@ export class CardService {
 			let staffInfo = {
 				...StaffConst,
 				Profile: {
+					...StaffConst.Profile,
 					Branch: 'HQ',
 					Department: DepartmentEnum[role],
 					JobTitle: JobTitleEnum[role],
@@ -208,13 +211,11 @@ export class CardService {
 					ContactNo: userData.contactNumber,
 				},
 				AccessControlData: {
+					...StaffConst.AccessControlData,
 					AccessEntryDate: getCurrentDateString(ITimeFormat.dateTime),
 					AccessExitDate: addTimeToDateString(getCurrentDateString(ITimeFormat.date), 'years', 1, ITimeFormat.dateTime),
-					DoorAccessRightId: '0001',
-					FloorAccessRightId: '001',
-					DefaultFloorGroupId: 'N/Available',
 				},
-				UserId: `${userData.role} ${userData.userId.toString()} FR`,
+				UserId: this.generateUserId(role, userData.userId, 'ISO14443ACSN'),
 				UserName: userData.firstName + ' ' + userData.lastName,
 				UserType: 'Normal',
 			} as CreateStaffDto
@@ -225,7 +226,7 @@ export class CardService {
 			await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[role],
 				id: effectiveUserGuid,
-				is_admin: userData.role === "SUB" ? true : false,
+				is_admin: userData.role === 'SUB' ? true : false,
 				person_name: userData.firstName + ' ' + userData.lastName,
 				group_list: ['1'],
 				face_list: [
@@ -234,7 +235,7 @@ export class CardService {
 						data: createUpdateFaceAuthDto.faceData.fileData,
 					},
 				],
-				person_code: `${role} ${userData.userId.toString()}`, // for display purpose
+				person_code: this.generateUserId(role, userData.userId, 'ISO14443ACSN'), // for display purpose
 				phone_num: userData.contactNumber,
 				card_number: userData.badgeNumber,
 			})
@@ -256,7 +257,7 @@ export class CardService {
 
 			// query user card and person details
 			const userCard = await this.microEngineService.getUserById(
-				`VI ${createUpdateVisitorFaceAuthDto.visitorDetails.visitorId.toString()} FR`,
+				this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
 			)
 			const personDetails = await this.megeyeService.queryPersonDetailsById(
 				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
@@ -309,7 +310,7 @@ export class CardService {
 						ITimeFormat.dateTime,
 					),
 				},
-				UserId: `VI ${createUpdateVisitorFaceAuthDto.visitorDetails.visitorId.toString()} FR`,
+				UserId: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
 				UserName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
 				UserType: 'Normal',
 			} as CreateStaffDto
@@ -343,7 +344,7 @@ export class CardService {
 						data: createUpdateVisitorFaceAuthDto.faceData.fileData,
 					},
 				],
-				person_code: `VI ${createUpdateVisitorFaceAuthDto.visitorDetails.visitorId.toString()}`, // for display purpose
+				person_code: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
 				phone_num: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
 				card_number: badgeNumber.toString(),
 			})
@@ -364,5 +365,26 @@ export class CardService {
 			updatedDateTime: getCurrentTimestamp(),
 		} as Cards)
 		return badgeNumber
+	}
+
+	generateUserId = (
+		role: keyof typeof RoleEnum,
+		userId: number,
+		accessType: 'MifareSector' | 'QRCode' | 'ISO14443ACSN',
+	): string => {
+		if (!Object.keys(RoleEnum).includes(role)) {
+			throw new Error('Invalid role. Role must be a valid key from RoleEnum and in uppercase letters.')
+		}
+		if (!Number.isInteger(userId) || userId <= 0) {
+			throw new Error('UserId must be a positive integer.')
+		}
+		const accessTypeLabels: Record<typeof accessType, string> = {
+			QRCode: 'QR',
+			ISO14443ACSN: 'FR',
+			MifareSector: 'Card',
+		}
+
+		const friendlyAccessType = accessTypeLabels[accessType] || 'unknown'
+		return `${role} ${userId} ${friendlyAccessType}`
 	}
 }
