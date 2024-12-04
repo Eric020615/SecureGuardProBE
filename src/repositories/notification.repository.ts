@@ -62,7 +62,7 @@ export class NotificationRepository {
 		await deleteDoc(docRef)
 	}
 
-	async createNotificationRepository(data: Notifications) {
+	async createNotificationRepository(notification: Notifications) {
 		return this.firebaseAdmin.firestore.runTransaction(async (transaction) => {
 			const id = await this.sequenceRepository.getSequenceId({
 				transaction: transaction,
@@ -71,7 +71,8 @@ export class NotificationRepository {
 			if (Number.isNaN(id)) {
 				throw new Error('Failed to generate id')
 			}
-			const docRef = await addDoc(this.notificationCollection, { ...data })
+			// can it remove ...?
+			const docRef = await addDoc(this.notificationCollection, Object.assign({}, notification))
 			await updateDoc(docRef, { id: id })
 		})
 	}

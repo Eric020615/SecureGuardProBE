@@ -38,7 +38,7 @@ export class NoticeService {
 			}
 			const fileGuids = await this.fileService.uploadMultipleFilesService(
 				createNoticeDto.attachments,
-				`notice/attachments/${noticeGuid}`,
+				`notices/attachments/${noticeGuid}`,
 				userId,
 				'notice attachments',
 			)

@@ -195,7 +195,7 @@ export class UserService {
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
 					userGuid,
-					'supported files',
+					'supported documents',
 				)
 				await this.userRepository.createStaffRepository(
 					new Users(

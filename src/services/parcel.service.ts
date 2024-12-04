@@ -19,10 +19,10 @@ export class ParcelService {
 		try {
 			const fileGuid = await this.fileService.uploadFileService(
 				createParcelDto.parcelImage,
-				`parcel/${createParcelDto.floor}/${createParcelDto.unit}/${getCurrentDateString(ITimeFormat.isoDateTime)}`,
+				`parcels/${createParcelDto.floor}/${createParcelDto.unit}/${getCurrentDateString(ITimeFormat.isoDateTime)}`,
 				createParcelDto.parcelImage.contentType,
 				userId,
-				'parcel image',
+				'parcel images',
 			)
 			await this.parcelRepository.createParcelRepository(
 				new Parcels(
