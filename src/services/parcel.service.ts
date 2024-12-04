@@ -80,6 +80,7 @@ export class ParcelService {
 					parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
 					floor: parcel.floor,
 					unit: parcel.unit,
+					parcelStatus: ParcelStatusEnum[parcel.parcelStatus],
 					status: DocumentStatusEnum[parcel.status],
 					createdBy: parcel.createdBy,
 					createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
@@ -115,6 +116,7 @@ export class ParcelService {
 									parcelImage: await this.fileService.getFileByGuidService(parcel.parcelImage),
 									floor: parcel.floor,
 									unit: parcel.unit,
+									createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime)
 								} as GetParcelDto
 							}),
 					  )

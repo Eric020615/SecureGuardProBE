@@ -1364,6 +1364,20 @@
 					"unit": {
 						"type": "string"
 					},
+					"parcelStatus": {
+						"type": "string",
+						"enum": [
+							"RECEIVED",
+							"STORED",
+							"NOTIFIED",
+							"PICKED_UP",
+							"UNCLAIMED",
+							"RETURNED_TO_SENDER",
+							"DAMAGED",
+							"LOST"
+						],
+						"nullable": false
+					},
 					"status": {
 						"type": "string",
 						"enum": [
@@ -1395,6 +1409,7 @@
 					"parcelImage",
 					"floor",
 					"unit",
+					"parcelStatus",
 					"status",
 					"createdBy",
 					"createdDateTime",

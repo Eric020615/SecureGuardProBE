@@ -489,6 +489,7 @@ const models: TsoaRoute.Models = {
             "parcelImage": {"ref":"GeneralFileResponseDto","required":true},
             "floor": {"dataType":"string","required":true},
             "unit": {"dataType":"string","required":true},
+            "parcelStatus": {"dataType":"enum","enums":["RECEIVED","STORED","NOTIFIED","PICKED_UP","UNCLAIMED","RETURNED_TO_SENDER","DAMAGED","LOST"],"required":true},
             "status": {"dataType":"enum","enums":["ACTIVE","SOFT_DELETED","ARCHIVED","PENDING","DRAFT","SUSPENDED"],"required":true},
             "createdBy": {"dataType":"string","required":true},
             "createdDateTime": {"dataType":"string","required":true},
