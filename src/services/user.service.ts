@@ -468,7 +468,7 @@ export class UserService {
 				subUserEmail: createSubUserRequestDto.email,
 				parentUserGuid: userId,
 				subUserRequestGuid: subUserRequestGuid,
-			} as SubUserAuthTokenPayloadDto)
+			} as SubUserAuthTokenPayloadDto, 3 * 24 * 60 * 60)
 			if (!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}

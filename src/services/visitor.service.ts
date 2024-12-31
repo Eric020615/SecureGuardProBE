@@ -27,7 +27,6 @@ import {
 	VisitorCategoryEnum,
 	VisitStatusEnum,
 } from '../common/constants'
-import { MicroEngineService } from './microEngine.service'
 import { JwtConfig } from '../config/jwtConfig'
 import { VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
 
@@ -35,7 +34,6 @@ import { VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
 export class VisitorService {
 	constructor(
 		@inject(VisitorRepository) private visitorRepository: VisitorRepository,
-		@inject(MicroEngineService) private microEngineService: MicroEngineService,
 		@inject(JwtConfig) private jwtConfig: JwtConfig,
 	) {}
 

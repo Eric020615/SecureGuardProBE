@@ -40,7 +40,7 @@ export class FacilityService {
 				createFacilityBookingDto.bookedBy ? createFacilityBookingDto.bookedBy : userId,
 			)
 			if (isBookedBefore) {
-				throw new OperationError('You already have an upcoming booking.', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				throw new OperationError('An upcoming booking already exists for this account.', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			await this.facilityRepository.createFacilityBookingRepository(
 				new FacilityBookings(

@@ -14,14 +14,13 @@ export class JwtConfig {
 		this.signature = process.env.JWT_SIGNATURE || ''
 	}
 
-	public createToken = (AuthTokenPayloadDto: any, maxAge: number = 3 * 24 * 60 * 60) => {
+	public createToken = (AuthTokenPayloadDto: any, maxAge?: number) => {
 		if (!this.signature) {
 			throw new OperationError('SIGNATURE_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
-		const jwtToken = jwt.sign(AuthTokenPayloadDto, this.signature, {
-			expiresIn: maxAge,
-		})
-		return jwtToken
+		const options: jwt.SignOptions = maxAge ? { expiresIn: maxAge } : {};
+		const jwtToken = jwt.sign(AuthTokenPayloadDto, this.signature, options);
+		return jwtToken;
 	}
 
 	public decryptToken = <T>(token: string) => {
