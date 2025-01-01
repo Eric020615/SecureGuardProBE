@@ -14,13 +14,18 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { DocumentStatusEnum, FacilityEnum, PaginationDirectionEnum } from '../common/constants'
 import { FacilityBookings } from '../models/facilities.model'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
 
 @provideSingleton(FacilityService)
 export class FacilityService {
+	private authAdmin
 	constructor(
 		@inject(FacilityBookingRepository)
 		private facilityRepository: FacilityBookingRepository,
-	) {}
+		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
+	) {
+		this.authAdmin = this.firebaseAdmin.auth
+	}
 	createFacilityBookingService = async (createFacilityBookingDto: CreateFacilityBookingDto, userId: string) => {
 		try {
 			let facilitySlot: SpaceAvailabilityDto
@@ -40,7 +45,10 @@ export class FacilityService {
 				createFacilityBookingDto.bookedBy ? createFacilityBookingDto.bookedBy : userId,
 			)
 			if (isBookedBefore) {
-				throw new OperationError('An upcoming booking already exists for this account.', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				throw new OperationError(
+					'An upcoming booking already exists for this account.',
+					HttpStatusCode.INTERNAL_SERVER_ERROR,
+				)
 			}
 			await this.facilityRepository.createFacilityBookingRepository(
 				new FacilityBookings(
@@ -100,23 +108,28 @@ export class FacilityService {
 				limit,
 			)
 			let data: GetFacilityBookingHistoryDto[] = []
-			data = rows
-				? rows.map((facilityBooking) => {
-						return {
-							bookingId: facilityBooking.id,
-							bookingGuid: facilityBooking.guid,
-							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
-							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-							facilityId: FacilityEnum[facilityBooking.facility],
-							bookedBy: facilityBooking.bookedBy,
-							numOfGuest: facilityBooking.numOfGuest,
-							isCancelled: facilityBooking.isCancelled,
-							status: DocumentStatusEnum[facilityBooking.status],
-							createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
-							updatedDateTime: convertTimestampToUserTimezone(facilityBooking.updatedDateTime),
-						} as GetFacilityBookingHistoryDto
-				  })
-				: []
+			data =
+				rows && rows.length > 0
+					? await Promise.all(
+							rows.map(async (facilityBooking) => {
+								return {
+									bookingId: facilityBooking.id,
+									bookingGuid: facilityBooking.guid,
+									startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
+									endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
+									facilityId: FacilityEnum[facilityBooking.facility],
+									bookedBy: (await this.authAdmin.getUser(facilityBooking.bookedBy))
+										? (await this.authAdmin.getUser(facilityBooking.bookedBy)).email
+										: '',
+									numOfGuest: facilityBooking.numOfGuest,
+									isCancelled: facilityBooking.isCancelled,
+									status: DocumentStatusEnum[facilityBooking.status],
+									createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
+									updatedDateTime: convertTimestampToUserTimezone(facilityBooking.updatedDateTime),
+								} as GetFacilityBookingHistoryDto
+							}),
+					  )
+					: []
 			return { data, count }
 		} catch (error: any) {
 			console.log(error)
@@ -129,6 +142,8 @@ export class FacilityService {
 			let facilityBooking: FacilityBookings =
 				await this.facilityRepository.getFacilityBookingDetailsByFacilityBookingGuidRepository(facilityBookingGuid)
 			let data: GetFacilityBookingDetailsDto = {} as GetFacilityBookingDetailsDto
+			const createdBy = await this.authAdmin.getUser(facilityBooking.createdBy)
+			const updatedBy = await this.authAdmin.getUser(facilityBooking.updatedBy)
 			data = {
 				bookingId: facilityBooking.id,
 				bookingGuid: facilityBooking.guid ? facilityBooking.guid : '',
@@ -140,9 +155,9 @@ export class FacilityService {
 				isCancelled: facilityBooking.isCancelled,
 				cancelRemark: facilityBooking.cancelRemark,
 				status: DocumentStatusEnum[facilityBooking.status],
-				createdBy: facilityBooking.createdBy,
+				createdBy: createdBy.email ? createdBy.email : '',
 				createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
-				updatedBy: facilityBooking.updatedBy,
+				updatedBy: updatedBy.email ? updatedBy.email : '',
 				updatedDateTime: convertTimestampToUserTimezone(facilityBooking.updatedDateTime),
 			} as GetFacilityBookingDetailsDto
 			return data

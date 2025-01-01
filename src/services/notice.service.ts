@@ -9,13 +9,18 @@ import { DocumentStatusEnum, PaginationDirectionEnum } from '../common/constants
 import { FileService } from './file.service'
 import { arrayRemove, arrayUnion } from 'firebase/firestore'
 import { Notices } from '../models/notices.model'
+import { FirebaseAdmin } from '../config/firebaseAdmin'
 
 @provideSingleton(NoticeService)
 export class NoticeService {
+	private authAdmin
 	constructor(
 		@inject(NoticeRepository) private noticeRepository: NoticeRepository,
 		@inject(FileService) private fileService: FileService,
-	) {}
+		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
+	) {
+		this.authAdmin = this.firebaseAdmin.auth
+	}
 	createNoticeService = async (createNoticeDto: CreateNoticeDto, userId: string) => {
 		try {
 			const noticeGuid = await this.noticeRepository.createNoticeRepository(
@@ -103,6 +108,8 @@ export class NoticeService {
 			const notice = await this.noticeRepository.getNoticeDetailsByIdRepository(noticeGuid)
 			let data: GetNoticeDetailsDto = {} as GetNoticeDetailsDto
 			const attachments = await this.fileService.getFilesByGuidsService(notice.attachments)
+			const createdBy = await this.authAdmin.getUser(notice.createdBy)
+			const updatedBy = await this.authAdmin.getUser(notice.updatedBy)
 			if (notice != null) {
 				data = {
 					noticeId: notice.id,
@@ -113,9 +120,9 @@ export class NoticeService {
 					endDate: convertTimestampToUserTimezone(notice.endDate),
 					attachments: attachments,
 					status: DocumentStatusEnum[notice.status],
-					createdBy: notice.createdBy,
+					createdBy: createdBy.email ? createdBy.email : '',
 					createdDateTime: convertTimestampToUserTimezone(notice.createdDateTime),
-					updatedBy: notice.updatedBy,
+					updatedBy: updatedBy.email ? updatedBy.email : '',
 					updatedDateTime: convertTimestampToUserTimezone(notice.updatedDateTime),
 				} as GetNoticeDetailsDto
 			}
