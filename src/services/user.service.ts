@@ -21,12 +21,7 @@ import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { SendGridTemplateIds, SubUserRegistrationTemplateData } from '../common/sendGrid'
 import * as dotenv from 'dotenv'
-import {
-	DocumentStatusEnum,
-	GenderEnum,
-	PaginationDirectionEnum,
-	RoleEnum,
-} from '../common/constants'
+import { DocumentStatusEnum, GenderEnum, PaginationDirectionEnum, RoleEnum } from '../common/constants'
 import { SubUserAuthTokenPayloadDto } from '../dtos/auth.dto'
 import { JwtConfig } from '../config/jwtConfig'
 import { FileService } from './file.service'
@@ -97,7 +92,7 @@ export class UserService {
 				throw new OperationError('Invalid request', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 
-			if (role === 'SA' && this.instanceOfCreateResidentDto(createUserDto)) {
+			if (role === 'RES' && this.instanceOfCreateResidentDto(createUserDto)) {
 				const supportedDocuments = await this.fileService.uploadMultipleFilesService(
 					createUserDto.supportedDocuments,
 					`supportedDocuments/${userGuid}`,
@@ -464,11 +459,14 @@ export class UserService {
 				updatedBy: userId,
 				updatedDateTime: getCurrentTimestamp(),
 			})
-			const token = this.jwtConfig.createToken({
-				subUserEmail: createSubUserRequestDto.email,
-				parentUserGuid: userId,
-				subUserRequestGuid: subUserRequestGuid,
-			} as SubUserAuthTokenPayloadDto, 3 * 24 * 60 * 60)
+			const token = this.jwtConfig.createToken(
+				{
+					subUserEmail: createSubUserRequestDto.email,
+					parentUserGuid: userId,
+					subUserRequestGuid: subUserRequestGuid,
+				} as SubUserAuthTokenPayloadDto,
+				3 * 24 * 60 * 60,
+			)
 			if (!token) {
 				throw new OperationError('Failed to generate token', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}

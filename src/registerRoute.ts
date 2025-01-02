@@ -18,28 +18,6 @@ const corsOptions = {
 }
 
 export const registerRoutes = (app: express.Express) => {
-	// const getErrorBody = (err: unknown) => {
-
-	//   if (err instanceof ValidateError) {
-	//     return {
-	//       message: err.message,
-	//       status: HttpStatusCode.BAD_REQUEST,
-	//       fields: err.fields,
-	//       name: err.name,
-	//     };
-	//   } else if (err instanceof OperationError) {
-	//     return {
-	//       message: err.message,
-	//       status: err.status,
-	//     };
-	//   } else {
-	//     return {
-	//       message: "UNKNOWN_ERROR",
-	//       status: HttpStatusCode.INTERNAL_SERVER_ERROR,
-	//     };
-	//   }
-	// };
-
 	app
 		.use(cors(corsOptions))
 		.use(express.urlencoded({ extended: true, limit: '50mb' }))
