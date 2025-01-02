@@ -96,5 +96,11 @@ export const calculateDateDifference = (
 	if (!startDateString || !endDateString) return 0
 	const start = moment.utc(startDateString)
 	const end = moment.utc(endDateString)
-	return end.diff(start, timeUnit) 
+	return end.diff(start, timeUnit)
+}
+
+export const isWithinMinutesBefore = (dateTime: string, minutes: number) => {
+	const visitTime = moment.utc(dateTime)
+	const currentTime = moment().utc()
+	return currentTime.isAfter(visitTime.subtract(minutes, 'minutes')) && currentTime.isBefore(visitTime)
 }

@@ -48,7 +48,8 @@ export class ParcelController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('USER_NOT_FOUND', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			let userData = await this.userService.getUserDetailsByIdService(request.userGuid)
+			const userGuid = await this.userService.getEffectiveUserGuidService(request.userGuid, request.role)
+			let userData = await this.userService.getUserDetailsByIdService(userGuid)
 			let roleInformation = userData.roleInformation as ResidentInformationDto
 			let { data, count } = await this.parcelService.getParcelByResidentService(
 				id,
