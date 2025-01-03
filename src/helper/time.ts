@@ -42,6 +42,10 @@ export const getCurrentDateString = (dateFormat: string) => {
 	return moment().utc().format(dateFormat)
 }
 
+export const getCurrentDateStringInUTC8 = (dateFormat: string = ITimeFormat.isoDateTime) => {
+	return moment().utcOffset(8).format(dateFormat)
+}
+
 // Convert a DateTimeOffset string to a Date object
 export const convertDateStringToDate = (dateString: string) => {
 	if (!dateString) return null
@@ -87,6 +91,16 @@ export const addTimeToDateString = (
 	return moment(dateString).utc().add(amount, timeUnit).format(dateFormat)
 }
 
+export const addTimeToDateStringInUTC8 = (
+	dateString: string,
+	timeUnit: moment.unitOfTime.DurationConstructor,
+	amount: number,
+	dateFormat: string = ITimeFormat.isoDateTime,
+): string => {
+	if (!dateString) return '';
+	return moment(dateString).utcOffset(8).add(amount, timeUnit).format(dateFormat);
+};
+
 // Calculate the difference between two date strings
 export const calculateDateDifference = (
 	startDateString: string,
@@ -99,8 +113,11 @@ export const calculateDateDifference = (
 	return end.diff(start, timeUnit)
 }
 
-export const isWithinMinutesBefore = (dateTime: string, minutes: number) => {
-	const visitTime = moment.utc(dateTime)
+export const isWithinTimeRange = (dateTimeString: string, minutes: number) => {
+	const dateTime = moment.utc(dateTimeString)
 	const currentTime = moment().utc()
-	return currentTime.isAfter(visitTime.subtract(minutes, 'minutes')) && currentTime.isBefore(visitTime)
+
+	const startTime = dateTime.clone().subtract(minutes, 'minutes') // 15 minutes before visitTime
+	const endTime = dateTime.clone().add(minutes, 'minutes') // 15 minutes after visitTime
+	return currentTime.isBetween(startTime, endTime, null, '[)')
 }

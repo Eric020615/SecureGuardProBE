@@ -17,7 +17,7 @@ import {
 	convertTimestampToUserTimezone,
 	getCurrentDateString,
 	getCurrentTimestamp,
-	isWithinMinutesBefore,
+	isWithinTimeRange,
 } from '../helper/time'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
@@ -216,16 +216,16 @@ export class VisitorService {
 		try {
 			const visitors = await this.visitorRepository.getVisitorDetailsRepository(visitorGuid)
 			let data: GetVisitorDetailsByTokenDto = {} as GetVisitorDetailsByTokenDto
-			if (visitors.visitDateTime < getCurrentTimestamp()) {
-				throw new OperationError('Visitors pass expired', HttpStatusCode.INTERNAL_SERVER_ERROR)
-			}
 			// Check if the current time is within 15 minutes before the visit time
-			if (!isWithinMinutesBefore(convertTimestampToUserTimezone(visitors.visitDateTime), 15)) {
+			if (!isWithinTimeRange(convertTimestampToUserTimezone(visitors.visitDateTime), 15)) {
 				throw new OperationError(
-					'You can only check in within 15 minutes of your visit time.',
+					'You can only check in within 15 minutes before or after your visit time.',
 					HttpStatusCode.FORBIDDEN,
 				)
 			}
+			// if (visitors.visitDateTime < getCurrentTimestamp()) {
+			// 	throw new OperationError('Visitors pass expired', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			// }
 
 			data = {
 				visitorId: visitors.id,

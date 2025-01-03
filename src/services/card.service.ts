@@ -22,9 +22,11 @@ import {
 import { CreateStaffDto } from '../dtos/microengine.dto'
 import {
 	addTimeToDateString,
-	convertDateStringToFormattedString,
+	addTimeToDateStringInUTC8,
 	getCurrentDateString,
+	getCurrentDateStringInUTC8,
 	getCurrentTimestamp,
+	isWithinTimeRange,
 } from '../helper/time'
 import { UserRepository } from '../repositories/user.repository'
 import { MegeyeService } from './megeye.service'
@@ -168,6 +170,7 @@ export class CardService {
 			if (userData.badgeNumber === '') {
 				throw new OperationError('User card not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
+			let currentDateTime = getCurrentDateStringInUTC8(ITimeFormat.isoDateTime)
 
 			// get effective user guid
 			const effectiveUserGuid = await this.userService.getEffectiveUserGuidService(userGuid, role)
@@ -212,17 +215,14 @@ export class CardService {
 				},
 				AccessControlData: {
 					...StaffConst.AccessControlData,
-					AccessEntryDate: getCurrentDateString(ITimeFormat.dateTime),
-					AccessExitDate: addTimeToDateString(getCurrentDateString(ITimeFormat.date), 'years', 1, ITimeFormat.dateTime),
+					AccessEntryDate: currentDateTime,
+					AccessExitDate: addTimeToDateStringInUTC8(currentDateTime, 'years', 1, ITimeFormat.isoDateTime),
 				},
 				UserId: this.generateUserId(role, userData.userId, 'ISO14443ACSN'),
 				UserName: userData.firstName + ' ' + userData.lastName,
 				UserType: 'Normal',
 			} as CreateStaffDto
 
-			// create user card and person
-			await this.microEngineService.addUser(staffInfo, userGuid, userData.badgeNumber)
-			await this.microEngineService.sendByCardGuid()
 			await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[role],
 				id: effectiveUserGuid,
@@ -239,6 +239,9 @@ export class CardService {
 				phone_num: userData.contactNumber,
 				card_number: userData.badgeNumber,
 			})
+			// create user card and person
+			await this.microEngineService.addUser(staffInfo, userGuid, userData.badgeNumber)
+			await this.microEngineService.sendByCardGuid()
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -249,6 +252,13 @@ export class CardService {
 		createUpdateVisitorFaceAuthDto: CreateUpdateVisitorFaceAuthDto,
 	) => {
 		try {
+			if (!isWithinTimeRange(createUpdateVisitorFaceAuthDto.visitorDetails.visitDateTime, 15)) {
+				throw new OperationError(
+					'You can only check in within 15 minutes before or after your visit time.',
+					HttpStatusCode.FORBIDDEN,
+				)
+			}
+			let currentDateTime = getCurrentDateStringInUTC8(ITimeFormat.isoDateTime)
 			// get resident guid
 			const residentGuid = await this.userService.getEffectiveUserGuidService(
 				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
@@ -285,36 +295,6 @@ export class CardService {
 				return
 			}
 
-			// if not exists create new card and person
-			let staffInfo = {
-				...StaffConst,
-				Profile: {
-					...StaffConst.Profile,
-					Department: DepartmentEnum.VI,
-					JobTitle: JobTitleEnum.VI,
-					EmailAddress: createUpdateVisitorFaceAuthDto.visitorDetails.visitorEmail,
-					ContactNo: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
-					Remark1: `Resident userGuid: ${residentGuid}`,
-					Remark2: `Staff PIC userGuid: ${staffGuid}`,
-				},
-				AccessControlData: {
-					...StaffConst.AccessControlData,
-					AccessEntryDate: convertDateStringToFormattedString(
-						createUpdateVisitorFaceAuthDto.visitorDetails.visitDateTime,
-						ITimeFormat.dateTime,
-					),
-					AccessExitDate: addTimeToDateString(
-						createUpdateVisitorFaceAuthDto.visitorDetails.visitDateTime,
-						'hours',
-						2,
-						ITimeFormat.dateTime,
-					),
-				},
-				UserId: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
-				UserName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
-				UserType: 'Normal',
-			} as CreateStaffDto
-
 			const badgeNumber = await this.createBadgeNumber(
 				staffGuid,
 				RoleEnum.VI,
@@ -325,13 +305,6 @@ export class CardService {
 				throw new OperationError('Failed to create badge number', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 
-			// create user card and person
-			await this.microEngineService.addUser(
-				staffInfo,
-				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-				badgeNumber.toString(),
-			)
-			await this.microEngineService.sendByCardGuid()
 			await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum.VI,
 				id: createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
@@ -347,7 +320,38 @@ export class CardService {
 				person_code: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
 				phone_num: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
 				card_number: badgeNumber.toString(),
+				visit_begin_time: currentDateTime,
+				visit_end_time: addTimeToDateStringInUTC8(currentDateTime, 'hours', 2, ITimeFormat.isoDateTime),
 			})
+
+			// if not exists create new card and person
+			let staffInfo = {
+				...StaffConst,
+				Profile: {
+					...StaffConst.Profile,
+					Department: DepartmentEnum.VI,
+					JobTitle: JobTitleEnum.VI,
+					EmailAddress: createUpdateVisitorFaceAuthDto.visitorDetails.visitorEmail,
+					ContactNo: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
+					Remark1: `Resident userGuid: ${residentGuid}`,
+					Remark2: `Staff PIC userGuid: ${staffGuid}`,
+				},
+				AccessControlData: {
+					...StaffConst.AccessControlData,
+					AccessEntryDate: currentDateTime,
+					AccessExitDate: addTimeToDateStringInUTC8(currentDateTime, 'hours', 2, ITimeFormat.isoDateTime),
+				},
+				UserId: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
+				UserName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
+				UserType: 'Normal',
+			} as CreateStaffDto
+			// create user card and person
+			await this.microEngineService.addUser(
+				staffInfo,
+				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
+				badgeNumber.toString(),
+			)
+			await this.microEngineService.sendByCardGuid()
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
