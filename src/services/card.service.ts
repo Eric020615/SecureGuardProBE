@@ -112,7 +112,7 @@ export class CardService {
 					EmailAddress: userData.email,
 					ContactNo: userData.contactNumber,
 					Remark1: `userGuid: ${userData.userId.toString()}`,
-					Remark2: `referralUserGuid ${userData.role == 'SUB' ? referralUserGuid : ''}`,
+					Remark2: `${userData.role == 'SUB' ? `referralUserGuid: ${referralUserGuid}` : ''}`,
 				},
 				AccessControlData: {
 					...StaffConst.AccessControlData,
@@ -173,13 +173,13 @@ export class CardService {
 			let currentDateTime = getCurrentDateStringInUTC8(ITimeFormat.isoDateTime)
 
 			// get effective user guid
-			const effectiveUserGuid = await this.userService.getEffectiveUserGuidService(userGuid, role)
+			const referralUserGuid = await this.userService.getEffectiveUserGuidService(userGuid, role)
 
 			// query user card and person details
+			const personDetails = await this.megeyeService.queryPersonDetailsById(userGuid)
 			const userCard = await this.microEngineService.getUserById(
 				this.generateUserId(role, userData.userId, 'ISO14443ACSN'),
 			)
-			const personDetails = await this.megeyeService.queryPersonDetailsById(effectiveUserGuid)
 
 			// if exists update the access control details
 			if (userCard && personDetails) {
@@ -197,7 +197,7 @@ export class CardService {
 						],
 						phone_num: userData.contactNumber,
 					},
-					effectiveUserGuid,
+					userGuid,
 				)
 				return
 			}
@@ -212,6 +212,8 @@ export class CardService {
 					JobTitle: JobTitleEnum[role],
 					EmailAddress: userData.email,
 					ContactNo: userData.contactNumber,
+					Remark1: `userGuid: ${userData.userId.toString()}`,
+					Remark2: `${userData.role == 'SUB' ? `referralUserGuid: ${referralUserGuid}` : ''}`,
 				},
 				AccessControlData: {
 					...StaffConst.AccessControlData,
@@ -225,7 +227,7 @@ export class CardService {
 
 			await this.megeyeService.createPerson({
 				recognition_type: RoleRecognitionTypeEnum[role],
-				id: effectiveUserGuid,
+				id: userGuid,
 				is_admin: userData.role === 'SUB' ? true : false,
 				person_name: userData.firstName + ' ' + userData.lastName,
 				group_list: ['1'],
