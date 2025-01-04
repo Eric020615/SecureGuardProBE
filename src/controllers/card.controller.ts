@@ -139,16 +139,8 @@ export class CardController extends Controller {
 			return response
 		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			if (err instanceof OperationError) {
-				const response = {
-					message: err.message ? err.message : '',
-					status: '500',
-					data: null,
-				}
-				return response
-			}
 			const response = {
-				message: err,
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}
@@ -179,16 +171,8 @@ export class CardController extends Controller {
 			return response
 		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			if (err instanceof OperationError) {
-				const response = {
-					message: err.message ? err.message : '',
-					status: '500',
-					data: null,
-				}
-				return response
-			}
 			const response = {
-				message: err,
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}
@@ -217,10 +201,10 @@ export class CardController extends Controller {
 				data: null,
 			}
 			return response
-		} catch (err) {
+		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
 			const response = {
-				message: 'Failed to upload visitor face auth',
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}

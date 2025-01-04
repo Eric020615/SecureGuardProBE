@@ -55,16 +55,8 @@ export class AuthController extends Controller {
 			return response
 		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			if (err instanceof OperationError) {
-				const response = {
-					message: err.message ? err.message : '',
-					status: '500',
-					data: null,
-				}
-				return response
-			}
 			const response = {
-				message: '',
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}
@@ -91,16 +83,8 @@ export class AuthController extends Controller {
 			return response
 		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			if (err instanceof OperationError) {
-				const response = {
-					message: err.message ? err.message : '',
-					status: '500',
-					data: null,
-				}
-				return response
-			}
 			const response = {
-				message: err,
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}
@@ -126,16 +110,8 @@ export class AuthController extends Controller {
 			return response
 		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			if (err instanceof OperationError) {
-				const response = {
-					message: err.message ? err.message : '',
-					status: '500',
-					data: null,
-				}
-				return response
-			}
 			const response = {
-				message: err,
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}
@@ -166,16 +142,8 @@ export class AuthController extends Controller {
 			return response
 		} catch (err: any) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			if (err instanceof OperationError) {
-				const response = {
-					message: err.message ? err.message : '',
-					status: '500',
-					data: null,
-				}
-				return response
-			}
 			const response = {
-				message: err,
+				message: err.message ? err.message : '',
 				status: '500',
 				data: null,
 			}

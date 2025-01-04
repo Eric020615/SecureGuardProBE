@@ -20,7 +20,18 @@ export class MegeyeService {
 				data: createPersonDto,
 			})
 			if (!success) {
-				throw new OperationError('Failed to create user face auth', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				// Assuming response is an array of ErrorDetail objects
+				if (Array.isArray(response) && response.length > 0) {
+					const errorDetail = response[0]
+					// Throw the error with the message from the response
+					throw new OperationError(
+						errorDetail.detail || 'Failed to create user face auth', // Use the error detail from the first object or fallback
+						HttpStatusCode.INTERNAL_SERVER_ERROR,
+					)
+				} else {
+					// Fallback if the response does not contain any errors
+					throw new OperationError('Failed to create user face auth', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				}
 			}
 			return response
 		} catch (error: any) {
@@ -36,11 +47,22 @@ export class MegeyeService {
 				data: editPersonDto,
 			})
 			if (!success) {
-				throw new OperationError('Failed to edit user face auth', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				// Assuming response is an array of ErrorDetail objects
+				if (Array.isArray(response.errors) && response.errors.length > 0) {
+					const errorDetail = response.errors[0]
+					// Throw the error with the message from the response
+					throw new OperationError(
+						errorDetail.detail || 'Failed to create user face auth', // Use the error detail from the first object or fallback
+						HttpStatusCode.INTERNAL_SERVER_ERROR,
+					)
+				} else {
+					// Fallback if the response does not contain any errors
+					throw new OperationError('Failed to edit user face auth', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				}
 			}
 			return response
 		} catch (error: any) {
-			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+			throw new OperationError(error.message, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
 

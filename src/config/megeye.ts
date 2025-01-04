@@ -68,14 +68,11 @@ export class MegeyeManager {
 	public async requestNewCookie(): Promise<void> {
 		try {
 			// get salt, challenge and temp session_id
-			const challengeResponse = await this.client.get(
-				`${this.megeyeConfig.apiBaseUrl}/api/auth/login/challenge`,
-				{
-					params: {
-						username: this.megeyeConfig.megeyeUsername,
-					},
+			const challengeResponse = await this.client.get(`${this.megeyeConfig.apiBaseUrl}/api/auth/login/challenge`, {
+				params: {
+					username: this.megeyeConfig.megeyeUsername,
 				},
-			)
+			})
 			if (challengeResponse.status !== 200) {
 				throw new Error('Failed to obtain challenge')
 			}
@@ -123,103 +120,94 @@ export class MegeyeManager {
 
 				const performRequest = async (): Promise<AxiosInstance> => {
 					let response: AxiosResponse = {} as AxiosResponse
-					while (!success && attempt < maxAttempt) {
-						attempt++
-						try {
-							// Perform the API request
-							if (type === 'get') {
-								response = await client.get(baseURL, {
-									params: data,
-									responseType: isBloob ? 'blob' : 'json',
-									paramsSerializer: (params) => this.parseParams(params),
-									headers: {
-										'Content-Type': 'application/json',
-										...(token != null
-											? {
-													Authorization: `${token}`,
-											  }
-											: {}),
-									},
-								})
-							} else if (type === 'put') {
-								response = await client.put(
-									baseURL,
-									payload.isUrlencoded ? queryString.stringify(data) : data,
-									{
-										headers: {
-											'Content-Type': payload.isFormData
-												? 'multipart/form-data'
-												: payload.isUrlencoded
-												? 'application/x-www-form-urlencoded'
-												: 'application/json',
-											...(token != null
-												? {
-														Authorization: `${token}`,
-												  }
-												: {}),
-										},
-										params: payload.params,
-										paramsSerializer: (params) => this.parseParams(params),
-									},
-								)
-							} else if (type === 'patch') {
-								response = await client.patch(
-									baseURL,
-									payload.isUrlencoded ? queryString.stringify(data) : data,
-									{
-										headers: {
-											'Content-Type': payload.isFormData
-												? 'multipart/form-data'
-												: payload.isUrlencoded
-												? 'application/x-www-form-urlencoded'
-												: 'application/json',
-											...(token != null
-												? {
-														Authorization: `${token}`,
-												  }
-												: {}),
-										},
-									},
-								)
-							} else if (type === 'delete') {
-								response = await client.delete(baseURL, {
-									headers: {
-										'Content-Type': payload.isFormData
-											? 'multipart/form-data'
-											: payload.isUrlencoded
-											? 'application/x-www-form-urlencoded'
-											: 'application/json',
-										...(token != null
-											? {
-													Authorization: `${token}`,
-											  }
-											: {}),
-									},
-									data: data,
-								})
-							} else {
-								response = await client.post(baseURL, data, {
-									headers: {
-										'Content-Type': payload.isFormData
-											? 'multipart/form-data'
-											: payload.isUrlencoded
-											? 'application/x-www-form-urlencoded'
-											: 'application/json',
-										...(token != null
-											? {
-													Authorization: `${token}`,
-											  }
-											: {}),
-									},
-									params: payload.params,
-									paramsSerializer: (params) => this.parseParams(params),
-								})
-							}
-							success = true
-						} catch (error: any) {
-							response = error.response
-							console.log(error.response.data)
+					// while (!success && attempt < maxAttempt) {
+					// 	attempt++
+					try {
+						// Perform the API request
+						if (type === 'get') {
+							response = await client.get(baseURL, {
+								params: data,
+								responseType: isBloob ? 'blob' : 'json',
+								paramsSerializer: (params) => this.parseParams(params),
+								headers: {
+									'Content-Type': 'application/json',
+									...(token != null
+										? {
+												Authorization: `${token}`,
+										  }
+										: {}),
+								},
+							})
+						} else if (type === 'put') {
+							response = await client.put(baseURL, payload.isUrlencoded ? queryString.stringify(data) : data, {
+								headers: {
+									'Content-Type': payload.isFormData
+										? 'multipart/form-data'
+										: payload.isUrlencoded
+										? 'application/x-www-form-urlencoded'
+										: 'application/json',
+									...(token != null
+										? {
+												Authorization: `${token}`,
+										  }
+										: {}),
+								},
+								params: payload.params,
+								paramsSerializer: (params) => this.parseParams(params),
+							})
+						} else if (type === 'patch') {
+							response = await client.patch(baseURL, payload.isUrlencoded ? queryString.stringify(data) : data, {
+								headers: {
+									'Content-Type': payload.isFormData
+										? 'multipart/form-data'
+										: payload.isUrlencoded
+										? 'application/x-www-form-urlencoded'
+										: 'application/json',
+									...(token != null
+										? {
+												Authorization: `${token}`,
+										  }
+										: {}),
+								},
+							})
+						} else if (type === 'delete') {
+							response = await client.delete(baseURL, {
+								headers: {
+									'Content-Type': payload.isFormData
+										? 'multipart/form-data'
+										: payload.isUrlencoded
+										? 'application/x-www-form-urlencoded'
+										: 'application/json',
+									...(token != null
+										? {
+												Authorization: `${token}`,
+										  }
+										: {}),
+								},
+								data: data,
+							})
+						} else {
+							response = await client.post(baseURL, data, {
+								headers: {
+									'Content-Type': payload.isFormData
+										? 'multipart/form-data'
+										: payload.isUrlencoded
+										? 'application/x-www-form-urlencoded'
+										: 'application/json',
+									...(token != null
+										? {
+												Authorization: `${token}`,
+										  }
+										: {}),
+								},
+								params: payload.params,
+								paramsSerializer: (params) => this.parseParams(params),
+							})
 						}
+						success = true
+					} catch (error: any) {
+						response = error.response
+						console.log(error.response.data)
 					}
 					if (!success) {
 						console.log('All attempts to perform request failed')
@@ -234,7 +222,7 @@ export class MegeyeManager {
 			}
 		}
 
-		const data = await  _handler(payload)
+		const data = await _handler(payload)
 		return data
 	}
 
@@ -302,7 +290,7 @@ export const listUrl = {
 			path: '/api/persons/item/{id}',
 			type: IType.put,
 		},
-    queryPersonDetailsById: {
+		queryPersonDetailsById: {
 			path: '/api/persons/item/{id}',
 			type: IType.get,
 		},
