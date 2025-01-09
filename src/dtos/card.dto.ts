@@ -16,7 +16,7 @@ export interface CreateUpdateFaceAuthDto {
 }
 
 export interface CreateUpdateVisitorFaceAuthDto {
-	visitorDetails: GetVisitorDetailsByTokenDto
+	visitorGuid: string
 	faceData: GeneralFileDto
 }
 

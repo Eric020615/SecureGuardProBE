@@ -23,6 +23,7 @@ import { CreateStaffDto } from '../dtos/microengine.dto'
 import {
 	addTimeToDateString,
 	addTimeToDateStringInUTC8,
+	convertTimestampToUserTimezone,
 	getCurrentDateString,
 	getCurrentDateStringInUTC8,
 	getCurrentTimestamp,
@@ -33,6 +34,8 @@ import { MegeyeService } from './megeye.service'
 import { CardRepository } from '../repositories/card.repository'
 import { Cards } from '../models/cards.model'
 import { Users } from '../models/users.model'
+import { VisitorRepository } from '../repositories/visitor.repository'
+import { Visitors } from '../models/visitors.model'
 
 @provideSingleton(CardService)
 export class CardService {
@@ -43,6 +46,7 @@ export class CardService {
 		private megeyeService: MegeyeService,
 		@inject(UserRepository) private userRepository: UserRepository,
 		@inject(CardRepository) private cardRepository: CardRepository,
+		@inject(VisitorRepository) private visitorRepository: VisitorRepository,
 	) {}
 
 	// create card
@@ -223,31 +227,45 @@ export class CardService {
 		createUpdateVisitorFaceAuthDto: CreateUpdateVisitorFaceAuthDto,
 	) => {
 		try {
-			if (!isWithinTimeRange(createUpdateVisitorFaceAuthDto.visitorDetails.visitDateTime, 15)) {
+			const visitorDetails = await this.visitorRepository.getVisitorDetailsRepository(
+				createUpdateVisitorFaceAuthDto.visitorGuid,
+			)
+			if (visitorDetails == null) {
+				throw new OperationError('Visitor not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			if (!isWithinTimeRange(convertTimestampToUserTimezone(visitorDetails.visitDateTime, ITimeFormat.isoDateTime), 15)) {
 				throw new OperationError(
 					'You can only check in within 15 minutes before or after your visit time.',
 					HttpStatusCode.FORBIDDEN,
 				)
 			}
 			let currentDateTime = getCurrentDateStringInUTC8(ITimeFormat.isoDateTime)
-			// get resident guid
 			const residentGuid = await this.userService.getEffectiveUserGuidService(
-				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
+				createUpdateVisitorFaceAuthDto.visitorGuid,
 				'VI',
 			)
-			const badgeNumber = await this.createBadgeNumber(
-				staffGuid,
-				RoleEnum.VI,
-				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-			)
-			if (badgeNumber === null) {
-				throw new OperationError('Failed to create badge number', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			let badgeNumber = visitorDetails.badgeNumber ? visitorDetails.badgeNumber : ''
+			if (badgeNumber === '') {
+				const result = await this.createBadgeNumber(
+					staffGuid,
+					RoleEnum.VI,
+					createUpdateVisitorFaceAuthDto.visitorGuid,
+				)
+				if (result === null) {
+					throw new OperationError('Failed to create badge number', HttpStatusCode.INTERNAL_SERVER_ERROR)
+				}
+				badgeNumber = result.toString()
+				await this.visitorRepository.editVisitorByIdRepository(
+					createUpdateVisitorFaceAuthDto.visitorGuid,
+					{
+						badgeNumber: badgeNumber,
+					} as Visitors,
+				)
 			}
-			
-			await this.createOrEditMegEyePerson(createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid, {
+			await this.createOrEditMegEyePerson(createUpdateVisitorFaceAuthDto.visitorGuid, {
 				recognitionType: RoleRecognitionTypeEnum.VI,
 				isAdmin: false,
-				personName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
+				personName: visitorDetails.visitorName,
 				groupList: ['1'],
 				faceList: [
 					{
@@ -255,26 +273,25 @@ export class CardService {
 						data: createUpdateVisitorFaceAuthDto.faceData.fileData,
 					},
 				],
-				personCode: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
-				phoneNum: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
-				cardNumber: badgeNumber.toString(),
+				personCode: this.generateUserId('VI', visitorDetails.id, 'ISO14443ACSN'),
+				phoneNum: visitorDetails.visitorContactNumber,
+				cardNumber: badgeNumber,
 				visitBeginTime: currentDateTime,
 				visitEndTime: addTimeToDateStringInUTC8(currentDateTime, 'hours', 2, ITimeFormat.isoDateTime),
 			})
-
 			await this.createMicroEngineUser(
-				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
+				createUpdateVisitorFaceAuthDto.visitorGuid,
 				'VI',
-				createUpdateVisitorFaceAuthDto.visitorDetails.visitorId,
-				badgeNumber.toString(),
+				visitorDetails.id,
+				badgeNumber,
 				{
 					...StaffConst,
 					Profile: {
 						...StaffConst.Profile,
 						Department: DepartmentEnum.VI,
 						JobTitle: JobTitleEnum.VI,
-						EmailAddress: createUpdateVisitorFaceAuthDto.visitorDetails.visitorEmail,
-						ContactNo: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
+						EmailAddress: visitorDetails.visitorEmail,
+						ContactNo: visitorDetails.visitorContactNumber,
 						Remark1: `Resident userGuid: ${residentGuid}`,
 						Remark2: `Staff PIC userGuid: ${staffGuid}`,
 					},
@@ -288,8 +305,8 @@ export class CardService {
 							ITimeFormat.dateTime,
 						),
 					},
-					UserId: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
-					UserName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
+					UserId: this.generateUserId('VI', visitorDetails.id, 'ISO14443ACSN'),
+					UserName: visitorDetails.visitorName,
 					UserType: 'Normal',
 				} as CreateStaffDto,
 			)

@@ -19,6 +19,16 @@ export const convertTimestampToUserTimezone = (
 	return moment(timestamp.toDate()).utc().format(timeFormat)
 }
 
+export const convertTimestampToDateString = (
+	timestamp: Timestamp | null,
+	timeFormat: string = ITimeFormat.isoDateTime,
+) => {
+	if (!timestamp) {
+		return ''
+	}
+	return moment(timestamp.toDate()).format(timeFormat)
+}
+
 export const getCurrentTimestamp = () => {
 	return Timestamp.fromDate(moment().utc().toDate())
 }

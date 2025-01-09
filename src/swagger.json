@@ -2370,15 +2370,15 @@
 			},
 			"CreateUpdateVisitorFaceAuthDto": {
 				"properties": {
-					"visitorDetails": {
-						"$ref": "#/components/schemas/GetVisitorDetailsByTokenDto"
+					"visitorGuid": {
+						"type": "string"
 					},
 					"faceData": {
 						"$ref": "#/components/schemas/GeneralFileDto"
 					}
 				},
 				"required": [
-					"visitorDetails",
+					"visitorGuid",
 					"faceData"
 				],
 				"type": "object",

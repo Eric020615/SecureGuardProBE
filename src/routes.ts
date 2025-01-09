@@ -831,7 +831,7 @@ const models: TsoaRoute.Models = {
     "CreateUpdateVisitorFaceAuthDto": {
         "dataType": "refObject",
         "properties": {
-            "visitorDetails": {"ref":"GetVisitorDetailsByTokenDto","required":true},
+            "visitorGuid": {"dataType":"string","required":true},
             "faceData": {"ref":"GeneralFileDto","required":true},
         },
         "additionalProperties": false,
