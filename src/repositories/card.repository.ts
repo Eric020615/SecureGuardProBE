@@ -1,10 +1,11 @@
-import { addDoc, collection, updateDoc } from 'firebase/firestore'
+import { addDoc, and, collection, getDocs, query, updateDoc, where } from 'firebase/firestore'
 import { FirebaseClient } from '../config/initFirebase'
 import { provideSingleton } from '../helper/provideSingleton'
 import { inject } from 'inversify'
 import { Cards } from '../models/cards.model'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { SequenceRepository } from './sequence.repository'
+import { DocumentStatusEnum } from '../common/constants'
 
 @provideSingleton(CardRepository)
 export class CardRepository {
@@ -34,5 +35,19 @@ export class CardRepository {
 			await updateDoc(docRef, { badgeNumber: id })
 			return id
 		})
+	}
+
+	async getCardByReferalUidRepository(referralUid: String) {
+		try {
+			const cardsQuery = query(
+				this.cardCollection,
+				and(where('referralUid', '==', referralUid), where('status', '==', DocumentStatusEnum.ACTIVE)),
+			)
+	
+			const cardsSnapshot = await getDocs(cardsQuery)
+			return cardsSnapshot
+		} catch (error) {
+			console.log(error)
+		}
 	}
 }

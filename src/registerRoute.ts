@@ -13,7 +13,7 @@ interface IError {
 }
 
 const corsOptions = {
-	origin: ['http://localhost:8081', 'http://localhost:8082', 'http://localhost:4000'],
+	origin: ['http://localhost:8081', 'http://localhost:8082', 'http://localhost:4000', 'http://10.167.58.192:4000'],
 	optionsSuccessStatus: 200,
 }
 

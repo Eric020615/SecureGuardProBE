@@ -67,6 +67,8 @@ export class MegeyeManager {
 
 	public async requestNewCookie(): Promise<void> {
 		try {
+			// can I make the cookie as null like clear all things
+			this.cookieJar.removeAllCookies()
 			// get salt, challenge and temp session_id
 			const challengeResponse = await this.client.get(`${this.megeyeConfig.apiBaseUrl}/api/auth/login/challenge`, {
 				params: {

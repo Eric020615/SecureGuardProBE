@@ -23,7 +23,6 @@ import { CreateStaffDto } from '../dtos/microengine.dto'
 import {
 	addTimeToDateString,
 	addTimeToDateStringInUTC8,
-	convertDateStringToFormattedString,
 	getCurrentDateString,
 	getCurrentDateStringInUTC8,
 	getCurrentTimestamp,
@@ -171,40 +170,24 @@ export class CardService {
 			if (userData.badgeNumber === '') {
 				throw new OperationError('User card not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-			let currentDateTime = getCurrentDateStringInUTC8(ITimeFormat.isoDateTime)
-
 			// get effective user guid
 			const referralUserGuid = await this.userService.getEffectiveUserGuidService(userGuid, role)
-
-			// query user card and person details
-			const personDetails = await this.megeyeService.queryPersonDetailsById(userGuid)
-			const userCard = await this.microEngineService.getUserById(
-				this.generateUserId(role, userData.userId, 'ISO14443ACSN'),
-			)
-
-			// if exists update the access control details
-			if (userCard && personDetails) {
-				await this.megeyeService.editPerson(
+			await this.createOrEditMegEyePerson(userGuid, {
+				recognitionType: RoleRecognitionTypeEnum[role],
+				isAdmin: userData.role === 'SUB' ? true : false,
+				personName: userData.firstName + ' ' + userData.lastName,
+				groupList: ['1'],
+				faceList: [
 					{
-						recognition_type: RoleRecognitionTypeEnum[role],
-						is_admin: userData.role === 'SA' ? true : false,
-						person_name: userData.firstName + ' ' + userData.lastName,
-						group_list: ['1'],
-						face_list: [
-							{
-								idx: 0,
-								data: createUpdateFaceAuthDto.faceData.fileData,
-							},
-						],
-						phone_num: userData.contactNumber,
+						idx: 0,
+						data: createUpdateFaceAuthDto.faceData.fileData,
 					},
-					userGuid,
-				)
-				return
-			}
-
-			// if not exists create new card and person
-			let staffInfo = {
+				],
+				personCode: this.generateUserId(role, userData.userId, 'ISO14443ACSN'), // for display purpose
+				phoneNum: userData.contactNumber,
+				cardNumber: userData.badgeNumber,
+			})
+			await this.createMicroEngineUser(userGuid, role, userData.userId, userData.badgeNumber, {
 				...StaffConst,
 				Profile: {
 					...StaffConst.Profile,
@@ -229,27 +212,7 @@ export class CardService {
 				UserId: this.generateUserId(role, userData.userId, 'ISO14443ACSN'),
 				UserName: userData.firstName + ' ' + userData.lastName,
 				UserType: 'Normal',
-			} as CreateStaffDto
-
-			await this.megeyeService.createPerson({
-				recognition_type: RoleRecognitionTypeEnum[role],
-				id: userGuid,
-				is_admin: userData.role === 'SUB' ? true : false,
-				person_name: userData.firstName + ' ' + userData.lastName,
-				group_list: ['1'],
-				face_list: [
-					{
-						idx: 0,
-						data: createUpdateFaceAuthDto.faceData.fileData,
-					},
-				],
-				person_code: this.generateUserId(role, userData.userId, 'ISO14443ACSN'), // for display purpose
-				phone_num: userData.contactNumber,
-				card_number: userData.badgeNumber,
-			})
-			// create user card and person
-			await this.microEngineService.addUser(staffInfo, userGuid, userData.badgeNumber)
-			await this.microEngineService.sendByCardGuid()
+			} as CreateStaffDto)
 		} catch (error: any) {
 			throw new OperationError(error.message, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -272,101 +235,64 @@ export class CardService {
 				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
 				'VI',
 			)
-
-			// query user card and person details
-			const personDetails = await this.megeyeService.queryPersonDetailsById(
-				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-			)
-
-			const userCard = await this.microEngineService.getUserById(
-				this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
-			)
-
-			// if exists update face auth
-			if (userCard && personDetails) {
-				// update face auth
-				await this.megeyeService.editPerson(
-					{
-						recognition_type: RoleRecognitionTypeEnum.VI,
-						is_admin: false,
-						person_name: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
-						group_list: ['1'],
-						face_list: [
-							{
-								idx: 0,
-								data: createUpdateVisitorFaceAuthDto.faceData.fileData,
-							},
-						],
-						phone_num: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
-					},
-					createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-				)
-				return
-			}
-
 			const badgeNumber = await this.createBadgeNumber(
 				staffGuid,
 				RoleEnum.VI,
 				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
 			)
-
 			if (badgeNumber === null) {
 				throw new OperationError('Failed to create badge number', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
-
-			// megeye create person
-			await this.megeyeService.createPerson({
-				recognition_type: RoleRecognitionTypeEnum.VI,
-				id: createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
-				is_admin: false,
-				person_name: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
-				group_list: ['1'],
-				face_list: [
+			
+			await this.createOrEditMegEyePerson(createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid, {
+				recognitionType: RoleRecognitionTypeEnum.VI,
+				isAdmin: false,
+				personName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
+				groupList: ['1'],
+				faceList: [
 					{
 						idx: 0,
 						data: createUpdateVisitorFaceAuthDto.faceData.fileData,
 					},
 				],
-				person_code: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
-				phone_num: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
-				card_number: badgeNumber.toString(),
-				visit_begin_time: currentDateTime,
-				visit_end_time: addTimeToDateStringInUTC8(currentDateTime, 'hours', 2, ITimeFormat.isoDateTime),
+				personCode: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
+				phoneNum: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
+				cardNumber: badgeNumber.toString(),
+				visitBeginTime: currentDateTime,
+				visitEndTime: addTimeToDateStringInUTC8(currentDateTime, 'hours', 2, ITimeFormat.isoDateTime),
 			})
 
-			// microengine create user
-			let staffInfo = {
-				...StaffConst,
-				Profile: {
-					...StaffConst.Profile,
-					Department: DepartmentEnum.VI,
-					JobTitle: JobTitleEnum.VI,
-					EmailAddress: createUpdateVisitorFaceAuthDto.visitorDetails.visitorEmail,
-					ContactNo: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
-					Remark1: `Resident userGuid: ${residentGuid}`,
-					Remark2: `Staff PIC userGuid: ${staffGuid}`,
-				},
-				AccessControlData: {
-					...StaffConst.AccessControlData,
-					AccessEntryDate: getCurrentDateString(ITimeFormat.dateTime),
-					AccessExitDate: addTimeToDateString(
-						getCurrentDateString(ITimeFormat.isoDateTime),
-						'hours',
-						2,
-						ITimeFormat.dateTime,
-					),
-				},
-				UserId: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
-				UserName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
-				UserType: 'Normal',
-			} as CreateStaffDto
-			// create user card and person
-			await this.microEngineService.addUser(
-				staffInfo,
+			await this.createMicroEngineUser(
 				createUpdateVisitorFaceAuthDto.visitorDetails.visitorGuid,
+				'VI',
+				createUpdateVisitorFaceAuthDto.visitorDetails.visitorId,
 				badgeNumber.toString(),
+				{
+					...StaffConst,
+					Profile: {
+						...StaffConst.Profile,
+						Department: DepartmentEnum.VI,
+						JobTitle: JobTitleEnum.VI,
+						EmailAddress: createUpdateVisitorFaceAuthDto.visitorDetails.visitorEmail,
+						ContactNo: createUpdateVisitorFaceAuthDto.visitorDetails.visitorContactNumber,
+						Remark1: `Resident userGuid: ${residentGuid}`,
+						Remark2: `Staff PIC userGuid: ${staffGuid}`,
+					},
+					AccessControlData: {
+						...StaffConst.AccessControlData,
+						AccessEntryDate: getCurrentDateString(ITimeFormat.dateTime),
+						AccessExitDate: addTimeToDateString(
+							getCurrentDateString(ITimeFormat.isoDateTime),
+							'hours',
+							2,
+							ITimeFormat.dateTime,
+						),
+					},
+					UserId: this.generateUserId('VI', createUpdateVisitorFaceAuthDto.visitorDetails.visitorId, 'ISO14443ACSN'),
+					UserName: createUpdateVisitorFaceAuthDto.visitorDetails.visitorName,
+					UserType: 'Normal',
+				} as CreateStaffDto,
 			)
-			await this.microEngineService.sendByCardGuid()
 		} catch (error: any) {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
@@ -405,5 +331,65 @@ export class CardService {
 
 		const friendlyAccessType = accessTypeLabels[accessType] || 'unknown'
 		return `${role} ${userId} ${friendlyAccessType}`
+	}
+
+	private async createOrEditMegEyePerson(
+		userGuid: string,
+		personData: {
+			recognitionType: string
+			isAdmin: boolean
+			personName: string
+			groupList: string[]
+			faceList: { idx: number; data: string }[]
+			phoneNum: string
+			personCode?: string
+			cardNumber?: string
+			visitBeginTime?: string
+			visitEndTime?: string
+		},
+	): Promise<void> {
+		const personDetails = await this.megeyeService.queryPersonDetailsById(userGuid)
+		// if exists update the access control details
+		if (personDetails) {
+			await this.megeyeService.editPerson(
+				{
+					recognition_type: personData.recognitionType,
+					is_admin: personData.isAdmin,
+					person_name: personData.personName,
+					group_list: personData.groupList,
+					face_list: personData.faceList,
+					phone_num: personData.phoneNum,
+				},
+				userGuid,
+			)
+		} else {
+			await this.megeyeService.createPerson({
+				recognition_type: personData.recognitionType,
+				id: userGuid,
+				is_admin: personData.isAdmin,
+				person_name: personData.personName,
+				group_list: personData.groupList,
+				face_list: personData.faceList,
+				phone_num: personData.phoneNum,
+				person_code: personData.personCode,
+				card_number: personData.cardNumber,
+				visit_begin_time: personData.visitBeginTime,
+				visit_end_time: personData.visitEndTime,
+			})
+		}
+	}
+
+	private async createMicroEngineUser(
+		userGuid: string,
+		role: keyof typeof RoleEnum,
+		userId: number,
+		badgeNumber: string,
+		staffInfo: CreateStaffDto,
+	): Promise<void> {
+		const userCard = await this.microEngineService.getUserById(this.generateUserId(role, userId, 'ISO14443ACSN'))
+		if (!userCard) {
+			await this.microEngineService.addUser(staffInfo, userGuid, badgeNumber)
+			await this.microEngineService.sendByCardGuid()
+		}
 	}
 }
