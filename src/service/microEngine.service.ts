@@ -23,8 +23,7 @@ export class MicroEngineService {
 	private refreshToken: string
 	private expiresAt: Date | null
 
-	constructor(
-	) {
+	constructor() {
 		this.apiKey = ''
 		this.refreshToken = ''
 		this.expiresAt = null
@@ -122,6 +121,10 @@ export class MicroEngineService {
 			listUrl.identityApi.auth.refreshToken.path,
 			listUrl.identityApi.auth.refreshToken.type,
 			{ refreshToken: this.refreshToken },
+			undefined,
+			{
+				Authorization: `Bearer ${this.apiKey}`,
+			},
 		)
 		if (!response) {
 			throw new Error('Failed to refresh token in microengine.')
@@ -140,7 +143,7 @@ export class MicroEngineService {
 			if (this.expiresAt) {
 				// if expires, refresh token
 				if (this.expiresAt && moment().isAfter(this.expiresAt)) {
-					this.refreshAccessToken()
+					await this.refreshAccessToken()
 				}
 			}
 		} catch (error) {
@@ -184,23 +187,27 @@ export class MicroEngineService {
 	}
 
 	async addUser(data: CreateStaffDto, badgeNumber: string) {
-		const odataQuery = `$filter=UserId eq '${data.UserId}' and Cards/any(c: c/BadgeNo eq '${badgeNumber}')`
-		const response = await this.getUserOdata(odataQuery)
-		if (response && response.value.length > 0) {
-			throw new Error(`User with UserId ${data.UserId} and BadgeNo ${badgeNumber} already exists.`)
+		try {
+			const odataQuery = `$filter=UserId eq '${data.UserId}' and Cards/any(c: c/BadgeNo eq '${badgeNumber}')`
+			const response = await this.getUserOdata(odataQuery)
+			if (response && response.value.length > 0) {
+				throw new Error(`User with UserId ${data.UserId} and BadgeNo ${badgeNumber} already exists.`)
+			}
+			data = {
+				...data,
+				Card: {
+					...data.Card,
+					BadgeNo: badgeNumber,
+				},
+			}
+			await this.apiRequest(
+				listUrl.cardDbManagementApi.users.add.path,
+				listUrl.cardDbManagementApi.users.add.type,
+				JSON.stringify(data),
+			)
+		} catch (error) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
-		data = {
-			...data,
-			Card: {
-				...data.Card,
-				BadgeNo: badgeNumber,
-			},
-		}
-		await this.apiRequest(
-			listUrl.cardDbManagementApi.users.add.path,
-			listUrl.cardDbManagementApi.users.add.type,
-			JSON.stringify(data),
-		)
 	}
 
 	async updateUser(userId: string, data: any) {
