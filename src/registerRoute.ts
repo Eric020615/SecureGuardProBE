@@ -5,15 +5,8 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJson from './swagger.json'
 
-interface IError {
-	status?: number
-	fields?: string[]
-	message?: string
-	name?: string
-}
-
 const corsOptions = {
-	origin: ['http://localhost:8081', 'http://localhost:8082', 'http://localhost:4000', 'http://10.167.58.192:4000'],
+	origin: ['http://localhost:8081', 'http://localhost:8082', 'http://localhost:4000', 'http://10.167.56.15:4000'],
 	optionsSuccessStatus: 200,
 }
 

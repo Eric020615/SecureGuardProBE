@@ -3,33 +3,33 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { VisitorManagementController } from './controllers/visitorManagement.controller';
+import { VisitorManagementController } from './controller/visitorManagement.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { VisitorController } from './controllers/visitor.controller';
+import { VisitorController } from './controller/visitor.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UserManagementController } from './controllers/userManagement.controller';
+import { UserManagementController } from './controller/userManagement.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UserController } from './controllers/user.controller';
+import { UserController } from './controller/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { RefDataController } from './controllers/refData.controller';
+import { RefDataController } from './controller/refData.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { ParcelManagementController } from './controllers/parcelManagement.controller';
+import { ParcelManagementController } from './controller/parcelManagement.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { ParcelController } from './controllers/parcel.controller';
+import { ParcelController } from './controller/parcel.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { NotificationController } from './controllers/notification.controller';
+import { NotificationController } from './controller/notification.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { NoticeManagementController } from './controllers/noticeManagement.controller';
+import { NoticeManagementController } from './controller/noticeManagement.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { NoticeController } from './controllers/notice.controller';
+import { NoticeController } from './controller/notice.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { FacilityManagementController } from './controllers/facilityManagement.controller';
+import { FacilityManagementController } from './controller/facilityManagement.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { FacilityController } from './controllers/facility.controller';
+import { FacilityController } from './controller/facility.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { CardController } from './controllers/card.controller';
+import { CardController } from './controller/card.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './controllers/auth.controller';
+import { AuthController } from './controller/auth.controller';
 import { expressAuthentication } from './middleware/security.middleware';
 // @ts-ignore - no great way to install types from subpackage
 import { iocContainer } from './ioc';

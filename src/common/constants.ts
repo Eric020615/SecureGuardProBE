@@ -1,4 +1,4 @@
-import { AccessControlDataDto, CardDto, CreateStaffDto, StaffProfileDto } from '../dtos/microengine.dto'
+import { AccessControlDataDto, CardDto, CreateStaffDto, StaffProfileDto } from '../dto/microengine.dto'
 
 export enum PaginationDirectionEnum {
 	Next = 'next',

@@ -1,6 +1,6 @@
 import { Request } from 'express'
-import { AuthTokenPayloadDto, SubUserAuthTokenPayloadDto, VisitorPassTokenPayloadDto } from '../dtos/auth.dto'
-import { AuthService } from '../services/auth.service'
+import { AuthTokenPayloadDto, SubUserAuthTokenPayloadDto, VisitorPassTokenPayloadDto } from '../dto/auth.dto'
+import { AuthService } from '../service/auth.service'
 import { iocContainer } from '../ioc'
 import { OperationError } from '../common/operation-error'
 import { HttpStatusCode } from '../common/http-status-code'

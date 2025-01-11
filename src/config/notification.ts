@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
 import axios, { AxiosError } from 'axios'
 import { provideSingleton } from '../helper/provideSingleton'
-import { ExpoNotificationRequest, ExpoNotificationResponse } from '../dtos/notification.dto'
+import { ExpoNotificationRequest, ExpoNotificationResponse } from '../dto/notification.dto'
 
 dotenv.config()
 
