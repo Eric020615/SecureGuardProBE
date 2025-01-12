@@ -80,4 +80,19 @@ export class MegeyeService {
 			return null
 		}
 	}
+
+	public async deletePersonDetailsById(personId: string) {
+		try {
+			const [success, response] = await this.megeyeManager.MegeyeGlobalHandler({
+				path: listUrl.personnelManagement.delete.path.replace('{id}', personId),
+				type: listUrl.personnelManagement.delete.type,
+			})
+			if (!success) {
+				return null
+			}
+			return response
+		} catch (error: any) {
+			return null
+		}
+	}
 }

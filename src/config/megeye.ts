@@ -292,6 +292,10 @@ export const listUrl = {
 			path: '/api/persons/item/{id}',
 			type: IType.put,
 		},
+		delete: {
+			path: '/api/persons/item/{id}',
+			type: IType.delete,
+		},
 		queryPersonDetailsById: {
 			path: '/api/persons/item/{id}',
 			type: IType.get,

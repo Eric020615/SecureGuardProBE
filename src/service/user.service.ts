@@ -32,6 +32,7 @@ import { NotificationRepository } from '../repository/notification.repository'
 import { GetFacilityBookingUserDto } from '../dto/facility.dto'
 import { VisitorRepository } from '../repository/visitor.repository'
 import { UserRecord } from 'firebase-admin/auth'
+import { CardService } from './card.service'
 
 dotenv.config()
 

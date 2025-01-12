@@ -294,6 +294,34 @@ export class CardService {
 		}
 	}
 
+	deleteCardService = async (userGuid: string) => {
+		try {
+			const userData = await this.userService.getUserDetailsByIdService(userGuid)
+			if (userData == null) {
+				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
+			}
+			const faceIdCard = this.generateUserId(userData.role, userData.userId, 'ISO14443ACSN')
+			if (await this.microEngineService.getUserById(faceIdCard)) {
+				await this.microEngineService.deleteUser(faceIdCard)
+			}
+			const qrCodeCard = this.generateUserId(userData.role, userData.userId, 'QRCode')
+			if (await this.microEngineService.getUserById(qrCodeCard)) {
+				await this.microEngineService.deleteUser(qrCodeCard)
+			}
+			const megeyePerson = await this.megeyeService.queryPersonDetailsById(userGuid)
+			if (megeyePerson) {
+				await this.megeyeService.deletePersonDetailsById(userGuid)
+			}
+			// await this.cardRepository.(userData.badgeNumber)
+			await this.userRepository.editUserDetailsByIdRepository(userGuid, {
+				badgeNumber: '',
+			} as Users)
+		} catch (error: any) {
+			console.log(error)
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
+	}
+
 	createBadgeNumber = async (userGuid: string, role: RoleEnum, referralUid?: string) => {
 		const badgeNumber = await this.cardRepository.createCardRepository({
 			badgeNumber: 0,

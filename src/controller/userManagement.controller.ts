@@ -25,11 +25,15 @@ import { inject } from 'inversify'
 import { PaginationDirectionEnum } from '../common/constants'
 import { GetUserByAdminDto, GetUserDetailsByIdDto } from '../dto/user.dto'
 import { UserService } from '../service/user.service'
+import { CardService } from '../service/card.service'
 
 @Route('users/admin')
 @provideSingleton(UserManagementController)
 export class UserManagementController extends Controller {
-	constructor(@inject(UserService) private userService: UserService) {
+	constructor(
+		@inject(UserService) private userService: UserService,
+		@inject(CardService) private cardService: CardService,
+	) {
 		super()
 	}
 
@@ -174,6 +178,7 @@ export class UserManagementController extends Controller {
 			if (!request.userGuid) {
 				throw new OperationError('User not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
+			await this.cardService.deleteCardService((await this.userService.getUserDetailsByIdService(id)).userGuid)
 			await this.userService.deleteUserByIdService(id, request.userGuid)
 			const response = {
 				message: 'User was deleted successfully',

@@ -216,8 +216,12 @@ export class MicroEngineService {
 	}
 
 	async deleteUser(userId: string) {
-		const url = listUrl.cardDbManagementApi.users.delete.path.replace('{userId}', userId)
-		return this.apiRequest(url, listUrl.cardDbManagementApi.users.delete.type)
+		try {
+			const url = listUrl.cardDbManagementApi.users.delete.path.replace('{userId}', userId)
+			return this.apiRequest(url, listUrl.cardDbManagementApi.users.delete.type)
+		} catch (error) {
+			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+		}
 	}
 
 	async updateBadge(userId: string, data: any) {
