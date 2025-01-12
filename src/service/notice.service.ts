@@ -145,7 +145,7 @@ export class NoticeService {
 			const fileGuids = await this.fileService.editFilesService(
 				editNoticeDto.deletedAttachments,
 				editNoticeDto.newAttachments ?? [],
-				`notice/attachments/${noticeGuid}`,
+				`notices/attachments/${noticeGuid}`,
 				userId,
 				'notice attachments',
 			)
