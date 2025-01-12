@@ -85,23 +85,23 @@ export class SubUserRequests extends BaseModel {
 
 export class Residents {
 	id?: string
-	unit: string
 	floor: string
+	unit: string
 	createdBy: string
 	updatedBy: string
 	createdDateTime: Timestamp
 	updatedDateTime: Timestamp
 
 	constructor(
-		unit: string,
 		floor: string,
+		unit: string,
 		createdBy: string,
 		updatedBy: string,
 		createdDateTime: Timestamp,
 		updatedDateTime: Timestamp,
 	) {
-		this.unit = unit
 		this.floor = floor
+		this.unit = unit
 		this.createdBy = createdBy
 		this.updatedBy = updatedBy
 		this.createdDateTime = createdDateTime

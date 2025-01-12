@@ -69,7 +69,6 @@ export const expressAuthentication = async (
 			return Promise.resolve({})
 		}
 	} catch (error: any) {
-		console.log(error)
 		return response.status(402).json({
 			message: error.message,
 			status: 402,

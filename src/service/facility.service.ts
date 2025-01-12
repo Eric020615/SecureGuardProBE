@@ -132,7 +132,6 @@ export class FacilityService {
 					: []
 			return { data, count }
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

@@ -105,7 +105,6 @@ export class AuthService {
 			return { token, userGuid: response.user.uid }
 		} catch (error: any) {
 			if (error instanceof FirebaseError) {
-				console.log(error)
 				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
 			throw new OperationError('Account Login Failed', HttpStatusCode.INTERNAL_SERVER_ERROR)

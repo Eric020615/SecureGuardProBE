@@ -82,7 +82,6 @@ export class VisitorService {
 			} as Visitors
 			await this.visitorRepository.editVisitorByIdRepository(guid, visitor)
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
@@ -122,7 +121,6 @@ export class VisitorService {
 				: []
 			return { data, count }
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
@@ -150,7 +148,6 @@ export class VisitorService {
 			}
 			return data
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
@@ -175,7 +172,6 @@ export class VisitorService {
 				: []
 			return { data, count }
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

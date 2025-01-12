@@ -24,7 +24,6 @@ export class RefDataService {
 				: []
 			return data
 		} catch (error: any) {
-            console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}

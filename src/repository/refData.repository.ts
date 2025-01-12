@@ -57,7 +57,7 @@ export class RefDataRepository {
 		if (!unit) {
 			throw new OperationError('Unit not found', HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
-		if (unit.isAssigned == true) {
+		if (unit.isAssigned == true && updatedUnit.assignedTo) {
 			throw new OperationError('Unit had been occupied', HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 		await unitDocRef.update({

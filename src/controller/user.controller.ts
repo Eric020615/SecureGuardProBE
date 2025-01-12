@@ -88,7 +88,6 @@ export class UserController extends Controller {
 			}
 			return response
 		} catch (err) {
-			console.log(err)
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
 			const response = {
 				message: 'Failed to retrieve user details',
@@ -190,7 +189,6 @@ export class UserController extends Controller {
 			return response
 		} catch (err) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			console.log(err)
 			const response = {
 				message: 'Failed to retrieve sub user list',
 				status: '500',

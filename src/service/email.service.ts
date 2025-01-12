@@ -25,7 +25,6 @@ export class EmailService {
 
 		try {
 			await sgMail.send(msg)
-			// console.log('Email sent: ' + response[0].statusCode)
 			return [ true, 'Email sent successfully' ]
 		} catch (error: any) {
 			if (error.response) {

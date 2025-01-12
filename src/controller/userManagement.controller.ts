@@ -58,7 +58,6 @@ export class UserManagementController extends Controller {
 			return response
 		} catch (err) {
 			this.setStatus(HttpStatusCode.INTERNAL_SERVER_ERROR)
-			console.log(err)
 			const response = {
 				message: 'Failed to retrieve user list',
 				status: '500',

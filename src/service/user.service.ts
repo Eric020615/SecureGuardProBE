@@ -215,7 +215,6 @@ export class UserService {
 			}
 			await this.authAdmin.updateUser(userGuid, { displayName: createUserDto.userName })
 		} catch (error: any) {
-			console.log(error)
 			if (error instanceof FirebaseError) {
 				throw new OperationError(convertFirebaseAuthEnumMessage(error.code), HttpStatusCode.INTERNAL_SERVER_ERROR)
 			}
@@ -433,7 +432,6 @@ export class UserService {
 				}
 			}
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
@@ -514,7 +512,6 @@ export class UserService {
 					: []
 			return { data, count }
 		} catch (error: any) {
-			console.log(error)
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
