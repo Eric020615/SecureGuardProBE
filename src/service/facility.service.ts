@@ -85,8 +85,8 @@ export class FacilityService {
 							startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 							endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
 							facilityId: FacilityEnum[facilityBooking.facility],
+							spaceId: facilityBooking.space,
 							bookedBy: facilityBooking.bookedBy,
-							numOfGuest: facilityBooking.numOfGuest,
 							isCancelled: facilityBooking.isCancelled,
 							status: DocumentStatusEnum[facilityBooking.status],
 							createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
@@ -115,13 +115,13 @@ export class FacilityService {
 								return {
 									bookingId: facilityBooking.id,
 									bookingGuid: facilityBooking.guid,
+									facilityId: FacilityEnum[facilityBooking.facility],
+									spaceId: facilityBooking.space,
 									startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 									endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-									facilityId: FacilityEnum[facilityBooking.facility],
 									bookedBy: (await this.authAdmin.getUser(facilityBooking.bookedBy))
 										? (await this.authAdmin.getUser(facilityBooking.bookedBy)).email
 										: '',
-									numOfGuest: facilityBooking.numOfGuest,
 									isCancelled: facilityBooking.isCancelled,
 									status: DocumentStatusEnum[facilityBooking.status],
 									createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
@@ -142,15 +142,17 @@ export class FacilityService {
 			let facilityBooking: FacilityBookings =
 				await this.facilityRepository.getFacilityBookingDetailsByFacilityBookingGuidRepository(facilityBookingGuid)
 			let data: GetFacilityBookingDetailsDto = {} as GetFacilityBookingDetailsDto
+			const bookedBy = await this.authAdmin.getUser(facilityBooking.bookedBy)
 			const createdBy = await this.authAdmin.getUser(facilityBooking.createdBy)
 			const updatedBy = await this.authAdmin.getUser(facilityBooking.updatedBy)
 			data = {
 				bookingId: facilityBooking.id,
 				bookingGuid: facilityBooking.guid ? facilityBooking.guid : '',
 				facilityId: FacilityEnum[facilityBooking.facility],
+				spaceId: facilityBooking.space,
 				startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 				endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-				bookedBy: facilityBooking.bookedBy,
+				bookedBy: bookedBy.email ? bookedBy.email : '',
 				numOfGuest: facilityBooking.numOfGuest,
 				isCancelled: facilityBooking.isCancelled,
 				cancelRemark: facilityBooking.cancelRemark,

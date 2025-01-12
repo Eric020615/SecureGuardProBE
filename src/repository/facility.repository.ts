@@ -9,7 +9,7 @@ import { SequenceRepository } from './sequence.repository'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
 import { DocumentStatusEnum, FacilityEnum, PaginationDirectionEnum } from '../common/constants'
 import { Facilities, FacilityBookings } from '../model/facilities.model'
-import { SpaceAvailabilityDto } from '../dto/facility.dto'
+import { GetSpaceBySpaceIdDto, SpaceAvailabilityDto } from '../dto/facility.dto'
 
 @provideSingleton(FacilityBookingRepository)
 export class FacilityBookingRepository {
@@ -164,8 +164,29 @@ export class FacilityBookingRepository {
 			)
 			return bookedSpaces // Return the booking status for all spaces
 		} catch (error: any) {
-			console.log(error)
 			return []
+		}
+	}
+
+	async getSpaceRepository(facilityId: keyof typeof FacilityEnum, spaceId?: string): Promise<GetSpaceBySpaceIdDto> {
+		try {
+			const facilityDocRef = doc(this.refDataCollection, facilityId)
+			const facilityDoc = await getDoc(facilityDocRef)
+			let result: Facilities = facilityDoc.data() as Facilities
+			if (spaceId) {
+				return {} as GetSpaceBySpaceIdDto
+			}
+			const space = result.spaces.find((space) => space.id === spaceId)
+			if (!space) {
+				return {} as GetSpaceBySpaceIdDto
+			}
+			return {
+				spaceId: space.id,
+				spaceName: space.name,
+				capacity: space.capacity,
+			} as GetSpaceBySpaceIdDto
+		} catch (error: any) {
+			return {} as GetSpaceBySpaceIdDto
 		}
 	}
 }

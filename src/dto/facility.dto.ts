@@ -13,6 +13,7 @@ export interface GetFacilityBookingHistoryDto {
 	bookingId: number
 	bookingGuid: string
 	facilityId: keyof typeof FacilityEnum
+	spaceId: string
 	startDate: string
 	endDate: string
 	bookedBy: string
@@ -24,6 +25,7 @@ export interface GetFacilityBookingDetailsDto {
 	bookingId: number
 	bookingGuid: string
 	facilityId: keyof typeof FacilityEnum
+	spaceId: string
 	startDate: string
 	endDate: string
 	bookedBy: string
@@ -57,4 +59,9 @@ export interface SpaceAvailabilityDto {
 export interface GetFacilityBookingUserDto {
     userGuid: string
 	email: string
+}
+
+export interface GetSpaceBySpaceIdDto {
+	spaceId: string
+	spaceName: string
 }
