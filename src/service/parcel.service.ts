@@ -9,6 +9,7 @@ import { CreateParcelDto, GetParcelDetailsDto, GetParcelDto } from '../dto/parce
 import { FileService } from './file.service'
 import { Parcels } from '../model/parcels.model'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { UserService } from './user.service'
 
 @provideSingleton(ParcelService)
 export class ParcelService {
@@ -16,6 +17,7 @@ export class ParcelService {
 	constructor(
 		@inject(ParcelRepository) private parcelRepository: ParcelRepository,
 		@inject(FileService) private fileService: FileService,
+		@inject(UserService) private userService: UserService,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
 	) {
 		this.authAdmin = this.firebaseAdmin.auth
@@ -77,8 +79,8 @@ export class ParcelService {
 		try {
 			const parcel = await this.parcelRepository.getParcelDetailsByIdRepository(parcelGuid)
 			let data: GetParcelDetailsDto = {} as GetParcelDetailsDto
-			const createdBy = await this.authAdmin.getUser(parcel.createdBy)
-			const updatedBy = await this.authAdmin.getUser(parcel.updatedBy)
+			const createdBy = await this.userService.safeGetUserEmail(parcel.createdBy)
+			const updatedBy = await this.userService.safeGetUserEmail(parcel.updatedBy)
 			if (parcel != null) {
 				data = {
 					parcelId: parcel.id,
@@ -88,9 +90,9 @@ export class ParcelService {
 					unit: parcel.unit,
 					parcelStatus: ParcelStatusEnum[parcel.parcelStatus],
 					status: DocumentStatusEnum[parcel.status],
-					createdBy: createdBy.email ? createdBy.email : '',
+					createdBy: createdBy ? createdBy : '',
 					createdDateTime: convertTimestampToUserTimezone(parcel.createdDateTime),
-					updatedBy: updatedBy.email ? updatedBy.email : '',
+					updatedBy: updatedBy ? updatedBy : '',
 					updatedDateTime: convertTimestampToUserTimezone(parcel.updatedDateTime),
 				} as GetParcelDetailsDto
 			}

@@ -31,6 +31,7 @@ import {
 import { JwtConfig } from '../config/jwtConfig'
 import { VisitorPassTokenPayloadDto } from '../dto/auth.dto'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { UserService } from './user.service'
 
 @provideSingleton(VisitorService)
 export class VisitorService {
@@ -39,6 +40,7 @@ export class VisitorService {
 		@inject(VisitorRepository) private visitorRepository: VisitorRepository,
 		@inject(JwtConfig) private jwtConfig: JwtConfig,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
+		@inject(UserService) private userService: UserService,
 	) {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
@@ -129,8 +131,8 @@ export class VisitorService {
 		try {
 			const visitors = await this.visitorRepository.getVisitorDetailsRepository(visitorGuid)
 			let data: GetVisitorDetailsDto = {} as GetVisitorDetailsDto
-			const createdBy = await this.authAdmin.getUser(visitors.createdBy)
-			const updatedBy = await this.authAdmin.getUser(visitors.updatedBy)
+			const createdBy = await this.userService.safeGetUserEmail(visitors.createdBy)
+			const updatedBy = await this.userService.safeGetUserEmail(visitors.updatedBy)
 			data = {
 				visitorId: visitors.id,
 				visitorGuid: visitors.guid ? visitors.guid : '',
@@ -141,8 +143,8 @@ export class VisitorService {
 				visitDateTime: convertTimestampToUserTimezone(visitors.visitDateTime),
 				token: visitors.token,
 				status: DocumentStatusEnum[visitors.status] as keyof typeof DocumentStatusEnum,
-				createdBy: createdBy.email ? createdBy.email : '',
-				updatedBy: updatedBy.email ? updatedBy.email : '',
+				createdBy: createdBy ? createdBy : '',
+				updatedBy: updatedBy ? updatedBy : '',
 				createdDateTime: convertTimestampToUserTimezone(visitors.createdDateTime),
 				updatedDateTime: convertTimestampToUserTimezone(visitors.updatedDateTime),
 			}

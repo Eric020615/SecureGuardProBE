@@ -586,4 +586,16 @@ export class UserService {
 			throw new OperationError(error, HttpStatusCode.INTERNAL_SERVER_ERROR)
 		}
 	}
+
+	safeGetUserEmail = async (userId: string): Promise<string> => {
+		try {
+		  const user = await this.authAdmin.getUser(userId);
+		  return user.email || '';
+		} catch (error: any) {
+		  if (error.code === 'auth/user-not-found') {
+			return 'User Deleted'; // Return empty string if user not found
+		  }
+		  throw error; // Re-throw unexpected errors
+		}
+	};
 }

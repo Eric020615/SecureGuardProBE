@@ -15,6 +15,7 @@ import { inject } from 'inversify'
 import { DocumentStatusEnum, FacilityEnum, PaginationDirectionEnum } from '../common/constants'
 import { FacilityBookings } from '../model/facilities.model'
 import { FirebaseAdmin } from '../config/firebaseAdmin'
+import { UserService } from './user.service'
 
 @provideSingleton(FacilityService)
 export class FacilityService {
@@ -23,6 +24,7 @@ export class FacilityService {
 		@inject(FacilityBookingRepository)
 		private facilityRepository: FacilityBookingRepository,
 		@inject(FirebaseAdmin) private firebaseAdmin: FirebaseAdmin,
+		@inject(UserService) private userService: UserService,
 	) {
 		this.authAdmin = this.firebaseAdmin.auth
 	}
@@ -119,9 +121,7 @@ export class FacilityService {
 									spaceId: facilityBooking.space,
 									startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 									endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-									bookedBy: (await this.authAdmin.getUser(facilityBooking.bookedBy))
-										? (await this.authAdmin.getUser(facilityBooking.bookedBy)).email
-										: '',
+									bookedBy: await this.userService.safeGetUserEmail(facilityBooking.bookedBy),
 									isCancelled: facilityBooking.isCancelled,
 									status: DocumentStatusEnum[facilityBooking.status],
 									createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
@@ -141,9 +141,9 @@ export class FacilityService {
 			let facilityBooking: FacilityBookings =
 				await this.facilityRepository.getFacilityBookingDetailsByFacilityBookingGuidRepository(facilityBookingGuid)
 			let data: GetFacilityBookingDetailsDto = {} as GetFacilityBookingDetailsDto
-			const bookedBy = await this.authAdmin.getUser(facilityBooking.bookedBy)
-			const createdBy = await this.authAdmin.getUser(facilityBooking.createdBy)
-			const updatedBy = await this.authAdmin.getUser(facilityBooking.updatedBy)
+			const bookedBy = await this.userService.safeGetUserEmail(facilityBooking.bookedBy)
+			const createdBy = await this.userService.safeGetUserEmail(facilityBooking.createdBy)
+			const updatedBy = await this.userService.safeGetUserEmail(facilityBooking.updatedBy)
 			data = {
 				bookingId: facilityBooking.id,
 				bookingGuid: facilityBooking.guid ? facilityBooking.guid : '',
@@ -151,14 +151,14 @@ export class FacilityService {
 				spaceId: facilityBooking.space,
 				startDate: convertTimestampToUserTimezone(facilityBooking.startDate),
 				endDate: convertTimestampToUserTimezone(facilityBooking.endDate),
-				bookedBy: bookedBy.email ? bookedBy.email : '',
+				bookedBy: bookedBy ? bookedBy : '',
 				numOfGuest: facilityBooking.numOfGuest,
 				isCancelled: facilityBooking.isCancelled,
 				cancelRemark: facilityBooking.cancelRemark,
 				status: DocumentStatusEnum[facilityBooking.status],
-				createdBy: createdBy.email ? createdBy.email : '',
+				createdBy: createdBy ? createdBy : '',
 				createdDateTime: convertTimestampToUserTimezone(facilityBooking.createdDateTime),
-				updatedBy: updatedBy.email ? updatedBy.email : '',
+				updatedBy: updatedBy ? updatedBy : '',
 				updatedDateTime: convertTimestampToUserTimezone(facilityBooking.updatedDateTime),
 			} as GetFacilityBookingDetailsDto
 			return data
