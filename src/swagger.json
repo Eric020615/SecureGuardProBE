@@ -1930,6 +1930,9 @@
 						],
 						"nullable": false
 					},
+					"spaceId": {
+						"type": "string"
+					},
 					"startDate": {
 						"type": "string"
 					},
@@ -1959,6 +1962,7 @@
 					"bookingId",
 					"bookingGuid",
 					"facilityId",
+					"spaceId",
 					"startDate",
 					"endDate",
 					"bookedBy",
@@ -2091,6 +2095,9 @@
 						],
 						"nullable": false
 					},
+					"spaceId": {
+						"type": "string"
+					},
 					"startDate": {
 						"type": "string"
 					},
@@ -2139,6 +2146,7 @@
 					"bookingId",
 					"bookingGuid",
 					"facilityId",
+					"spaceId",
 					"startDate",
 					"endDate",
 					"bookedBy",

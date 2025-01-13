@@ -6,7 +6,7 @@ import swaggerUi from 'swagger-ui-express'
 import swaggerJson from './swagger.json'
 
 const corsOptions = {
-	origin: ['http://localhost:8081', 'http://localhost:8082', 'http://localhost:4000', 'http://10.167.56.15:4000'],
+	origin: ['http://localhost:8081', 'http://localhost:8082', 'http://localhost:4000', 'http://10.167.56.80:4000'],
 	optionsSuccessStatus: 200,
 }
 
